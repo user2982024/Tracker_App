@@ -1,0 +1,13 @@
+# Node
+node_modules/
+.env
+
+# Frontend
+Frontend/node_modules/
+Frontend/dist/
+
+# Backend
+Backend/node_modules/
+
+# Logs
+npm-debug.log*
