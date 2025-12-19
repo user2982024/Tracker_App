@@ -1,3 +1,4 @@
+
 const { body } = require('express-validator');
 
 exports.signupValidator = [
@@ -17,4 +18,16 @@ exports.signupValidator = [
     .notEmpty().withMessage("Password is required")
     .isLength({ min: 6 }).withMessage("Password must be at least 6 characters long")
     .matches(/\d/).withMessage("Password must contain atleast one number")
+];
+
+exports.signinValidator = [
+    body("email")
+    .trim()
+    .notEmpty().withMessage("Emial is required")
+    .isEmail().withMessage("Please provide a valid email")
+    .normalizeEmail(),
+
+    body("password")
+    .trim()
+    .notEmpty().withMessage("Password is required")
 ];

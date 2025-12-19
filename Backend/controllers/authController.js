@@ -2,6 +2,7 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+// Signup Route
 exports.signup = async (req, res) => {
     try {
         const { name, email, password } = req.body;
@@ -15,7 +16,7 @@ exports.signup = async (req, res) => {
             });
         }
 
-        // Hash passwwrd
+        // Hash password
         const hashedPassword =
          await bcrypt.hash(password, 12);
 
@@ -50,3 +51,54 @@ exports.signup = async (req, res) => {
         });
     }
 }
+
+// Signin Route
+exports.signin = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        // Find user by email
+        const user = await User.findOne({ email }).select("+password");
+
+        if (!user) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email or password",
+            });
+        }
+
+        // Compare passwords
+        const isPasswordMatch = await bcrypt.compare(password, user.password);              // password is stored in DB as user.passowrd
+
+        if (!isPasswordMatch) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid email or password",
+            });
+        }
+
+        // Generate JWT token
+        const token = jwt.sign({ user: user._id }, process.env.JWT_SECRET, {
+            expiresIn: "7d"
+        });
+
+        // Send response (never send password)
+        return res.status(200).json({
+            success: true,
+            message: "Signin successful",
+            token,
+            user: {
+                id: user._id,
+                name: user.name,
+                email: user.email,
+            },
+        });
+    }
+    catch(error) {
+        console.error("Signin Error", error);
+        return res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
+    }
+};
