@@ -3,6 +3,7 @@ import Navbar from './UI_components/Navbar';
 import MainSreen_1 from './UI_components/MainScreen_1';
 import Card_1_Section from './UI_components/Card_1_Section';
 import MainScreen_2 from './UI_components/MainScreen_2';
+import Ending from './UI_components/Ending';
 
 const App = () => {
   return (
@@ -11,6 +12,7 @@ const App = () => {
       <MainSreen_1 />
       <Card_1_Section />
       <MainScreen_2 />
+      <Ending />
     </div>
   )
 }
