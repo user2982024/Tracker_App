@@ -5,7 +5,7 @@ const Signup = () => {
   // State for form inputs
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = "";
+  const [password, setPassword] = useState("");
 
   // Hnadle form submit
   const handleSignup = async (e) => {
