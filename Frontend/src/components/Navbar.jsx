@@ -19,7 +19,7 @@ const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
-    toast.success("Logged out successfully!");
+    toast.success("Signed out successfully!");
     navigate("/");
   };
 
@@ -51,14 +51,14 @@ const Navbar = () => {
               <>
                 <NavLink
                   to="/signin"
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-purple-600 hover:text-white transition"
+                  className="px-4 py-2 border border-gray-300 rounded-md cursor-pointer text-gray-700 hover:bg-purple-600 hover:text-white transition"
                 >
                   Signin
                 </NavLink>
 
                 <NavLink
                   to="/signup"
-                  className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition"
+                  className="px-4 py-2 bg-purple-600 text-white rounded-md cursor-pointer hover:bg-purple-700 transition"
                 >
                   Signup
                 </NavLink>
@@ -66,7 +66,7 @@ const Navbar = () => {
             ) : (
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+                className="px-4 py-2 bg-red-500 cursor-pointer text-white rounded-md hover:bg-red-600 transition"
               >
                 Signout
               </button>

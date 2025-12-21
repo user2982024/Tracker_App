@@ -105,7 +105,7 @@ const Signin = () => {
               ${
                 loading
                   ? "bg-purple-400 cursor-not-allowed"
-                  : "bg-purple-600 hover:bg-purple-700 hover:scale-[1.02]"
+                  : "bg-purple-600 hover:bg-purple-700 hover:scale-[1.02] cursor-pointer"
               }`}
           >
             {loading ? "Signing in..." : "Sign In"}

@@ -17,7 +17,7 @@ const Ending = () => {
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
           
           {/* Primary Button */}
-          <button className="flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 font-semibold text-purple-600 shadow-lg transition hover:scale-105 hover:bg-purple-50">
+          <button className="flex items-center justify-center gap-2 rounded-xl cursor-pointer bg-white px-8 py-4 font-semibold text-purple-600 shadow-lg transition hover:scale-105 hover:bg-purple-50">
             Start Today
             <span className="text-sm">→</span>
           </button>

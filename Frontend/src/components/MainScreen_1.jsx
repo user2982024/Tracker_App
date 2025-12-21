@@ -27,7 +27,7 @@ const MainScreen_1 = () => {
 
           {/* Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
-            <button className="bg-purple-600 text-white font-bold px-6 py-3 rounded-lg hover:bg-purple-500 transition">
+            <button className="bg-purple-600 text-white cursor-pointer font-bold px-6 py-3 rounded-lg hover:bg-purple-500 transition">
               Get Started
             </button>
             <button className="bg-white text-black font-bold px-6 py-3 rounded-lg border-2 border-gray-700 hover:bg-gray-100 transition">
