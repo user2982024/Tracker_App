@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { LuUser, LuMail, LuLock } from "react-icons/lu";
+import toast, { Toaster } from "react-hot-toast";
 
 const Signup = () => {
   // State for form inputs
@@ -30,7 +31,18 @@ const Signup = () => {
       // Convert response to JSON
       const data = await response.json();
 
-      console.log("Signup response", data);
+      if (response.status === 409) {
+        toast.error("User already exists. Try logging in.");
+        return;
+      }
+
+      if (response.ok) {
+        console.log("Signup successful", data);
+        toast.success("Signup successful! 🎉");
+        setTimeout(() => {
+          window.location.href = "/"; // redirect to the landing page
+        }, 2000);
+      }
     } catch (error) {
       console.error("Signup error", error);
     }
@@ -38,6 +50,7 @@ const Signup = () => {
 
   return (
     <section className="flex min-h-screen items-center justify-center bg-[#faf7ff] px-4">
+      <Toaster position="top-right" reverseOrder={false} />
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-xl">
         {/* Header */}
         <div className="text-center">
