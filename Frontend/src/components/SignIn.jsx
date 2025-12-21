@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { LuMail, LuLock } from "react-icons/lu";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -50,8 +50,6 @@ const Signin = () => {
       setLoading(false);
     }
   };
-
-  const navigate = useNavigate();
 
   return (
     <section className="flex min-h-screen items-center justify-center bg-[#faf7ff] px-4">
@@ -116,12 +114,12 @@ const Signin = () => {
 
         {/* Footer */}
         <p className="mt-6 text-center text-sm text-gray-600">
-          Don’t have an account?{" "}
-          <span 
-          onClick={() => navigate('/signup')}
+          Don't have an account?{" "}
+          <NavLink 
+          to='/signup'             // NavLink and useNavigate() both could be used
           className="cursor-pointer font-medium text-purple-600 hover:underline">
             Sign up
-          </span>
+          </NavLink>
         </p>
       </div>
     </section>

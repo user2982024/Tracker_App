@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { LuUser, LuMail, LuLock } from "react-icons/lu";
 import toast, { Toaster } from "react-hot-toast";
 
@@ -7,6 +8,8 @@ const Signup = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
 
   // Hnadle form submit
   const handleSignup = async (e) => {
@@ -40,7 +43,7 @@ const Signup = () => {
         console.log("Signup successful", data);
         toast.success("Signup successful! 🎉");
         setTimeout(() => {
-          window.location.href = "/"; // redirect to the landing page
+          navigate("/signin"); // redirect to the landing page
         }, 2000);
       }
     } catch (error) {
