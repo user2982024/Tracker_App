@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import toast, { Toaster } from "react-hot-toast";
 
 const navLinkClass = ({ isActive }) =>
@@ -8,19 +9,23 @@ const navLinkClass = ({ isActive }) =>
   }`;
 
 const Navbar = () => {
-  // ✅ Correct way: derive auth state synchronously
   const [isAuthenticated, setIsAuthenticated] = useState(
     () => !!localStorage.getItem("token")
   );
 
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Logout handler
   const handleLogout = () => {
     localStorage.removeItem("token");
     setIsAuthenticated(false);
     toast.success("Signed out successfully!");
+    setIsMenuOpen(false);
     navigate("/");
+  };
+
+  const handleLinkClick = () => {
+    setIsMenuOpen(false);
   };
 
   return (
@@ -29,36 +34,45 @@ const Navbar = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16 items-center">
-          
-          {/* App Name */}
-          <NavLink to="/" className="text-black font-bold text-xl">
+          {/* Logo */}
+          <NavLink
+            to="/"
+            className="flex items-center gap-2 text-black font-bold text-xl"
+            onClick={handleLinkClick}
+          >
+            <img src="/3.png" alt="TaskFlow Logo" className="h-8 w-8" />
             TaskFlow
           </NavLink>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex space-x-8">
-            <NavLink to="/notes" className={navLinkClass}>Notes</NavLink>
-            <NavLink to="/todos" className={navLinkClass}>Todos</NavLink>
-            <NavLink to="/goals" className={navLinkClass}>Goals</NavLink>
+            <NavLink to="/notes" className={navLinkClass}>
+              Notes
+            </NavLink>
+            <NavLink to="/todos" className={navLinkClass}>
+              Todos
+            </NavLink>
+            <NavLink to="/goals" className={navLinkClass}>
+              Goals
+            </NavLink>
             <NavLink to="/daily-habits" className={navLinkClass}>
               Daily Habits
             </NavLink>
           </div>
 
-          {/* Auth Buttons */}
-          <div className="flex space-x-4">
+          {/* Desktop Auth */}
+          <div className="hidden md:flex space-x-4">
             {!isAuthenticated ? (
               <>
                 <NavLink
                   to="/signin"
-                  className="px-4 py-2 border border-gray-300 rounded-md cursor-pointer text-gray-700 hover:bg-purple-600 hover:text-white transition"
+                  className="px-3 py-1.5 border border-gray-300 rounded-md text-gray-700 hover:bg-purple-600 hover:text-white transition"
                 >
                   Signin
                 </NavLink>
-
                 <NavLink
                   to="/signup"
-                  className="px-4 py-2 bg-purple-600 text-white rounded-md cursor-pointer hover:bg-purple-700 transition"
+                  className="px-3 py-1.5 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition"
                 >
                   Signup
                 </NavLink>
@@ -66,24 +80,93 @@ const Navbar = () => {
             ) : (
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 bg-red-500 cursor-pointer text-white rounded-md hover:bg-red-600 transition"
+                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+              >
+                Signout
+              </button>
+            )}
+          </div>
+
+          {/* Hamburger Button (Mobile) */}
+          <button
+            onClick={() => setIsMenuOpen((prev) => !prev)}
+            className="md:hidden text-gray-700 focus:outline-none"
+          >
+            {isMenuOpen ? (
+              <HiOutlineX size={26} />
+            ) : (
+              <HiOutlineMenu size={26} />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {isMenuOpen && (
+        <div className="md:hidden border-t border-gray-200 px-4 py-6">
+          {/* Navigation Links (Vertical) */}
+          <div className="flex flex-col space-y-4 text-center">
+            <NavLink
+              to="/notes"
+              className={navLinkClass}
+              onClick={handleLinkClick}
+            >
+              Notes
+            </NavLink>
+            <NavLink
+              to="/todos"
+              className={navLinkClass}
+              onClick={handleLinkClick}
+            >
+              Todos
+            </NavLink>
+            <NavLink
+              to="/goals"
+              className={navLinkClass}
+              onClick={handleLinkClick}
+            >
+              Goals
+            </NavLink>
+            <NavLink
+              to="/daily-habits"
+              className={navLinkClass}
+              onClick={handleLinkClick}
+            >
+              Daily Habits
+            </NavLink>
+          </div>
+
+          {/* Auth Buttons (Horizontal) */}
+          <div className="mt-6 pt-4 border-t border-gray-200 flex justify-center gap-4">
+            {!isAuthenticated ? (
+              <>
+                <NavLink
+                  to="/signin"
+                  onClick={handleLinkClick}
+                  className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md"
+                >
+                  Signin
+                </NavLink>
+
+                <NavLink
+                  to="/signup"
+                  onClick={handleLinkClick}
+                  className="flex items-center justify-center px-4 py-2 bg-purple-600 text-white rounded-md"
+                >
+                  Signup
+                </NavLink>
+              </>
+            ) : (
+              <button
+                onClick={handleLogout}
+                className="px-6 py-2 bg-red-500 text-white rounded-md"
               >
                 Signout
               </button>
             )}
           </div>
         </div>
-      </div>
-
-      {/* Mobile Navigation */}
-      <div className="md:hidden px-4 pb-4 flex flex-col items-center space-y-2">
-        <NavLink to="/notes" className={navLinkClass}>Notes</NavLink>
-        <NavLink to="/todos" className={navLinkClass}>Todos</NavLink>
-        <NavLink to="/goals" className={navLinkClass}>Goals</NavLink>
-        <NavLink to="/daily-habits" className={navLinkClass}>
-          Daily Habits
-        </NavLink>
-      </div>
+      )}
     </nav>
   );
 };
