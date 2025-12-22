@@ -8,8 +8,8 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Name is required"],
       trim: true, // removes extra spaces
-      minLength: 4,
-      maxLength: 50,
+      minlength: 4,
+      maxlength: 50,
     },
 
     email: {
@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
-      minLength: 6,
+      minlength: 6,
       select: false, // never return password in queries
     },
   },
