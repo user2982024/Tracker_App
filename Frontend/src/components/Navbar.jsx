@@ -13,7 +13,7 @@ const Navbar = () => {
     () => !!localStorage.getItem("token")
   );
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false); // <-- Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false); 
   const navigate = useNavigate();
 
   const handleLogout = () => {
