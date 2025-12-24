@@ -6,6 +6,7 @@ import NoteCard from "./NoteCard";
 const Notes = () => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [visibleCount, setVisibleCount] = useState(6);
 
   const navigate = useNavigate();
 
@@ -35,7 +36,11 @@ const Notes = () => {
     fetchNotes();
   }, []);
 
-  const displayedNotes = notes.slice(0, 6);
+  const displayedNotes = notes.slice(0, visibleCount);
+
+  const handleShowMore = () => {
+    setVisibleCount((prev) => prev + 6);
+  };
 
   return (
     <section className="min-h-screen bg-gray-50 px-6 py-8">
@@ -43,8 +48,8 @@ const Notes = () => {
       <div className="flex items-center justify-between mb-8">
         {/* Left: Title */}
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">All Notes</h1>
-          <p className="text-sm text-gray-500">{notes.length} notes in total</p>
+          <h1 className="text-2xl font-semibold text-purple-600">All Notes</h1>
+          <p className="text-sm text-gray-500"><b>{notes.length}</b> notes in total</p>
         </div>
 
         {/* Right: Buttons */}
@@ -104,6 +109,18 @@ const Notes = () => {
               createdAt={note.createdAt}
             />
           ))}
+        </div>
+      )}
+
+      {/* Show More Button */}
+      {visibleCount < notes.length && (
+        <div className="flex justify-center mt-8">
+          <button
+            onClick={handleShowMore}
+            className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-6 py-3 text-sm font-medium text-white shadow hover:bg-purple-500 transition"
+          >
+            Show More Notes
+          </button>
         </div>
       )}
     </section>

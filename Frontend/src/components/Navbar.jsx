@@ -81,7 +81,7 @@ const Navbar = () => {
             ) : (
               <button
                 onClick={() => setIsModalOpen(true)} 
-                className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
+                className="px-4 py-2 bg-red-500 text-white rounded-xl cursor-pointer hover:bg-red-600 transition"
               >
                 Signout
               </button>
@@ -126,14 +126,14 @@ const Navbar = () => {
                 <NavLink
                   to="/signin"
                   onClick={handleLinkClick}
-                  className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-xl"
+                  className="flex items-center justify-center px-4 py-2 border cursor-pointer border-gray-300 rounded-xl"
                 >
                   Signin
                 </NavLink>
                 <NavLink
                   to="/signup"
                   onClick={handleLinkClick}
-                  className="flex items-center justify-center px-4 py-2 bg-purple-600 text-white rounded-xl"
+                  className="flex items-center justify-center px-4 py-2 cursor-pointer bg-purple-600 text-white rounded-xl"
                 >
                   Signup
                 </NavLink>
@@ -141,7 +141,7 @@ const Navbar = () => {
             ) : (
               <button
                 onClick={() => setIsModalOpen(true)} 
-                className="px-6 py-2 bg-red-500 text-white rounded-xl"
+                className="px-6 py-2 bg-red-500 text-white rounded-xl cursor-pointer"
               >
                 Signout
               </button>
@@ -160,13 +160,13 @@ const Navbar = () => {
             <div className="flex justify-center gap-4">
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
+                className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition cursor-pointer"
               >
                 Yes
               </button>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-xl hover:bg-gray-400 transition"
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-xl hover:bg-gray-400 transition cursor-pointer"
               >
                 No
               </button>
