@@ -79,7 +79,7 @@ const AddNote = () => {
           <button
             type="submit"
             disabled={loading}
-            className="bg-violet-600 text-white py-2 rounded-lg hover:bg-violet-700 transition"
+            className="bg-violet-600 text-white py-2 rounded-lg hover:bg-violet-700 cursor-pointer transition"
           >
             Save Note
           </button>

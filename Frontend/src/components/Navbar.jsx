@@ -67,21 +67,21 @@ const Navbar = () => {
               <>
                 <NavLink
                   to="/signin"
-                  className="px-3 py-1.5 border border-gray-300 rounded-md text-gray-700 hover:bg-purple-600 hover:text-white transition"
+                  className="px-3 py-1.5 border border-gray-300 rounded-xl text-gray-700 hover:bg-purple-600 hover:text-white transition"
                 >
                   Signin
                 </NavLink>
                 <NavLink
                   to="/signup"
-                  className="px-3 py-1.5 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition"
+                  className="px-3 py-1.5 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition"
                 >
                   Signup
                 </NavLink>
               </>
             ) : (
               <button
-                onClick={() => setIsModalOpen(true)} // open modal instead of direct logout
-                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+                onClick={() => setIsModalOpen(true)} 
+                className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
               >
                 Signout
               </button>
@@ -126,22 +126,22 @@ const Navbar = () => {
                 <NavLink
                   to="/signin"
                   onClick={handleLinkClick}
-                  className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md"
+                  className="flex items-center justify-center px-4 py-2 border border-gray-300 rounded-xl"
                 >
                   Signin
                 </NavLink>
                 <NavLink
                   to="/signup"
                   onClick={handleLinkClick}
-                  className="flex items-center justify-center px-4 py-2 bg-purple-600 text-white rounded-md"
+                  className="flex items-center justify-center px-4 py-2 bg-purple-600 text-white rounded-xl"
                 >
                   Signup
                 </NavLink>
               </>
             ) : (
               <button
-                onClick={() => setIsModalOpen(true)} // open modal
-                className="px-6 py-2 bg-red-500 text-white rounded-md"
+                onClick={() => setIsModalOpen(true)} 
+                className="px-6 py-2 bg-red-500 text-white rounded-xl"
               >
                 Signout
               </button>
@@ -160,13 +160,13 @@ const Navbar = () => {
             <div className="flex justify-center gap-4">
               <button
                 onClick={handleLogout}
-                className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition"
+                className="px-4 py-2 bg-red-500 text-white rounded-xl hover:bg-red-600 transition"
               >
                 Yes
               </button>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 transition"
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-xl hover:bg-gray-400 transition"
               >
                 No
               </button>

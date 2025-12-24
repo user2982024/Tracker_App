@@ -4,7 +4,7 @@ import { Plus, StickyNote } from "lucide-react";
 import NoteCard from "./NoteCard";
 
 const Notes = () => {
-  const [notes, setNotes]   = useState([]);
+  const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const navigate = useNavigate();
@@ -14,25 +14,20 @@ const Notes = () => {
       try {
         const token = localStorage.getItem("token");
 
-        const res = await fetch(
-          "http://localhost:5000/api/notes",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await fetch("http://localhost:5000/api/notes", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         const data = await res.json();
 
         if (data.success) {
           setNotes(data.notes);
         }
-      }
-      catch (error) {
+      } catch (error) {
         console.error("Failed to fetch notes", error);
-      }
-      finally {
+      } finally {
         setLoading(false);
       }
     };
@@ -45,25 +40,32 @@ const Notes = () => {
   return (
     <section className="min-h-screen bg-gray-50 px-6 py-8">
       {/* Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
+      <div className="flex items-center justify-between mb-8">
+        {/* Left: Title */}
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">All Notes</h1>
           <p className="text-sm text-gray-500">{notes.length} notes in total</p>
         </div>
 
-        <button 
-        onClick={() => navigate('/notes/add')}
-        className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-violet-700 transition">
-          <Plus size={18} />
-          Add Note
-        </button>
+        {/* Right: Buttons */}
+        <div className="flex gap-3">
+          <button
+            onClick={() => navigate("/notes/add")}
+            className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-violet-700 transition"
+          >
+            <Plus size={18} />
+            Add Note
+          </button>
+
+          <button className="inline-flex items-center gap-2 rounded-xl bg-red-500 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-red-600 transition">
+            Delete All
+          </button>
+        </div>
       </div>
 
       {/* Loading State */}
       {loading && (
-        <div className="text-center text-gray-500 mt-20">
-          Loading notes...
-        </div>
+        <div className="text-center text-gray-500 mt-20">Loading notes...</div>
       )}
 
       {/* Empty State */}
@@ -73,15 +75,18 @@ const Notes = () => {
             <StickyNote className="text-violet-600" size={28} />
           </div>
 
-          <h2 className="text-lg font-semibold text-gray-800">No notes to show</h2>
+          <h2 className="text-lg font-semibold text-gray-800">
+            No notes to show
+          </h2>
           <p className="mt-1 max-w-sm text-sm text-gray-500">
             You haven't created any notes yet. Start capturing your ideas,
             tasks, or thoughts by adding your first note.
           </p>
 
-          <button 
-          onClick={() => navigate('/notes/add')}
-          className="mt-6 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 text-sm font-medium text-white shadow hover:bg-violet-700 transition">
+          <button
+            onClick={() => navigate("/notes/add")}
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 text-sm font-medium text-white shadow hover:bg-violet-700 transition"
+          >
             <Plus size={18} />
             Create your first note
           </button>
@@ -92,7 +97,7 @@ const Notes = () => {
       {!loading && notes.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayedNotes.map((note) => (
-            <NoteCard 
+            <NoteCard
               key={note._id}
               title={note.title}
               content={note.content}
