@@ -1,9 +1,46 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Plus, StickyNote } from "lucide-react";
+import NoteCard from "./NoteCard";
 
 const Notes = () => {
-  const notes = []; // empty state for now
+  const [notes, setNotes]   = useState([]);
+  const [loading, setLoading] = useState(true);
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch(
+          "http://localhost:5000/api/notes",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await res.json();
+
+        if (data.success) {
+          setNotes(data.notes);
+        }
+      }
+      catch (error) {
+        console.error("Failed to fetch notes", error);
+      }
+      finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotes();
+  }, []);
+
+  const displayedNotes = notes.slice(0, 6);
 
   return (
     <section className="min-h-screen bg-gray-50 px-6 py-8">
@@ -21,6 +58,13 @@ const Notes = () => {
           Add Note
         </button>
       </div>
+
+      {/* Loading State */}
+      {loading && (
+        <div className="text-center text-gray-500 mt-20">
+          Loading notes...
+        </div>
+      )}
 
       {/* Empty State */}
       {notes.length === 0 && (
@@ -41,6 +85,20 @@ const Notes = () => {
             <Plus size={18} />
             Create your first note
           </button>
+        </div>
+      )}
+
+      {/* Notes Grid */}
+      {!loading && notes.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {displayedNotes.map((note) => (
+            <NoteCard 
+              key={note._id}
+              title={note.title}
+              content={note.content}
+              createdAt={note.createdAt}
+            />
+          ))}
         </div>
       )}
     </section>

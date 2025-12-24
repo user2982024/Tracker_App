@@ -1,11 +1,11 @@
-const Notes = require('../models/Notes');
+const Note = require('../models/Notes');
 
 // Create a new note (POST)
 exports.createNote = async (req, res) => {
     try {
         const { title, content, isPinned, isArchived } = req.body;
 
-        const note = await Notes.create({
+        const note = await Note.create({
             title,
             content, 
             isPinned: isPinned || false,
@@ -24,6 +24,25 @@ exports.createNote = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Server error while creating note"
+        });
+    }
+};
+
+// Get all notes (GET)
+exports.getAllNotes = async (req, res) => {
+    try {
+        const notes = await Note.find({ user: req.user._id })
+        .sort({ createdAt: -1 });
+
+        res.status(200).json({
+            success: true,
+            notes,
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Failed to fetch notes",
         });
     }
 };
