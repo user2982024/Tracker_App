@@ -56,7 +56,7 @@ const Notes = () => {
         <div className="flex gap-3">
           <button
             onClick={() => navigate("/notes/add")}
-            className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-violet-700 transition"
+            className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-purple-500 transition"
           >
             <Plus size={18} />
             Add Note
@@ -77,7 +77,7 @@ const Notes = () => {
       {notes.length === 0 && (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-white py-24 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-violet-100 mb-4">
-            <StickyNote className="text-violet-600" size={28} />
+            <StickyNote className="text-purple-600" size={28} />
           </div>
 
           <h2 className="text-lg font-semibold text-gray-800">
@@ -117,7 +117,7 @@ const Notes = () => {
         <div className="flex justify-center mt-8">
           <button
             onClick={handleShowMore}
-            className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-6 py-3 text-sm font-medium text-white shadow hover:bg-purple-500 transition"
+            className="inline-flex items-center gap-2 rounded-xl bg-purple-600 cursor-pointer px-6 py-3 text-sm font-medium text-white shadow hover:bg-purple-500 transition"
           >
             Show More Notes
           </button>

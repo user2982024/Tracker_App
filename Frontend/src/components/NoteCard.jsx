@@ -1,39 +1,66 @@
 import React from "react";
-import { Eye, Edit, Trash2 } from "lucide-react"; 
+import { Eye, Edit, Trash2, Calendar } from "lucide-react";
 
 const NoteCard = ({ title, content, createdAt, onOpen, onEdit, onDelete }) => {
   return (
-    <div className="bg-purple-50 rounded-2xl shadow-md p-5 hover:shadow-xl transition cursor-pointer flex flex-col justify-between">
-      {/* Note Content */}
-      <div>
-        <h3 className="text-lg font-semibold text-purple-600">{title}</h3>
-        <p className="text-gray-600 mt-2 line-clamp-3">{content}</p>
-        <p className="text-sm text-gray-400 mt-4">{new Date(createdAt).toLocaleDateString()}</p>
+    <div className="group relative overflow-hidden rounded-3xl bg-linear-to-br from-white/80 to-white shadow-md backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
+
+      {/* Left Accent Line */}
+      <div className="absolute left-0 top-0 h-full w-1.5 bg-linear-to-b from-violet-500 via-purple-500 to-fuchsia-500 opacity-80 group-hover:opacity-100" />
+
+      {/* Glow */}
+      <div className="absolute inset-0 rounded-3xl bg-linear-to-br from-violet-400/20 to-purple-600/20 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100" />
+
+      {/* Content */}
+      <div className="relative z-10 flex h-full flex-col p-6 pl-7">
+        <h3 className="text-lg font-semibold text-gray-900 transition group-hover:text-violet-600">
+          {title}
+        </h3>
+
+        <p className="mt-3 text-sm leading-relaxed text-gray-600 line-clamp-4">
+          {content}
+        </p>
+
+        <div className="grow" />
+
+        <div className="mt-6 flex items-center justify-between">
+          <div className="flex items-center gap-1.5 text-xs text-gray-400">
+            <Calendar size={14} />
+            {new Date(createdAt).toLocaleDateString()}
+          </div>
+
+          {/* Actions */}
+          <div className="flex gap-2 opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
+            <ActionButton label="Open" icon={Eye} onClick={onOpen} color="violet" />
+            <ActionButton label="Edit" icon={Edit} onClick={onEdit} color="purple" />
+            <ActionButton label="Delete" icon={Trash2} onClick={onDelete} color="red" />
+          </div>
+        </div>
       </div>
+    </div>
+  );
+};
 
-      {/* Action Buttons */}
-      <div className="mt-4 flex justify-end gap-2">
-        <button
-          onClick={onOpen}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-black text-white text-sm hover:bg-gray-800 transition"
-        >
-          <Eye size={16} /> Open
-        </button>
+const ActionButton = ({ icon: Icon, onClick, color, label }) => {
+  const colors = {
+    violet: "hover:bg-violet-100 hover:text-violet-600",
+    purple: "hover:bg-purple-100 hover:text-purple-600",
+    red: "hover:bg-red-100 hover:text-red-600",
+  };
 
-        <button
-          onClick={onEdit}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-purple-500 text-white text-sm hover:bg-purple-600 transition"
-        >
-          <Edit size={16} /> Edit
-        </button>
+  return (
+    <div className="relative group/button">
+      <button
+        onClick={onClick}
+        className={`rounded-full bg-gray-100 p-2 text-gray-600 cursor-pointer transition ${colors[color]}`}
+      >
+        <Icon size={16} />
+      </button>
 
-        <button
-          onClick={onDelete}
-          className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-500 text-white text-sm hover:bg-red-600 transition"
-        >
-          <Trash2 size={16} /> Delete
-        </button>
-      </div>
+      {/* Tooltip */}
+      <span className="pointer-events-none absolute -top-9 left-1/2 -translate-x-1/2 rounded-md bg-gray-900 px-2 py-1 text-xs text-white opacity-0 transition group-hover/button:opacity-100">
+        {label}
+      </span>
     </div>
   );
 };
