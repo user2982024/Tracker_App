@@ -107,6 +107,7 @@ const Notes = () => {
               title={note.title}
               content={note.content}
               createdAt={note.createdAt}
+              onEdit={() => navigate(`/notes/edit/${note._id}`)}
             />
           ))}
         </div>

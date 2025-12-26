@@ -5,7 +5,7 @@ import Signup from "./components/SignUp";
 import Signin from "./components/SignIn";
 import Notes from "./components/Notes";
 import Todos from "./components/Todos";
-import AddNote from "./components/AddNote";
+import NoteForm from "./components/NoteForm";
 import ProtectedRoute from "./components/ProtectedRoutes";
 
 const App = () => {
@@ -20,7 +20,8 @@ const App = () => {
 
         <Route element={<ProtectedRoute />}>
           <Route path="/notes" element={<Notes />} />
-          <Route path="/notes/add" element={<AddNote />}/>
+          <Route path="/notes/add" element={<NoteForm mode="create"/>}/>
+          <Route path="/notes/edit/:id" element={<NoteForm mode="edit"/>}/>
           <Route path="/todos" element={<Todos />} />
         </Route>
       </Routes>
