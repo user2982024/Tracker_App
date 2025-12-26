@@ -81,7 +81,7 @@ const Navbar = () => {
             ) : (
               <button
                 onClick={() => setIsModalOpen(true)} 
-                className="px-4 py-2 bg-red-500 text-white rounded-xl cursor-pointer hover:bg-red-600 transition"
+                className="px-4 py-1.5 bg-white border-2 border-red-500 text-red-600 rounded-xl cursor-pointer hover:bg-red-600 hover:text-white transition"
               >
                 Signout
               </button>
@@ -141,7 +141,7 @@ const Navbar = () => {
             ) : (
               <button
                 onClick={() => setIsModalOpen(true)} 
-                className="px-6 py-2 bg-red-500 text-white rounded-xl cursor-pointer"
+                className="px-6 py-2 bg-white border-2 border-red-500 text-red-600 hover:bg-red-600 hover:text-white rounded-xl cursor-pointer"
               >
                 Signout
               </button>
