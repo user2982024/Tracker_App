@@ -46,6 +46,7 @@ exports.getAllNotes = async (req, res) => {
   }
 };
 
+// Edit an existing note
 exports.editNote = async (req, res) => {
   try {
     const noteId = req.params.id;
@@ -90,6 +91,39 @@ exports.editNote = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Server error while updating note",
+    });
+  }
+};
+
+// Get note by id
+exports.getNoteById = async (req, res) => {
+  try {
+    const note = await Note.findById(req.params.id);
+
+    if (!note) {
+      return res.status(404).json({
+        success: false,
+        message: "Note not found"
+      });
+    }
+
+    // Ownership check
+    if (note.user.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "Access denied"
+      });
+    }
+
+    res.status(200).json({
+      success: true, 
+      note
+    });
+  }
+  catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error while fetching note"
     });
   }
 };

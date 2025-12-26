@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {  useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -9,6 +9,8 @@ const AddNote = () => {
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  // Fetch existing note data if in edit mode
 
   const handleSubmit = async (e) => {
     e.preventDefault();
