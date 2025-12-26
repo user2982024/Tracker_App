@@ -91,7 +91,7 @@ const Navbar = () => {
           {/* Hamburger Button (Mobile) */}
           <button
             onClick={() => setIsMenuOpen((prev) => !prev)}
-            className="md:hidden text-gray-700 focus:outline-none"
+            className="md:hidden text-gray-700 focus:outline-none cursor-pointer"
           >
             {isMenuOpen ? <HiOutlineX size={26} /> : <HiOutlineMenu size={26} />}
           </button>
