@@ -1,5 +1,5 @@
 const express = require('express');
-const { createNote, getAllNotes, editNote, getNoteById } = require('../controllers/notesController');
+const { createNote, getAllNotes, editNote, getNoteById, deleteNote } = require('../controllers/notesController');
 const { notesValidator } = require('../validators/notesValidator');
 const authMiddleware = require('../middlewares/authMiddleware'); 
 
@@ -16,5 +16,8 @@ router.get('/:id', authMiddleware, getNoteById);
 
 // Edit note route
 router.put('/edit/:id', authMiddleware, notesValidator, editNote);
+
+// Delete 
+router.delete('/delete/:id', authMiddleware, deleteNote);
 
 module.exports = router;
