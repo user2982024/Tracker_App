@@ -169,3 +169,5 @@ exports.deleteNote = async (req, res) => {
     });
   }
 };
+
+// Deleting all notes of a particular user (DELETE)
