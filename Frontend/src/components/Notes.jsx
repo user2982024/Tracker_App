@@ -10,6 +10,8 @@ const Notes = () => {
   const [visibleCount, setVisibleCount] = useState(6);
   const [confirmNoteId, setConfirmNoteId] = useState(null);
   const [deletingNoteId, setDeletingNoteId] = useState(null);
+  const [confirmDeleteAll, setConfirmDeleteAll] = useState(false);
+  const [deletingAll, setDeletingAll] = useState(false);
 
   const navigate = useNavigate();
 
@@ -45,7 +47,7 @@ const Notes = () => {
     setVisibleCount((prev) => prev + 6);
   };
 
-  // Delete note function
+  // Delete single note
   const handleDelete = async (noteId) => {
     try {
       setDeletingNoteId(noteId);
@@ -54,29 +56,51 @@ const Notes = () => {
       const res = await fetch(`http://localhost:5000/api/notes/delete/${noteId}`, {
         method: "DELETE",
         headers: {
-          Authorization: `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
 
       const data = await res.json();
-
       if (!res.ok) throw new Error(data.message || "Failed to delete note");
 
-      // Remove note from state
       setNotes((prev) => prev.filter((note) => note._id !== noteId));
       toast.success("Note deleted successfully");
-    }
-    catch (error) {
+    } catch (error) {
       toast.error(error.message);
-    }
-    finally {
+    } finally {
       setDeletingNoteId(null);
       setConfirmNoteId(null);
     }
-  }
+  };
+
+  // Delete all notes
+  const handleDeleteAll = async () => {
+    try {
+      setDeletingAll(true);
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`http://localhost:5000/api/notes/delete-all`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Failed to delete all notes");
+
+      setNotes([]);
+      toast.success("All notes deleted successfully");
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setDeletingAll(false);
+      setConfirmDeleteAll(false);
+    }
+  };
 
   return (
-     <section className="min-h-screen bg-gray-50 px-6 py-8">
+    <section className="min-h-screen bg-gray-50 px-6 py-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
@@ -89,24 +113,23 @@ const Notes = () => {
         <div className="flex gap-3">
           <button
             onClick={() => navigate("/notes/add")}
-            className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-purple-500 transition"
+            className="inline-flex items-center gap-2 rounded-xl cursor-pointer bg-purple-600 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-purple-500 transition"
           >
             <Plus size={18} />
             Add Note
           </button>
 
-          <button className="inline-flex items-center gap-2 rounded-xl bg-red-500 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-red-600 transition">
+          <button
+            onClick={() => setConfirmDeleteAll(true)}
+            className="inline-flex items-center gap-2 rounded-xl cursor-pointer bg-red-500 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-red-600 transition"
+          >
             Delete All
           </button>
         </div>
       </div>
 
       {/* Loading */}
-      {loading && (
-        <div className="text-center text-gray-500 mt-20">
-          Loading notes...
-        </div>
-      )}
+      {loading && <div className="text-center text-gray-500 mt-20">Loading notes...</div>}
 
       {/* Empty State */}
       {!loading && notes.length === 0 && (
@@ -115,9 +138,7 @@ const Notes = () => {
             <StickyNote className="text-purple-600" size={28} />
           </div>
 
-          <h2 className="text-lg font-semibold text-gray-800">
-            No notes to show
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-800">No notes to show</h2>
           <p className="mt-1 max-w-sm text-sm text-gray-500">
             You haven't created any notes yet.
           </p>
@@ -160,18 +181,14 @@ const Notes = () => {
         </div>
       )}
 
-      {/* DELETE CONFIRMATION MODAL */}
+      {/* DELETE SINGLE NOTE MODAL */}
       {confirmNoteId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl animate-scale-in">
-            <h2 className="text-lg font-semibold text-gray-900">
-              Delete this note?
-            </h2>
-
+            <h2 className="text-lg font-semibold text-gray-900">Delete this note?</h2>
             <p className="mt-2 text-sm text-gray-600">
               This action cannot be undone. The note will be permanently deleted.
             </p>
-
             <div className="mt-6 flex justify-end gap-3">
               <button
                 onClick={() => setConfirmNoteId(null)}
@@ -179,15 +196,39 @@ const Notes = () => {
               >
                 Cancel
               </button>
-
               <button
                 onClick={() => handleDelete(confirmNoteId)}
                 disabled={deletingNoteId === confirmNoteId}
                 className="rounded-xl bg-red-600 px-4 py-2 text-sm font-medium cursor-pointer text-white hover:bg-red-700 transition disabled:opacity-60"
               >
-                {deletingNoteId === confirmNoteId
-                  ? "Deleting..."
-                  : "Yes, delete"}
+                {deletingNoteId === confirmNoteId ? "Deleting..." : "Yes, delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DELETE ALL NOTES MODAL */}
+      {confirmDeleteAll && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl animate-scale-in">
+            <h2 className="text-lg font-semibold text-gray-900">Delete all notes?</h2>
+            <p className="mt-2 text-sm text-gray-600">
+              This action cannot be undone. All notes will be permanently deleted.
+            </p>
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setConfirmDeleteAll(false)}
+                className="rounded-xl px-4 py-2 text-sm font-medium cursor-pointer text-gray-600 hover:bg-gray-100 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAll}
+                disabled={deletingAll}
+                className="rounded-xl bg-red-600 px-4 py-2 text-sm font-medium cursor-pointer text-white hover:bg-red-700 transition disabled:opacity-60"
+              >
+                {deletingAll ? "Deleting..." : "Yes, delete all"}
               </button>
             </div>
           </div>
