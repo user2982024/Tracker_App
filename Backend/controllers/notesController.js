@@ -107,14 +107,6 @@ exports.getNoteById = async (req, res) => {
       });
     }
 
-    // Ownership check
-    if (note.user.toString() !== req.user._id.toString()) {
-      return res.status(403).json({
-        success: false,
-        message: "Access denied"
-      });
-    }
-
     res.status(200).json({
       success: true, 
       note
@@ -171,3 +163,22 @@ exports.deleteNote = async (req, res) => {
 };
 
 // Deleting all notes of a particular user (DELETE)
+exports.deleteAllNotes = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    const result = await Note.deleteMany({ user: userId });
+
+    res.status(200).json({
+      success: true,
+      message: "All notes deleted successfully",
+      deletedCount: result.deletedCount
+    });
+  }
+  catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error while deleting notes"
+    });
+  }
+};
