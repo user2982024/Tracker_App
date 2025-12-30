@@ -53,12 +53,15 @@ const Notes = () => {
       setDeletingNoteId(noteId);
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`http://localhost:5000/api/notes/delete/${noteId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `http://localhost:5000/api/notes/delete/${noteId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Failed to delete note");
@@ -87,7 +90,8 @@ const Notes = () => {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Failed to delete all notes");
+      if (!res.ok)
+        throw new Error(data.message || "Failed to delete all notes");
 
       setNotes([]);
       toast.success("All notes deleted successfully");
@@ -99,30 +103,33 @@ const Notes = () => {
     }
   };
 
-  // Archive notes 
+  // Archive notes
   const handleArchive = async (noteId) => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`http://localhost:5000/api/notes/archive/${noteId}`, {
-        method: "PATCH", 
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `http://localhost:5000/api/notes/archive/${noteId}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       const data = await res.json();
 
       if (!res.ok) throw new Error(data.message || "Failed to archive note");
 
-      setNotes((prev) => prev.filter((note) => note._id !== noteId));
-
-      toast.success("Notes archived successfully");
-    }
-    catch (error) {
+      if (data.success) {
+        setNotes((prev) => prev.filter((note) => note._id !== noteId));
+        toast.success("Note archived successfully");
+      }
+    } catch (error) {
       toast.error(error.message);
     }
-  }
+  };
 
   return (
     <section className="min-h-screen bg-gray-50 px-6 py-8">
@@ -135,7 +142,8 @@ const Notes = () => {
           </p>
         </div>
 
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          {/* Left: Add Note */}
           <button
             onClick={() => navigate("/notes/add")}
             className="inline-flex items-center gap-2 rounded-xl cursor-pointer bg-purple-600 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-purple-500 transition"
@@ -144,17 +152,28 @@ const Notes = () => {
             Add Note
           </button>
 
+          {/* Middle: Delete All */}
           <button
             onClick={() => setConfirmDeleteAll(true)}
             className="inline-flex items-center gap-2 rounded-xl cursor-pointer bg-red-500 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-red-600 transition"
           >
             Delete All
           </button>
+
+          {/* Right: Archived Notes */}
+          <button
+            onClick={() => navigate("/notes/archived")}
+            className="inline-flex items-center gap-2 rounded-xl cursor-pointer bg-white border-2 border-purple-600 text-purple-600 px-5 py-2.5 text-sm font-medium shadow hover:bg-purple-600 hover:text-white transition"
+          >
+            Archived Notes
+          </button>
         </div>
       </div>
 
       {/* Loading */}
-      {loading && <div className="text-center text-gray-500 mt-20">Loading notes...</div>}
+      {loading && (
+        <div className="text-center text-gray-500 mt-20">Loading notes...</div>
+      )}
 
       {/* Empty State */}
       {!loading && notes.length === 0 && (
@@ -163,7 +182,9 @@ const Notes = () => {
             <StickyNote className="text-purple-600" size={28} />
           </div>
 
-          <h2 className="text-lg font-semibold text-gray-800">No notes to show</h2>
+          <h2 className="text-lg font-semibold text-gray-800">
+            No notes to show
+          </h2>
           <p className="mt-1 max-w-sm text-sm text-gray-500">
             You haven't created any notes yet.
           </p>
@@ -211,9 +232,12 @@ const Notes = () => {
       {confirmNoteId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl animate-scale-in">
-            <h2 className="text-lg font-semibold text-gray-900">Delete this note?</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Delete this note?
+            </h2>
             <p className="mt-2 text-sm text-gray-600">
-              This action cannot be undone. The note will be permanently deleted.
+              This action cannot be undone. The note will be permanently
+              deleted.
             </p>
             <div className="mt-6 flex justify-end gap-3">
               <button
@@ -227,7 +251,9 @@ const Notes = () => {
                 disabled={deletingNoteId === confirmNoteId}
                 className="rounded-xl bg-red-600 px-4 py-2 text-sm font-medium cursor-pointer text-white hover:bg-red-700 transition disabled:opacity-60"
               >
-                {deletingNoteId === confirmNoteId ? "Deleting..." : "Yes, delete"}
+                {deletingNoteId === confirmNoteId
+                  ? "Deleting..."
+                  : "Yes, delete"}
               </button>
             </div>
           </div>
@@ -238,9 +264,12 @@ const Notes = () => {
       {confirmDeleteAll && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl animate-scale-in">
-            <h2 className="text-lg font-semibold text-gray-900">Delete all notes?</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              Delete all notes?
+            </h2>
             <p className="mt-2 text-sm text-gray-600">
-              This action cannot be undone. All notes will be permanently deleted.
+              This action cannot be undone. All notes will be permanently
+              deleted.
             </p>
             <div className="mt-6 flex justify-end gap-3">
               <button

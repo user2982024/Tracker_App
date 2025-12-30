@@ -250,7 +250,7 @@ exports.unarchiveNote = async (req, res) => {
 
     // Ownership check
     if (note.user.toString() !== userId.toString()) {
-      return res.status(403).js0n({
+      return res.status(403).json({
         success: false,
         message: "You are not allowed to unarchive this note",
       });
