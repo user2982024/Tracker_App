@@ -30,7 +30,10 @@ exports.createNote = async (req, res) => {
 // Get all notes (GET)
 exports.getAllNotes = async (req, res) => {
   try {
-    const notes = await Note.find({ user: req.user._id }).sort({
+    const notes = await Note.find({ 
+      user: req.user._id,
+      isArchived: false,
+     }).sort({
       createdAt: -1,
     });
 
