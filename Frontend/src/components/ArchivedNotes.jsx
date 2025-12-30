@@ -21,6 +21,7 @@ const ArchivedNotes = () => {
         const data = await res.json();
         if (data.success) setArchivedNotes(data.archivedNotes);
       } catch (error) {
+        console.error("Error fetching archived notes:", error);
         toast.error("Failed to fetch archived notes");
       } finally {
         setLoading(false);
@@ -56,9 +57,6 @@ const ArchivedNotes = () => {
       toast.error(error.message || "Failed to restore note");
     }
   };
-
-  // ---------- UI STATES ----------
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[60vh] text-gray-500">
@@ -95,7 +93,7 @@ const ArchivedNotes = () => {
             No archived notes yet
           </p>
           <p className="text-sm mt-2 max-w-sm">
-            Archive notes you don’t need right now. You can always bring them back later.
+            Archive notes you don't need right now. You can always bring them back later.
           </p>
         </div>
       ) : (
