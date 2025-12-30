@@ -8,6 +8,9 @@ const router = express.Router();
 // Create note route
 router.post('/create', authMiddleware, notesValidator, createNote);
 
+// Get archived notes route
+router.get('/archived', authMiddleware, getArchivedNotes);
+
 // Get all notes route
 router.get('/', authMiddleware, getAllNotes);
 
@@ -17,19 +20,16 @@ router.get('/:id', authMiddleware, getNoteById);
 // Edit note route
 router.put('/edit/:id', authMiddleware, notesValidator, editNote);
 
-// Delete single note route
-router.delete('/delete/:id', authMiddleware, deleteNote);
-
-// Delete all notes route
-router.delete('/delete-all', authMiddleware, deleteAllNotes);
-
 // Archive note route
 router.patch('/archive/:id', authMiddleware, archiveNote);
 
 // Unarchive note route
 router.patch('/unarchive/:id', authMiddleware, unarchiveNote);
 
-// Get archived notes route
-router.get('/archived', authMiddleware, getArchivedNotes);
+// Delete all notes route
+router.delete('/delete-all', authMiddleware, deleteAllNotes);
+
+// Delete single note route
+router.delete('/delete/:id', authMiddleware, deleteNote);
 
 module.exports = router;

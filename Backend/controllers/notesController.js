@@ -285,11 +285,9 @@ exports.unarchiveNote = async (req, res) => {
 // Get all archivd notes for a user (GET)
 exports.getArchivedNotes = async (req, res) => {
   try {
-    const userId = req.user._id;
-
     // Fetch notes
     const archivedNotes = await Note.find({
-      user: userId.toString(), 
+      user: req.user._id,
       isArchived: true
     }).sort({
       updatedAt: -1

@@ -19,6 +19,7 @@ const ArchivedNotes = () => {
         });
 
         const data = await res.json();
+        console.log("Archived notes response:", data);
 
         if (data.success) setArchivedNotes(data.archivedNotes);
       } catch (error) {
