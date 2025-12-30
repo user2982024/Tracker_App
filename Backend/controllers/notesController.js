@@ -281,3 +281,30 @@ exports.unarchiveNote = async (req, res) => {
     });
   }
 };
+
+// Get all archivd notes for a user (GET)
+exports.getArchivedNotes = async (req, res) => {
+  try {
+    const userId = req.user._id;
+
+    // Fetch notes
+    const archivedNotes = await Note.find({
+      user: userId, 
+      isArchived: true
+    }).sort({
+      updatedAt: -1
+    });
+
+    res.status(200).json({
+      success: true,
+      archivedNotes,
+    });
+  }
+  catch (err) {
+    console.error("Fetch archived notes error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Server error while fetching archived notes",
+    });
+  }
+};
