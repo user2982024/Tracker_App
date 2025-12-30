@@ -99,6 +99,31 @@ const Notes = () => {
     }
   };
 
+  // Archive notes 
+  const handleArchive = async (noteId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`http://localhost:5000/api/notes/archive/${noteId}`, {
+        method: "PATCH", 
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(data.message || "Failed to archive note");
+
+      setNotes((prev) => prev.filter((note) => note._id !== noteId));
+
+      toast.success("Notes archived successfully");
+    }
+    catch (error) {
+      toast.error(error.message);
+    }
+  }
+
   return (
     <section className="min-h-screen bg-gray-50 px-6 py-8">
       {/* Header */}
@@ -164,6 +189,7 @@ const Notes = () => {
               createdAt={note.createdAt}
               onEdit={() => navigate(`/notes/edit/${note._id}`)}
               onDelete={() => setConfirmNoteId(note._id)}
+              onArchive={() => handleArchive(note._id)}
             />
           ))}
         </div>

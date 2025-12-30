@@ -100,25 +100,24 @@ exports.getNoteById = async (req, res) => {
   try {
     const note = await Note.findOne({
       _id: req.params.id,
-      user: req.user._id
-    })
+      user: req.user._id,
+    });
 
     if (!note) {
       return res.status(404).json({
         success: false,
-        message: "Note not found"
+        message: "Note not found",
       });
     }
 
     res.status(200).json({
-      success: true, 
-      note
+      success: true,
+      note,
     });
-  }
-  catch (error) {
+  } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Server error while fetching note"
+      message: "Server error while fetching note",
     });
   }
 };
@@ -135,7 +134,7 @@ exports.deleteNote = async (req, res) => {
     if (!note) {
       return res.status(404).json({
         success: false,
-        message: "Note note found"
+        message: "Note note found",
       });
     }
 
@@ -143,7 +142,7 @@ exports.deleteNote = async (req, res) => {
     if (note.user.toString() !== userId.toString()) {
       return res.status(403).json({
         success: false,
-        message: "You are not allowed to delete this note"
+        message: "You are not allowed to delete this note",
       });
     }
 
@@ -152,15 +151,13 @@ exports.deleteNote = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Note deleted successfully"
+      message: "Note deleted successfully",
     });
-
-  }
-  catch (error) {
+  } catch (error) {
     console.error("Delete note error:", error);
     res.status(500).json({
       success: false,
-      message: "Server"
+      message: "Server",
     });
   }
 };
@@ -175,13 +172,112 @@ exports.deleteAllNotes = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "All notes deleted successfully",
-      deletedCount: result.deletedCount
+      deletedCount: result.deletedCount,
     });
-  }
-  catch (error) {
+  } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Server error while deleting notes"
+      message: "Server error while deleting notes",
+    });
+  }
+};
+
+// Archive a note (PATCH)
+exports.archiveNote = async (req, res) => {
+  try {
+    const noteId = req.params.id;
+    const userId = req.user._id;
+
+    const note = await Note.findById(noteId);
+
+    if (!note) {
+      return res.status(404).json({
+        success: false,
+        message: "Note not found",
+      });
+    }
+
+    // Ownership check
+    if (note.user.toString() !== userId.toString()) {
+      return res.status(403).json({
+        success: false,
+        message: "You are note allowed to archive this note",
+      });
+    }
+
+    // If already archived
+    if (note.isArchived) {
+      return res.status(400).json({
+        success: false,
+        message: "Note is already archived",
+      });
+    }
+
+    // Archive logic
+    note.isArchived = true;
+    note.isPinned = false; // auto-unpin archived notes
+
+    await note.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Note archived successfully",
+      note,
+    });
+  } catch (error) {
+    console.error("Archive note error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while archiving note",
+    });
+  }
+};
+
+// Unarchive a note (PATCH)
+exports.unarchiveNote = async (req, res) => {
+  try {
+    const noteId = req.params.id;
+    const userId = req.user._id;
+
+    const note = await Note.findById(noteId);
+
+    if (!note) {
+      return res.status(404).json({
+        success: false,
+        message: "Note not found",
+      });
+    }
+
+    // Ownership check
+    if (note.user.toString() !== userId.toString()) {
+      return res.status(403).js0n({
+        success: false,
+        message: "You are not allowed to unarchive this note",
+      });
+    }
+
+    // Check if note is archived or not
+    if (!note.isArchived) {
+      return res.status(400).json({
+        success: false,
+        message: "Note is not archived",
+      });
+    }
+
+    note.isArchived = false;
+
+    await note.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Note unarchived successfully",
+      note,
+    });
+  } catch (error) {
+    console.error("Unarchive note error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while unarchiving note",
     });
   }
 };

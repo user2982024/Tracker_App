@@ -1,7 +1,17 @@
 import React from "react";
-import { Eye, Edit, Trash2, Calendar } from "lucide-react";
+import { Eye, Edit, Trash2, Calendar, Archive, RotateCw } from "lucide-react";
 
-const NoteCard = ({ title, content, createdAt, onOpen, onEdit, onDelete }) => {
+const NoteCard = ({
+  title,
+  content,
+  createdAt,
+  onOpen,
+  onEdit,
+  onDelete,
+  onArchive,
+  onUnarchive,
+  isArchived = false,
+}) => {
   return (
     <div className="group relative overflow-hidden rounded-3xl bg-linear-to-br from-white/80 to-white shadow-md backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
 
@@ -31,9 +41,18 @@ const NoteCard = ({ title, content, createdAt, onOpen, onEdit, onDelete }) => {
 
           {/* Actions */}
           <div className="flex gap-2 opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-            <ActionButton label="Open" icon={Eye} onClick={onOpen} color="violet" />
-            <ActionButton label="Edit" icon={Edit} onClick={onEdit} color="purple" />
-            <ActionButton label="Delete" icon={Trash2} onClick={onDelete} color="red" />
+            {!isArchived && (
+              <>
+                <ActionButton label="Open" icon={Eye} onClick={onOpen} color="violet" />
+                <ActionButton label="Edit" icon={Edit} onClick={onEdit} color="purple" />
+                <ActionButton label="Delete" icon={Trash2} onClick={onDelete} color="red" />
+                <ActionButton label="Archive" icon={Archive} onClick={onArchive} color="purple" />
+              </>
+            )}
+
+            {isArchived && (
+              <ActionButton label="Unarchive" icon={RotateCw} onClick={onUnarchive} color="green" />
+            )}
           </div>
         </div>
       </div>
@@ -46,6 +65,8 @@ const ActionButton = ({ icon: Icon, onClick, color, label }) => {
     violet: "hover:bg-violet-100 hover:text-violet-600",
     purple: "hover:bg-purple-100 hover:text-purple-600",
     red: "hover:bg-red-100 hover:text-red-600",
+    gray: "hover:bg-gray-100 hover:text-gray-600",
+    green: "hover:bg-green-100 hover:text-green-600",
   };
 
   return (
