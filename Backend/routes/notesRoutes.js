@@ -1,5 +1,5 @@
 const express = require('express');
-const { createNote, getAllNotes, editNote, getNoteById, deleteNote, deleteAllNotes, archiveNote, unarchiveNote } = require('../controllers/notesController');
+const { createNote, getAllNotes, editNote, getNoteById, deleteNote, deleteAllNotes, archiveNote, unarchiveNote, getArchivedNotes } = require('../controllers/notesController');
 const { notesValidator } = require('../validators/notesValidator');
 const authMiddleware = require('../middlewares/authMiddleware'); 
 
@@ -28,5 +28,8 @@ router.patch('/archive/:id', authMiddleware, archiveNote);
 
 // Unarchive note route
 router.patch('/unarchive/:id', authMiddleware, unarchiveNote);
+
+// Get archived notes route
+router.get('/archived', authMiddleware, getArchivedNotes);
 
 module.exports = router;
