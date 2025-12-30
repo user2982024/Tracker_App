@@ -289,7 +289,7 @@ exports.getArchivedNotes = async (req, res) => {
 
     // Fetch notes
     const archivedNotes = await Note.find({
-      user: userId, 
+      user: userId.toString(), 
       isArchived: true
     }).sort({
       updatedAt: -1
