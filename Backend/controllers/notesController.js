@@ -30,10 +30,10 @@ exports.createNote = async (req, res) => {
 // Get all notes (GET)
 exports.getAllNotes = async (req, res) => {
   try {
-    const notes = await Note.find({ 
+    const notes = await Note.find({
       user: req.user._id,
       isArchived: false,
-     }).sort({
+    }).sort({
       createdAt: -1,
     });
 
@@ -291,21 +291,49 @@ exports.getArchivedNotes = async (req, res) => {
     // Fetch notes
     const archivedNotes = await Note.find({
       user: req.user._id,
-      isArchived: true
+      isArchived: true,
     }).sort({
-      updatedAt: -1
+      updatedAt: -1,
     });
 
     res.status(200).json({
       success: true,
       archivedNotes,
     });
-  }
-  catch (err) {
+  } catch (err) {
     console.error("Fetch archived notes error:", err);
     res.status(500).json({
       success: false,
       message: "Server error while fetching archived notes",
+    });
+  }
+};
+
+// Unarchive all archived notes for a user (PATCH)
+exports.unArchiveAllNotes = async (req, res) => {
+  try {
+    const result = await Note.updateMany(
+      {
+        user: req.user._id,
+        isArchived: true,
+      },
+      {
+        $set: {
+          isArchived: false,
+        },
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "All notes unarchived successfully",
+      modifiedCount: result.modifiedCount,
+    });
+  } catch (error) {
+    console.error("Unarchive all notes error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while unarchiving all notes",
     });
   }
 };
