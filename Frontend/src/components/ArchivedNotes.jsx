@@ -114,7 +114,7 @@ const ArchivedNotes = () => {
           <button
             onClick={handleUnarchiveAllNotes}
             disabled={unarchivingAll}
-            className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-green-500 transition disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-4 cursor-pointer py-2 text-sm font-medium text-white shadow hover:bg-green-500 transition disabled:opacity-60"
           >
             <RefreshCw size={18} />
             {unarchivingAll ? "Restoring..." : "Unarchive All"}
@@ -128,7 +128,7 @@ const ArchivedNotes = () => {
           <Archive className="w-14 h-14 mb-4 text-gray-400" />
           <p className="text-lg font-medium">No archived notes yet</p>
           <p className="text-sm mt-2 max-w-sm">
-            Archive notes you don’t need right now. You can always bring them back later.
+            Archive notes you don't need right now. You can always bring them back later.
           </p>
         </div>
       ) : (
