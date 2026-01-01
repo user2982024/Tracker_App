@@ -1,5 +1,16 @@
 const express = require('express');
-const { createNote, getAllNotes, editNote, getNoteById, deleteNote, deleteAllNotes, archiveNote, unarchiveNote, getArchivedNotes, unArchiveAllNotes } = require('../controllers/notesController');
+const { 
+    createNote, 
+    getAllNotes, 
+    editNote, 
+    getNoteById, 
+    deleteNote, 
+    deleteAllNotes, 
+    archiveNote, 
+    unarchiveNote, 
+    getArchivedNotes, 
+    unArchiveAllNotes, 
+    pinNote } = require('../controllers/notesController');
 const { notesValidator } = require('../validators/notesValidator');
 const authMiddleware = require('../middlewares/authMiddleware'); 
 
@@ -34,5 +45,8 @@ router.delete('/delete-all', authMiddleware, deleteAllNotes);
 
 // Delete single note route
 router.delete('/delete/:id', authMiddleware, deleteNote);
+
+// Pin note route
+router.patch('/pin/:id', authMiddleware, pinNote);
 
 module.exports = router;

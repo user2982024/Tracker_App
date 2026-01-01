@@ -160,7 +160,7 @@ exports.deleteNote = async (req, res) => {
     console.error("Delete note error:", error);
     res.status(500).json({
       success: false,
-      message: "Server",
+      message: "Server error while deleting note",
     });
   }
 };
@@ -335,5 +335,71 @@ exports.unArchiveAllNotes = async (req, res) => {
       success: false,
       message: "Server error while unarchiving all notes",
     });
+  }
+};
+
+// Pin a note (PATCH)
+const MAX_PINNED_NOTES = 5;
+
+exports.pinNote = async (req, res) => {
+  try {
+    const noteId = req.params.id;
+    const userId = req.user._id;
+
+    // Ownership check
+    const note = await Note.findOne({ _id: noteId, user: userId });
+
+    if (!note) {
+      return res.status(404).json({
+        success: false,
+        message: "Note not found"
+      });
+    }
+
+    // Archived notes cannot be pinned
+    if (note.isArchived) {
+      return res.status(400).json({
+        success: false,
+        message: "Archived notes cannot be pinned"
+      });
+    }
+
+    // ALready pinned
+    if (note.isPinned) {
+      return res.status(400).json({
+        success: false, 
+        messgae: "Note is already pinned"
+      });
+    }
+
+    // Count user's pinned notes
+    const pinnedCount = await Note.countDocuments({
+      user: userId,
+      isPinned: true
+    });
+
+    if (pinnedCount > MAX_PINNED_NOTES) {
+      return res.status(400).json({
+        success: false,
+        message: `You can pin only ${MAX_PINNED_NOTES} notes`
+      });
+    }
+
+    // Pint the note
+    note.isPinned = true
+    await note.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Note pinned successfully",
+      note
+    });
+  }
+  catch (error) {
+    console.error("Pin note error", error)
+      return res.status(500).json({
+        success: false,
+        messgae: "Server error while pinning note"
+      });
   }
 };
