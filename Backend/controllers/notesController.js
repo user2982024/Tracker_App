@@ -403,3 +403,5 @@ exports.pinNote = async (req, res) => {
       });
   }
 };
+
+// Unpin a note (PATCH)
