@@ -409,4 +409,7 @@ exports.unpinNote = async (req, res) => {
   try {
     
   }
+  catch (error) {
+    
+  }
 }
