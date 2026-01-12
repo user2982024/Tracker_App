@@ -410,6 +410,6 @@ exports.unpinNote = async (req, res) => {
     
   }
   catch (error) {
-    console.error("", )
+    console.error("", );
   }
 }
