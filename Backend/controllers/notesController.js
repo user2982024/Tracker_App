@@ -407,9 +407,39 @@ exports.pinNote = async (req, res) => {
 // Unpin a note (PATCH)
 exports.unpinNote = async (req, res) => {
   try {
-    
+    const userId = req.user._id;
+    const noteId = req.params.id;
+
+    const note = await Note.findOne({ _id: noteId, user: userId });
+
+    if (!note) {
+      return res.status(404).json({
+        success: false,
+        message: "Note not found"
+      });
+    }
+
+    if (!note.isPinned)  {
+      return res.status(400).json({
+        success: false,
+        message: "Note is not pinned"
+      });
+    }
+
+    note.isPinned = false;
+    await note.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Note unpinned successfully"
+    });
   }
   catch (error) {
-    console.error("", );
+    console.error("Unpin note error", error);
+    res.status(500).json({
+      success: false,
+      message: "Server error while unpinning note",
+    });
   }
-}
+};
+
