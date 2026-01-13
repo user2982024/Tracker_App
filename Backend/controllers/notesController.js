@@ -443,3 +443,27 @@ exports.unpinNote = async (req, res) => {
   }
 };
 
+exports.getPinnednotes = async (req, res) => {
+  try {
+    const pinnedNotes = await Note.find({
+      user: req.user._id,
+      isPinned: true,
+      isArchived: false
+    }).sort({
+      updatedAt: -1
+    });
+
+    res.status(200).json({
+      success: true,
+      pinnedNotes
+    });
+  }
+  catch (error) {
+    console.error("Get pinned notes error", error);
+    res.status(500).json({
+      suucess: false,
+      message: "Server error while fetching pinned notes"
+    });
+  }
+};
+

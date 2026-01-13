@@ -12,6 +12,7 @@ const {
   unArchiveAllNotes,
   pinNote,
   unpinNote,
+  getPinnedNotes
 } = require("../controllers/notesController");
 const { notesValidator } = require("../validators/notesValidator");
 const authMiddleware = require("../middlewares/authMiddleware");
@@ -23,6 +24,9 @@ router.post("/create", authMiddleware, notesValidator, createNote);
 
 // Get archived notes route
 router.get("/archived", authMiddleware, getArchivedNotes);
+
+// Get pinned notes route
+router.get("/pinned", authMiddleware, getPinnedNotes);
 
 // Get all notes route
 router.get("/", authMiddleware, getAllNotes);
