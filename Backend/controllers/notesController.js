@@ -465,4 +465,4 @@ exports.getPinnednotes = async (req, res) => {
       message: "Server error while fetching pinned notes"
     });
   }
-}
+};
