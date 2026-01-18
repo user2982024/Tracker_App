@@ -443,7 +443,7 @@ exports.unpinNote = async (req, res) => {
   }
 };
 
-exports.getPinnednotes = async (req, res) => {
+exports.getPinnedNotes = async (req, res) => {
   try {
     const pinnedNotes = await Note.find({
       user: req.user._id,
@@ -465,4 +465,4 @@ exports.getPinnednotes = async (req, res) => {
       message: "Server error while fetching pinned notes"
     });
   }
-};
+}
