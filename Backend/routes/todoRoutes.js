@@ -6,6 +6,6 @@ const authMiddleware = require('../middlewares/authMiddleware');
 const router = express.Router();
 
 // Create todo route
-router.post("/", authMiddleware, todoValidator, createTodo);
+router.post("/create", authMiddleware, todoValidator, createTodo);
 
 module.exports = router;
