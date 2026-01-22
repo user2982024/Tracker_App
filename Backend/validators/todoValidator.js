@@ -1,6 +1,6 @@
 const { body } = require("express-validator");
 
-const createTodoValidator = [
+exports.todoValidator = [
   body("title")
     .trim()
     .notEmpty()
@@ -24,7 +24,3 @@ const createTodoValidator = [
     .isISO8601()
     .withMessage("Due date must be a valid date"),
 ];
-
-module.exports = {
-  createTodoValidator,
-};
