@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { Archive, RefreshCw } from "lucide-react";
+import { Archive, RefreshCw, ArrowLeft } from "lucide-react";
 import NoteCard from "./NoteCard";
+import { useNavigate } from "react-router-dom";
 
 const ArchivedNotes = () => {
   const [archivedNotes, setArchivedNotes] = useState([]);
   const [unarchivingAll, setUnarchivingAll] = useState(false);
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   // Fetch archived notes
   useEffect(() => {
@@ -45,15 +48,13 @@ const ArchivedNotes = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message);
 
-      setArchivedNotes((prev) =>
-        prev.filter((note) => note._id !== noteId)
-      );
+      setArchivedNotes((prev) => prev.filter((note) => note._id !== noteId));
 
       toast.success("Note restored successfully");
     } catch (error) {
@@ -128,7 +129,8 @@ const ArchivedNotes = () => {
           <Archive className="w-14 h-14 mb-4 text-gray-400" />
           <p className="text-lg font-medium">No archived notes yet</p>
           <p className="text-sm mt-2 max-w-sm">
-            Archive notes you don't need right now. You can always bring them back later.
+            Archive notes you don't need right now. You can always bring them
+            back later.
           </p>
         </div>
       ) : (
@@ -146,6 +148,16 @@ const ArchivedNotes = () => {
           ))}
         </div>
       )}
+
+      <div className="mt-10 flex justify-center">
+        <button
+          className="inline-flex items-center gap-2 rounded-xl bg-purple-600 px-6 py-3 text-sm font-medium text-white shadow hover:bg-purple-500 transition hover:cursor-pointer"
+          onClick={() => navigate("/notes")}
+        >
+          <ArrowLeft size={18} />
+          Back to notes
+        </button>
+      </div>
     </div>
   );
 };
