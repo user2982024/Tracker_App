@@ -41,6 +41,66 @@ const Notes = () => {
     fetchNotes();
   }, []);
 
+  // Pin a note
+  const handlePin = async (noteId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch (`http://localhost:5000/api/notes/pin/${noteId}`,
+        {
+          method: "PATCH",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      setNotes(prev =>
+        prev.map(note =>
+          note._id === noteId ? { ...note, isPinned: true } : note
+        )
+      );
+
+      toast.success("Note pinned successfully!");
+    }
+    catch (error) {
+      toast.error(error.message);
+    }
+  }
+
+  // Unpin a note
+  const handleUnpin = async (noteId) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`http://localhost:5000/api/notes/unpin/${noteId}`,
+        {
+          method: "PATCH",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message);
+
+      setNotes(prev =>
+        prev.map(note => 
+          note._id === noteId ? { ...note, isPinned: false } : note
+        )
+      );
+
+      toast.success("Note unpinned successfully!");
+    }
+    catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  // Display pinned notes first
+  
+
+
   const displayedNotes = notes.slice(0, visibleCount);
 
   const handleShowMore = () => {
@@ -211,6 +271,8 @@ const Notes = () => {
               onEdit={() => navigate(`/notes/edit/${note._id}`)}
               onDelete={() => setConfirmNoteId(note._id)}
               onArchive={() => handleArchive(note._id)}
+              onPin={() => handlePin(note._id)}
+              onUnpin={() => handleUnpin(note._id)}
             />
           ))}
         </div>

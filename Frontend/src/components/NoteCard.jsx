@@ -1,5 +1,5 @@
 import React from "react";
-import { Eye, Edit, Trash2, Calendar, Archive, RotateCw } from "lucide-react";
+import { Eye, Edit, Trash2, Calendar, Archive, RotateCw, Pin } from "lucide-react";
 
 const NoteCard = ({
   title,
@@ -10,7 +10,10 @@ const NoteCard = ({
   onDelete,
   onArchive,
   onUnarchive,
+  onPin,
+  onUnpin,
   isArchived = false,
+  isPinned = false,
 }) => {
   return (
     <div className="group relative overflow-hidden rounded-3xl bg-linear-to-br from-white/80 to-white shadow-md backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
@@ -47,6 +50,7 @@ const NoteCard = ({
                 <ActionButton label="Edit" icon={Edit} onClick={onEdit} color="purple" />
                 <ActionButton label="Delete" icon={Trash2} onClick={onDelete} color="red" />
                 <ActionButton label="Archive" icon={Archive} onClick={onArchive} color="purple" />
+                <ActionButton label={isPinned ? "Unpin" : "Pin"} icon={Pin} onClick={isPinned ? onUnpin : onPin} color={isPinned ? "yellow" : "gray"} filled={isPinned}/>
               </>
             )}
 
@@ -60,22 +64,25 @@ const NoteCard = ({
   );
 };
 
-const ActionButton = ({ icon: Icon, onClick, color, label }) => {
+const ActionButton = ({ icon: Icon, onClick, color, label, filled }) => {
   const colors = {
     violet: "hover:bg-violet-100 hover:text-violet-600",
     purple: "hover:bg-purple-100 hover:text-purple-600",
     red: "hover:bg-red-100 hover:text-red-600",
     gray: "hover:bg-gray-100 hover:text-gray-600",
     green: "hover:bg-green-100 hover:text-green-600",
+    yellow: "bg-yellow-100 text-yellow-600",
   };
 
   return (
     <div className="relative group/button">
       <button
         onClick={onClick}
-        className={`rounded-full bg-gray-100 p-2 text-gray-600 cursor-pointer transition ${colors[color]}`}
+        className={`rounded-full p-2 transition cursor-pointer
+          ${filled ? colors.yellow : `bg-gray-100 ${colors[color]}`}
+        `}
       >
-        <Icon size={16} />
+        <Icon size={16} fill={filled ? "currentColor" : "none"}/>
       </button>
 
       {/* Tooltip */}
