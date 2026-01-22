@@ -4,6 +4,7 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const notesRoutes = require('./routes/notesRoutes');
+const todoRoutes = require('./routes/todoRoutes');
 
 dotenv.config();
 
@@ -29,6 +30,9 @@ app.use('/api/auth', authRoutes);
 
 // Notes Routes
 app.use('/api/notes', notesRoutes);
+
+// Todo Routes
+app.use('/api/todos', todoRoutes);
 
 const PORT = process.env.PORT || 5000;
 

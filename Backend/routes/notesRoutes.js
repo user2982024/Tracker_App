@@ -14,7 +14,7 @@ const {
   unpinNote,
   getPinnedNotes
 } = require("../controllers/notesController");
-const { notesValidator } = require("../validators/notesValidator");
+const notesValidator = require("../validators/notesValidator");
 const authMiddleware = require("../middlewares/authMiddleware");
 
 const router = express.Router();
