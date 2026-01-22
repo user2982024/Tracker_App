@@ -98,10 +98,12 @@ const Notes = () => {
   }
 
   // Display pinned notes first
-  
+  const sortedNotes = [
+    ...notes.filter(note => note.isPinned),
+    ...notes.filter(note => !note.isPinned),
+  ]
 
-
-  const displayedNotes = notes.slice(0, visibleCount);
+  const displayedNotes = sortedNotes.slice(0, visibleCount);
 
   const handleShowMore = () => {
     setVisibleCount((prev) => prev + 6);
@@ -268,6 +270,7 @@ const Notes = () => {
               title={note.title}
               content={note.content}
               createdAt={note.createdAt}
+              isPinned={note.isPinned}
               onEdit={() => navigate(`/notes/edit/${note._id}`)}
               onDelete={() => setConfirmNoteId(note._id)}
               onArchive={() => handleArchive(note._id)}

@@ -1,5 +1,13 @@
 import React from "react";
-import { Eye, Edit, Trash2, Calendar, Archive, RotateCw, Pin } from "lucide-react";
+import {
+  Eye,
+  Edit,
+  Trash2,
+  Calendar,
+  Archive,
+  RotateCw,
+  Pin,
+} from "lucide-react";
 
 const NoteCard = ({
   title,
@@ -16,8 +24,15 @@ const NoteCard = ({
   isPinned = false,
 }) => {
   return (
-    <div className="group relative overflow-hidden rounded-3xl bg-linear-to-br from-white/80 to-white shadow-md backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl">
-
+    <div
+      className={`group relative overflow-hidden rounded-3xl backdrop-blur-md transition-all duration-300
+    ${
+      isPinned
+        ? "bg-purple-50 shadow-xl ring-2 ring-purple-300 hover:shadow-2xl"
+        : "bg-linear-to-br from-white/80 to-white shadow-md hover:-translate-y-1 hover:shadow-2xl"
+    }
+  `}
+    >
       {/* Left Accent Line */}
       <div className="absolute left-0 top-0 h-full w-1.5 bg-linear-to-b from-violet-500 via-purple-500 to-fuchsia-500 opacity-80 group-hover:opacity-100" />
 
@@ -46,16 +61,47 @@ const NoteCard = ({
           <div className="flex gap-2 opacity-0 translate-y-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
             {!isArchived && (
               <>
-                <ActionButton label="Open" icon={Eye} onClick={onOpen} color="violet" />
-                <ActionButton label="Edit" icon={Edit} onClick={onEdit} color="purple" />
-                <ActionButton label="Delete" icon={Trash2} onClick={onDelete} color="red" />
-                <ActionButton label="Archive" icon={Archive} onClick={onArchive} color="purple" />
-                <ActionButton label={isPinned ? "Unpin" : "Pin"} icon={Pin} onClick={isPinned ? onUnpin : onPin} color={isPinned ? "yellow" : "gray"} filled={isPinned}/>
+                <ActionButton
+                  label="Open"
+                  icon={Eye}
+                  onClick={onOpen}
+                  color="violet"
+                />
+                <ActionButton
+                  label="Edit"
+                  icon={Edit}
+                  onClick={onEdit}
+                  color="purple"
+                />
+                <ActionButton
+                  label="Delete"
+                  icon={Trash2}
+                  onClick={onDelete}
+                  color="red"
+                />
+                <ActionButton
+                  label="Archive"
+                  icon={Archive}
+                  onClick={onArchive}
+                  color="purple"
+                />
+                <ActionButton
+                  label={isPinned ? "Unpin" : "Pin"}
+                  icon={Pin}
+                  onClick={isPinned ? onUnpin : onPin}
+                  color={isPinned ? "yellow" : "gray"}
+                  filled={isPinned}
+                />
               </>
             )}
 
             {isArchived && (
-              <ActionButton label="Unarchive" icon={RotateCw} onClick={onUnarchive} color="green" />
+              <ActionButton
+                label="Unarchive"
+                icon={RotateCw}
+                onClick={onUnarchive}
+                color="green"
+              />
             )}
           </div>
         </div>
@@ -71,7 +117,6 @@ const ActionButton = ({ icon: Icon, onClick, color, label, filled }) => {
     red: "hover:bg-red-100 hover:text-red-600",
     gray: "hover:bg-gray-100 hover:text-gray-600",
     green: "hover:bg-green-100 hover:text-green-600",
-    yellow: "bg-yellow-100 text-yellow-600",
   };
 
   return (
@@ -79,10 +124,10 @@ const ActionButton = ({ icon: Icon, onClick, color, label, filled }) => {
       <button
         onClick={onClick}
         className={`rounded-full p-2 transition cursor-pointer
-          ${filled ? colors.yellow : `bg-gray-100 ${colors[color]}`}
+          ${filled ? colors.violet : `bg-gray-100 ${colors[color]}`}
         `}
       >
-        <Icon size={16} fill={filled ? "currentColor" : "none"}/>
+        <Icon size={16} fill={filled ? "currentColor" : "none"} />
       </button>
 
       {/* Tooltip */}
