@@ -27,4 +27,4 @@ exports.createTodo = async (req, res) => {
             message: "Server error while creating todo"
         })
     }
-}
+};
