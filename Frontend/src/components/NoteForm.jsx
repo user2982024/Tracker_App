@@ -115,7 +115,7 @@ const AddNote = ({ mode = "create" }) => {
             disabled={loading}
             className="bg-violet-600 text-white py-2 rounded-lg hover:bg-violet-700 cursor-pointer transition"
           >
-            {loading ? (mode === "create" ? "Creating..." : "Updating...") : mode === "create" ? "Save note" : "Update note"}
+            {loading ? (mode === "create" ? "Creating..." : "Updating...") : mode === "create" ? "Save note" : "Save note"}
           </button>
         </form>
       </div>
