@@ -10,23 +10,30 @@ import ArchivedNotes from "./components/ArchivedNotes";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import TodoForm from "./components/TodoForm";
 
+import MainLayout from "./layouts/MainLayout"
+import EmptyLayout from "./layouts/EmptyLayout"
+
 const App = () => {
   return (
     <div>
-      <Navbar />
-
       <Routes>
-        <Route path="/" element={<LandingPage />} />
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<LandingPage />} />
+        </Route>
         <Route path="/signup" element={<Signup />} />
         <Route path="/signin" element={<Signin />} />
 
         <Route element={<ProtectedRoute />}>
-          <Route path="/notes" element={<Notes />} />
-          <Route path="/notes/add" element={<NoteForm mode="create"/>}/>
-          <Route path="/notes/edit/:id" element={<NoteForm mode="edit"/>}/>
-          <Route path="/notes/archived" element={<ArchivedNotes />}/>
-          <Route path="/todos" element={<Todos />} />
-          <Route path="/todos/add" element={<TodoForm />}/>
+          <Route element={<MainLayout />}>
+            <Route path="/notes" element={<Notes />} />
+            <Route path="/notes/archived" element={<ArchivedNotes />}/>
+            <Route path="/todos" element={<Todos />} />
+          </Route>
+          <Route element={<EmptyLayout />}>
+            <Route path="/notes/add" element={<NoteForm mode="create"/>}/>
+            <Route path="/notes/edit/:id" element={<NoteForm mode="edit"/>}/>
+            <Route path="/todos/add" element={<TodoForm />}/>
+          </Route>
         </Route>
       </Routes>
     </div>
@@ -34,3 +41,5 @@ const App = () => {
 };
 
 export default App;
+
+
