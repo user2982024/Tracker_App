@@ -8,6 +8,7 @@ import Todos from "./components/Todos";
 import NoteForm from "./components/NoteForm";
 import ArchivedNotes from "./components/ArchivedNotes";
 import ProtectedRoute from "./components/ProtectedRoutes";
+import TodoForm from "./components/TodoForm";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
           <Route path="/notes/edit/:id" element={<NoteForm mode="edit"/>}/>
           <Route path="/notes/archived" element={<ArchivedNotes />}/>
           <Route path="/todos" element={<Todos />} />
+          <Route path="/todos/add" element={<TodoForm />}/>
         </Route>
       </Routes>
     </div>

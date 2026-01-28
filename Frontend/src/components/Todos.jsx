@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Plus,
   CheckCircle2,
@@ -10,6 +11,7 @@ import {
 
 const Todos = () => {
   const todos = []; // empty state for now
+  const navigate = useNavigate();
 
   const stats = {
     total: 0,
@@ -33,7 +35,10 @@ const Todos = () => {
             placeholder="Search todos..."
             className="hidden sm:block rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
           />
-          <button className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-violet-700 transition">
+          <button
+            className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-medium text-white shadow hover:bg-violet-700 transition hover:cursor-pointer"
+            onClick={() => navigate("/todos/add")}
+          >
             <Plus size={18} />
             Add Task
           </button>
@@ -42,10 +47,30 @@ const Todos = () => {
 
       {/* Stats */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <StatCard title="Total Tasks" value={stats.total} icon={ListTodo} color="violet" />
-        <StatCard title="Completed" value={stats.completed} icon={CheckCircle2} color="green" />
-        <StatCard title="In Progress" value={stats.inProgress} icon={Clock} color="yellow" />
-        <StatCard title="Overdue" value={stats.overdue} icon={AlertCircle} color="red" />
+        <StatCard
+          title="Total Tasks"
+          value={stats.total}
+          icon={ListTodo}
+          color="violet"
+        />
+        <StatCard
+          title="Completed"
+          value={stats.completed}
+          icon={CheckCircle2}
+          color="green"
+        />
+        <StatCard
+          title="In Progress"
+          value={stats.inProgress}
+          icon={Clock}
+          color="yellow"
+        />
+        <StatCard
+          title="Overdue"
+          value={stats.overdue}
+          icon={AlertCircle}
+          color="red"
+        />
       </div>
 
       {/* Empty State */}
@@ -55,7 +80,9 @@ const Todos = () => {
             <ListTodo className="text-violet-600" size={28} />
           </div>
 
-          <h2 className="text-lg font-semibold text-gray-800">No todos to show</h2>
+          <h2 className="text-lg font-semibold text-gray-800">
+            No todos to show
+          </h2>
           <p className="mt-1 max-w-sm text-sm text-gray-500">
             You haven’t added any tasks yet. Start organizing your day by adding
             your first todo.
@@ -105,7 +132,9 @@ const StatCard = ({ title, value, icon: Icon, color }) => {
 
   return (
     <div className="flex items-center gap-4 rounded-2xl bg-white p-5 shadow-sm">
-      <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${colors[color]}`}>
+      <div
+        className={`flex h-12 w-12 items-center justify-center rounded-xl ${colors[color]}`}
+      >
         <Icon size={22} />
       </div>
       <div>
