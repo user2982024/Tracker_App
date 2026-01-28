@@ -77,7 +77,11 @@ const AddNote = ({ mode = "create" }) => {
         throw new Error(data.message || "Failed to create note");
       }
 
-      toast.success(mode === "create" ? "Note created successfully" : "Note updated successfully");
+      toast.success(
+        mode === "create"
+          ? "Note created successfully"
+          : "Note updated successfully",
+      );
       navigate("/notes");
     } catch (error) {
       toast.error(error.message);
@@ -87,8 +91,8 @@ const AddNote = ({ mode = "create" }) => {
   };
 
   return (
-    <section className="min-h-screen bg-gray-50 px-6 py-8 flex items-center justify-center">
-      <div className="w-full max-w-md bg-white rounded-xl shadow p-6">
+    <section className="flex items-center justify-center min-h-screen bg-gray-50 px-4 sm:px-6 ml-96">
+      <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl bg-white rounded-xl shadow p-6">
         <h1 className="text-2xl font-semibold text-gray-900 mb-4">
           {mode === "create" ? "Add new note" : "Edit note"}
         </h1>
@@ -99,7 +103,7 @@ const AddNote = ({ mode = "create" }) => {
             placeholder="Title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500"
           />
 
           <textarea
@@ -107,15 +111,21 @@ const AddNote = ({ mode = "create" }) => {
             rows="4"
             value={content}
             onChange={(e) => setContent(e.target.value)}
-            className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"
+            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 resize-none"
           />
 
           <button
             type="submit"
             disabled={loading}
-            className="bg-violet-600 text-white py-2 rounded-lg hover:bg-violet-700 cursor-pointer transition"
+            className="w-full bg-violet-600 text-white py-2 rounded-lg hover:bg-violet-700 cursor-pointer transition"
           >
-            {loading ? (mode === "create" ? "Creating..." : "Updating...") : mode === "create" ? "Save note" : "Save note"}
+            {loading
+              ? mode === "create"
+                ? "Creating..."
+                : "Updating..."
+              : mode === "create"
+                ? "Save note"
+                : "Save note"}
           </button>
         </form>
       </div>

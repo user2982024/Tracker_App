@@ -84,11 +84,14 @@ const Todos = () => {
             No todos to show
           </h2>
           <p className="mt-1 max-w-sm text-sm text-gray-500">
-            You haven’t added any tasks yet. Start organizing your day by adding
+            You haven't added any tasks yet. Start organizing your day by adding
             your first todo.
           </p>
 
-          <button className="mt-6 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 text-sm font-medium text-white shadow hover:bg-violet-700 transition">
+          <button
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 text-sm font-medium text-white shadow hover:bg-violet-700 transition hover: cursor-pointer"
+            onClick={() => navigate("/todos/add")}
+          >
             <Plus size={18} />
             Create your first task
           </button>
