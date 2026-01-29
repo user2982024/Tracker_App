@@ -7,7 +7,7 @@ const MainScreen_1 = () => {
         {/* Hero Section */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col items-center text-center">
           {/* Tagline */}
-          <div className="bg-purple-200 text-purple-600 rounded-2xl px-6 py-2 hover:bg-purple-400 mb-6">
+          <div className="bg-purple-200 text-purple-600 rounded-2xl px-6 py-2 hover:bg-purple-300 mb-6">
             <p className="font-medium">Your All-in-One Productivity Hub</p>
           </div>
 
