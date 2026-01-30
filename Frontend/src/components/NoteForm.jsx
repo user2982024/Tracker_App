@@ -91,7 +91,7 @@ const AddNote = ({ mode = "create" }) => {
   };
 
   return (
-    <section className="flex items-center justify-center min-h-screen bg-gray-50 px-4 sm:px-6 ml-96">
+    <section className="flex items-center justify-center min-h-screen bg-gray-50 px-4 sm:px-6">
       <div className="w-full max-w-md sm:max-w-lg lg:max-w-xl bg-white rounded-xl shadow p-6">
         <h1 className="text-2xl font-semibold text-gray-900 mb-4">
           {mode === "create" ? "Add new note" : "Edit note"}

@@ -253,7 +253,7 @@ const Notes = () => {
 
           <button
             onClick={() => navigate("/notes/add")}
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 text-sm font-medium text-white shadow hover:bg-violet-700 transition"
+            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 text-sm font-medium text-white shadow hover:bg-violet-700 transition hover:cursor-pointer"
           >
             <Plus size={18} />
             Create your first note
