@@ -67,7 +67,7 @@ const TodoForm = () => {
             <button
               type="button"
               onClick={() => navigate("/todos")}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition"
+              className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition hover:cursor-pointer"
             >
               Cancel
             </button>
