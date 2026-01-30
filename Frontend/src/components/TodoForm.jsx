@@ -1,4 +1,9 @@
+import { useNavigate } from "react-router-dom";
+
 const TodoForm = () => {
+
+  const navigate = useNavigate();
+
   return (
     <section className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-xl bg-white rounded-xl shadow-sm border border-gray-200 p-6">
@@ -61,6 +66,7 @@ const TodoForm = () => {
           <div className="flex justify-end gap-3 pt-2">
             <button
               type="button"
+              onClick={() => navigate("/todos")}
               className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition"
             >
               Cancel

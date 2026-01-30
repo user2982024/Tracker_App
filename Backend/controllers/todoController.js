@@ -28,3 +28,25 @@ exports.createTodo = async (req, res) => {
         })
     }
 };
+
+// Get all todos of a user (GET)
+exports.getAllTodos = async (req, res) => {
+    try {
+        const todos = await Todo.find({ user: req.user._id })
+        .sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            message: "Todos fetched successfully",
+            count: todos.length,
+            todos
+        });
+    }
+    catch (error) {
+        console.error("Error fetching todos", error.message);
+        res.status(500).json({
+            success: false,
+            message: "Server error while fetching todos"
+        })
+    }
+}
