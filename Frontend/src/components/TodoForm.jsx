@@ -1,6 +1,7 @@
 import { LucideClockFading } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const TodoForm = () => {
 
@@ -31,7 +32,7 @@ const TodoForm = () => {
 
       const token = localStorage.getItem("token");
 
-      const res = await fetch("http://localhost:5000/todos/create", {
+      const res = await fetch("http://localhost:5000/api/todos/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -46,12 +47,14 @@ const TodoForm = () => {
         throw new Error(data.message || "Failed to create todo");
       }
 
+      toast.success("Todo created successfully!")
+
       // Navigate back to todos list
       navigate("/todos");
     }
     catch (error) {
       console.error(error.message);
-      alert(error.message);
+      toast.error(error.message || "Something went wrong");
     }
     finally {
       setLoading(false);
@@ -145,7 +148,7 @@ const TodoForm = () => {
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition"
+              className="px-5 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition hover:cursor-pointer"
             >
               {loading ? "Adding todo" : "Add Todo"}
             </button>
