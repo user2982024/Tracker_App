@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Plus,
@@ -10,13 +10,45 @@ import {
 } from "lucide-react";
 
 const Todos = () => {
-  const todos = []; // empty state for now
+  const [todos, setTodos] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const fetchTodos = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await fetch("http://localhost:5000/api/todos", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message || "Failed to fetch todos");
+        }
+
+        setTodos(data.todos)
+      }
+      catch (error) {
+        console.error(error.message);
+      }
+      finally {
+        setLoading(false);
+      }
+    }
+
+    fetchTodos();
+  }, []);
+
   const stats = {
-    total: 0,
+    total: todos.length,
     completed: 0,
-    inProgress: 0,
+    inProgress: todos.length,
     overdue: 0,
   };
 
