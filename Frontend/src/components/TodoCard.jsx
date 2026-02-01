@@ -1,6 +1,6 @@
 import React from "react";
 
-const TodoCard = ({ todo }) => {
+const Todo = ({ todo }) => {
   return (
     <div className="flex items-start gap-4 rounded-xl bg-white p-4 shadow-sm transition hover:shadow">
       {/* Checkbox (UI only for now) */}
@@ -42,4 +42,4 @@ const TodoCard = ({ todo }) => {
   );
 };
 
-export default TodoCard;
+export default Todo;
