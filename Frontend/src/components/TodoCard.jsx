@@ -1,45 +1,44 @@
-import React from "react";
+import { CheckCircle, Clock, PlayCircle } from "lucide-react";
 
-const Todo = ({ todo }) => {
+const statusStyles = {
+  pending: "bg-yellow-100 text-yellow-700",
+  "in-progress": "bg-blue-100 text-blue-700",
+  completed: "bg-green-100 text-green-700",
+};
+
+const TodoCard = ({ todo, onStatusChange }) => {
   return (
-    <div className="flex items-start gap-4 rounded-xl bg-white p-4 shadow-sm transition hover:shadow">
-      {/* Checkbox (UI only for now) */}
-      <input
-        type="checkbox"
-        className="mt-1 h-4 w-4 rounded border-gray-300 text-violet-600 focus:ring-violet-500"
-      />
+    <div className="p-4 bg-white rounded-xl shadow space-y-2">
+      <div className="flex justify-between items-center">
+        <h3 className="font-semibold">{todo.title}</h3>
 
-      {/* Content */}
-      <div className="flex-1">
-        <h3 className="font-medium text-gray-900">
-          {todo.title || "Todo title"}
-        </h3>
+        <span className={`px-2 py-1 rounded text-xs ${statusStyles[todo.status]}`}>
+          {todo.status}
+        </span>
+      </div>
 
-        <p className="text-sm text-gray-500">
-          {todo.description || "Short todo description goes here"}
-        </p>
+      <p className="text-sm text-gray-600">{todo.description}</p>
 
-        {/* Meta Info */}
-        <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-          <span className="rounded-full bg-red-100 px-2 py-1 text-red-600">
-            High Priority
-          </span>
+      <div className="flex justify-between text-xs text-gray-500">
+        <span>Priority: {todo.priority}</span>
+        <span>Due: {new Date(todo.dueDate).toLocaleDateString()}</span>
+      </div>
 
-          <span className="rounded-full bg-blue-100 px-2 py-1 text-blue-600">
-            Work
-          </span>
+      <div className="flex gap-2 pt-2">
+        <button onClick={() => onStatusChange(todo._id, "pending")}>
+          <Clock size={18} />
+        </button>
 
-          <span className="rounded-full bg-gray-100 px-2 py-1 text-gray-600">
-            Due: Dec 22, 2024
-          </span>
+        <button onClick={() => onStatusChange(todo._id, "in-progress")}>
+          <PlayCircle size={18} />
+        </button>
 
-          <span className="rounded-full bg-yellow-100 px-2 py-1 text-yellow-700">
-            In Progress
-          </span>
-        </div>
+        <button onClick={() => onStatusChange(todo._id, "completed")}>
+          <CheckCircle size={18} />
+        </button>
       </div>
     </div>
   );
 };
 
-export default Todo;
+export default TodoCard;
