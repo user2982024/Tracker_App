@@ -3,7 +3,7 @@ import LandingPage from "./components/LandingPage";
 import Signup from "./components/SignUp";
 import Signin from "./components/SignIn";
 import Notes from "./components/Notes";
-import Todos from "./components/Todos";
+import Todos from "./components/TodoData";
 import NoteForm from "./components/NoteForm";
 import ArchivedNotes from "./components/ArchivedNotes";
 import ProtectedRoute from "./components/ProtectedRoutes";
