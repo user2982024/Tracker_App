@@ -39,6 +39,6 @@ const TodoCard = ({ todo, onStatusChange }) => {
       </div>
     </div>
   );
-};
+}
 
 export default TodoCard;
