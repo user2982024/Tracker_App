@@ -214,6 +214,6 @@ const StatCard = ({ title, value, icon: Icon, color }) => {
       </div>
     </div>
   );
-};
+}
 
 export default Todo;
