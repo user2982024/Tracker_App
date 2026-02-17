@@ -1,4 +1,4 @@
-import { CheckCircle, Clock, PlayCircle } from "lucide-react";
+import { CheckCircle, Clock, PlayCircle, Trash2 } from "lucide-react";
 
 const statusStyles = {
   pending: "bg-yellow-100 text-yellow-700",
@@ -6,7 +6,7 @@ const statusStyles = {
   completed: "bg-green-100 text-green-700",
 };
 
-const TodoCard = ({ todo, onStatusChange }) => {
+const TodoCard = ({ todo, onStatusChange, onDelete }) => {
   return (
     <div className="p-4 bg-white rounded-xl shadow space-y-2">
       <div className="flex justify-between items-center">
@@ -35,6 +35,13 @@ const TodoCard = ({ todo, onStatusChange }) => {
 
         <button onClick={() => onStatusChange(todo._id, "completed")}>
           <CheckCircle size={18} />
+        </button>
+
+        <button
+          onClick={() => onDelete(todo)}
+          className="ml-auto text-red-500 hover:text-red-700 hover:cursor-pointer"
+        >
+          <Trash2 size={18} />
         </button>
       </div>
     </div>

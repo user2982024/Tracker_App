@@ -1,5 +1,5 @@
 const express = require('express');
-const { createTodo, getAllTodos } = require('../controllers/todoController');
+const { createTodo, getAllTodos, deleteTodo } = require('../controllers/todoController');
 const { todoValidator } = require('../validators/todoValidator');
 const authMiddleware = require('../middlewares/authMiddleware');
 
@@ -10,5 +10,8 @@ router.post("/create", authMiddleware, todoValidator, createTodo);
 
 // Get all todos route
 router.get("/", authMiddleware, getAllTodos);
+
+// Delete a single todo route
+router.delete("/:id", authMiddleware, deleteTodo);
 
 module.exports = router;

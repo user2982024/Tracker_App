@@ -47,6 +47,35 @@ exports.getAllTodos = async (req, res) => {
         res.status(500).json({
             success: false,
             message: "Server error while fetching todos"
-        })
+        });
     }
-}
+};
+
+// Delete a single todo controller
+exports.deleteTodo = async (req, res) => {
+    try {
+        const todo = await Todo.findOneAndDelete({
+            _id: req.params.id,
+            user: req.user._id,
+        });
+
+        if (!todo) {
+            return res.status(404).json({
+                success: false,
+                message: "Todo not found"
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Todo deleted successfully"
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: error.message,
+        });
+    }
+};

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import {
   Plus,
   CheckCircle2,
@@ -13,6 +14,8 @@ import TodoCard from "./TodoCard";
 const Todo = () => {
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedTodo, setSelectedTodo] = useState(null);
 
   const navigate = useNavigate();
 
@@ -45,11 +48,54 @@ const Todo = () => {
     fetchTodos();
   }, []);
 
+  // Open modal
+  const handleDeleteClick = (todo) => {
+    setSelectedTodo(todo);
+    setShowModal(true);
+  }
+
+  // Confirm delete
+  const confirmDelete = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(
+        `http://localhost:5000/api/todos/${selectedTodo._id}`, {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.message);
+        }
+
+        setTodos((prev) => 
+        prev.filter((todo) => todo._id !== selectedTodo._id)
+      );
+
+      toast.success("Todo deleted successfully");
+
+      setShowModal(false);
+      setSelectedTodo(null);
+    }
+    catch (error) {
+      toast.error(error.message);
+    }
+  }
+
   const stats = {
     total: todos.length,
-    completed: 0,
-    inProgress: todos.length,
-    overdue: 0,
+    completed: todos.filter((t) => t.status === "completed").length,
+    inProgress: todos.filter((t) => t.status === "in-progress").length,
+    overdue: todos.filter(
+      (t) =>
+        new Date(t.dueDate) < new Date() &&
+        t.status !== "completed"
+    ).length,
   };
 
   return (
@@ -135,7 +181,11 @@ const Todo = () => {
       {todos.length > 0 && (
         <div className="space-y-3">
           {todos.map((todo, index) => (
-            <TodoCard key={todo._id || index} todo={todo} />
+            <TodoCard 
+            key={todo._id || index} 
+            todo={todo} 
+            onDelete={handleDeleteClick}
+            />
           ))}
         </div>
       )}
@@ -172,7 +222,7 @@ const Todo = () => {
             <Trophy size={32} />
           </div>
 
-          <h3 className="text-xl font-semibold">You’re doing great!</h3>
+          <h3 className="text-xl font-semibold">You're doing great!</h3>
           <p className="mt-2 text-sm text-violet-100">
             Keep completing tasks and maintain your productivity streak.
           </p>
@@ -189,6 +239,41 @@ const Todo = () => {
           </div>
         </div>
       </div>
+
+       {/* DELETE CONFIRMATION MODAL */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-lg">
+            <h2 className="text-lg font-semibold text-gray-900">
+              Delete Todo?
+            </h2>
+
+            <p className="mt-2 text-sm text-gray-600">
+              Are you sure you want to delete{" "}
+              <span className="font-medium">
+                {selectedTodo?.title}
+              </span>
+              ? This action cannot be undone.
+            </p>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
+              >
+                Yes, Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 };
