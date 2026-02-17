@@ -32,6 +32,7 @@ const App = () => {
             <Route path="/notes/add" element={<NoteForm mode="create"/>}/>
             <Route path="/notes/edit/:id" element={<NoteForm mode="edit"/>}/>
             <Route path="/todos/add" element={<TodoForm />}/>
+            <Route path="/todos/edit/:id" element={<TodoForm />}/>
           </Route>
         </Route>
       </Routes>
