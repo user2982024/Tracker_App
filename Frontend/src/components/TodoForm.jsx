@@ -221,7 +221,7 @@ const TodoForm = () => {
         </form>
       </div>
     </section>
-  );
+  )
 };
 
 export default TodoForm;
