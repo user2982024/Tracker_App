@@ -5,7 +5,7 @@ exports.createTodo = async (req, res) => {
     try {
         const { title, description, priority, dueDate } = req.body;
 
-        // Createing a todo
+        // Creating a todo
         const todo = await Todo.create({
             title,
             description,
