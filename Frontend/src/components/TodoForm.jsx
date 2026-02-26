@@ -18,7 +18,7 @@ const TodoForm = () => {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
 
-  // 🔥 Fetch existing todo if editing
+  // Fetch existing todo if editing
   useEffect(() => {
     if (!isEditMode) return;
 
