@@ -29,7 +29,7 @@ exports.signup = async (req, res) => {
 
         // Generate JWT token
         const token = jwt.sign({ user: user._id }, process.env.JWT_SECRET, {
-            expiresIn: "7d"
+            expiresIn: "7d"             // 7 days is the lifespan of generated token
         })
 
         res.status(201).json({
