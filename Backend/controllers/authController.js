@@ -42,7 +42,7 @@ exports.signup = async (req, res) => {
                 email: user.email
             }
         });
-    };
+    }
     catch (error) {
         console.error("Signup Error", error)
         res.status(500).json({
@@ -50,7 +50,7 @@ exports.signup = async (req, res) => {
             message: "Server error"
         });
     }
-}
+};
 
 // Signin Route
 exports.signin = async (req, res) => {
