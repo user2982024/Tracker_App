@@ -42,7 +42,7 @@ exports.signup = async (req, res) => {
                 email: user.email
             }
         });
-    }
+    };
     catch (error) {
         console.error("Signup Error", error)
         res.status(500).json({
