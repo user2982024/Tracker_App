@@ -50,7 +50,7 @@ exports.signup = async (req, res) => {
             message: "Server error"
         });
     }
-};
+}
 
 // Signin Route
 exports.signin = async (req, res) => {
