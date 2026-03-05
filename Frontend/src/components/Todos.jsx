@@ -157,7 +157,7 @@ const Todo = () => {
       {/* Filters & Sort (UI only) */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex gap-2 rounded-xl bg-white p-1 shadow-sm">
-          {["All Tasks", "Active", "Completed", "Overdue"].map((label, index) => (
+          {["All Tasks", "In progress", "Completed", "Overdue"].map((label, index) => (
             <button
               key={label}
               className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
