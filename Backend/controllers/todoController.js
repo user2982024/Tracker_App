@@ -120,3 +120,32 @@ exports.updateTodo = async (req, res) => {
         });
     }
 };
+
+// Get a single todo by Id (GET)
+exports.getTodoById = async (req, res) => {
+    try {
+        const todo = await Todo.findOne({
+            _id: req.params.id,
+            user: req.user._id,
+        });
+
+        if (!todo) {
+            return res.status(404).json({
+                success: false,
+                message: "Todo not found",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            todo,
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Server error",
+            error: error.message,
+        });
+    }
+};
