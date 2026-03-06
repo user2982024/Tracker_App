@@ -161,3 +161,24 @@ exports.getTodoById = async (req, res) => {
         });
     }
 };
+
+// Delete all todos of a user (DELETE)
+exports.deleteAllTodos = async (req, res) => {
+    try {
+        const result = await Todo.deleteMany({
+            user: req.user._id
+        });
+
+        return res.status(200).json({
+            success: true,
+            message: "All todos deleted successfully",
+            deletedCount: result.deletedCount
+        });
+    }
+    catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Server error while deleting todos"
+        });
+    }
+};

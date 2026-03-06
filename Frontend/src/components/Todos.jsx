@@ -17,6 +17,7 @@ const Todo = () => {
   const [showModal, setShowModal] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState(null);
   const [activeFilter, setActiveFilter] = useState("all");
+  const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
 
   const navigate = useNavigate();
 
@@ -53,7 +54,7 @@ const Todo = () => {
   const handleDeleteClick = (todo) => {
     setSelectedTodo(todo);
     setShowModal(true);
-  }
+  };
 
   // Confirm delete
   const confirmDelete = async () => {
@@ -61,32 +62,31 @@ const Todo = () => {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        `http://localhost:5000/api/todos/${selectedTodo._id}`, {
+        `http://localhost:5000/api/todos/${selectedTodo._id}`,
+        {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        });
-
-        const data = await res.json();
-
-        if (!res.ok) {
-          throw new Error(data.message);
-        }
-
-        setTodos((prev) => 
-        prev.filter((todo) => todo._id !== selectedTodo._id)
+        },
       );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message);
+      }
+
+      setTodos((prev) => prev.filter((todo) => todo._id !== selectedTodo._id));
 
       toast.success("Todo deleted successfully");
 
       setShowModal(false);
       setSelectedTodo(null);
-    }
-    catch (error) {
+    } catch (error) {
       toast.error(error.message);
     }
-  }
+  };
 
   // Stats
   const stats = {
@@ -94,9 +94,7 @@ const Todo = () => {
     completed: todos.filter((t) => t.status === "completed").length,
     inProgress: todos.filter((t) => t.status === "in-progress").length,
     overdue: todos.filter(
-      (t) =>
-        new Date(t.dueDate) < new Date() &&
-        t.status !== "completed"
+      (t) => new Date(t.dueDate) < new Date() && t.status !== "completed",
     ).length,
   };
 
@@ -125,15 +123,40 @@ const Todo = () => {
     return todos;
   })();
 
+  const deleteAllTodos = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch("http://localhost:5000/api/todos", {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message);
+      }
+
+      setTodos([]);
+
+      toast.success("All todos deleted successfully");
+
+      setShowDeleteAllModal(false);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
   return (
     <section className="min-h-screen bg-gray-50 px-6 py-8">
       {/* Header */}
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">My Todos</h1>
-          <p className="text-sm text-gray-500">
-            Manage your tasks efficiently
-          </p>
+          <p className="text-sm text-gray-500">Manage your tasks efficiently</p>
         </div>
 
         <div className="flex gap-3">
@@ -142,6 +165,13 @@ const Todo = () => {
             placeholder="Search todos..."
             className="hidden rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 sm:block"
           />
+
+          <button
+            onClick={() => setShowDeleteAllModal(true)}
+            className="inline-flex items-center gap-2 rounded-xl bg-red-600 px-5 py-2.5 text-sm font-medium text-white shadow transition hover:bg-red-700"
+          >
+            Delete All
+          </button>
 
           <button
             className="inline-flex items-center gap-2 rounded-xl bg-violet-600 px-5 py-2.5 text-sm font-medium text-white shadow transition hover:bg-violet-700"
@@ -181,7 +211,7 @@ const Todo = () => {
         />
       </div>
 
-       {/* Filters */}
+      {/* Filters */}
       <div className="mb-6 flex gap-2 rounded-xl bg-white p-1 shadow-sm">
         {filters.map((filter) => (
           <button
@@ -202,11 +232,7 @@ const Todo = () => {
       {filteredTodos.length > 0 && (
         <div className="space-y-3">
           {filteredTodos.map((todo) => (
-            <TodoCard
-              key={todo._id}
-              todo={todo}
-              onDelete={handleDeleteClick}
-            />
+            <TodoCard key={todo._id} todo={todo} onDelete={handleDeleteClick} />
           ))}
         </div>
       )}
@@ -229,6 +255,37 @@ const Todo = () => {
             <Plus size={18} />
             Create your first task
           </button>
+        </div>
+      )}
+
+      {showDeleteAllModal && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-lg">
+            <h2 className="text-lg font-semibold text-gray-900">
+              Delete All Todos?
+            </h2>
+
+            <p className="mt-2 text-sm text-gray-600">
+              Are you sure you want to delete all todos? This action cannot be
+              undone.
+            </p>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                onClick={() => setShowDeleteAllModal(false)}
+                className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={deleteAllTodos}
+                className="px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
+              >
+                Yes, Delete All
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
@@ -257,7 +314,7 @@ const Todo = () => {
         </div>
       </div>
 
-       {/* DELETE CONFIRMATION MODAL */}
+      {/* DELETE CONFIRMATION MODAL */}
       {showModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-lg">
@@ -266,11 +323,9 @@ const Todo = () => {
             </h2>
 
             <p className="mt-2 text-sm text-gray-600">
-              Are you sure you want to delete{" "}
-              <span className="font-medium">
-                {selectedTodo?.title}
-              </span>
-              ? This action cannot be undone.
+              Are you sure you want to delete
+              <span className="font-medium">{selectedTodo?.title}</span>? This
+              action cannot be undone.
             </p>
 
             <div className="mt-6 flex justify-end gap-3">
@@ -316,5 +371,5 @@ const StatCard = ({ title, value, icon: Icon, color }) => {
       </div>
     </div>
   );
-}
+};
 export default Todo;
