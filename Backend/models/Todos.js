@@ -15,9 +15,10 @@ const todoSchema = new mongoose.Schema(
     maxlength: [500, "Description cannot exceed 500 characters"],
   },
 
-  completed: {
-    type: Boolean,
-    default: false,
+  status: {
+    type: String,
+    enum: ["pending", "in progress", "completed"],
+    default: "pending",
   },
 
   priority: {

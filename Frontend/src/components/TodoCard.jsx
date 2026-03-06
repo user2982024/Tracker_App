@@ -3,51 +3,65 @@ import { useNavigate } from "react-router-dom";
 
 const statusStyles = {
   pending: "bg-yellow-100 text-yellow-700",
-  "in-progress": "bg-blue-100 text-blue-700",
+  "in progress": "bg-blue-100 text-blue-700",
   completed: "bg-green-100 text-green-700",
 };
 
 const TodoCard = ({ todo, onStatusChange, onDelete }) => {
   const navigate = useNavigate();
 
+  const formattedDate = todo?.dueDate
+    ? new Date(todo.dueDate).toLocaleDateString()
+    : "No date";
+
   return (
-    <div className="p-4 bg-white rounded-xl shadow space-y-2 hover:shadow-md transition">
-      {/* Title + Status */}
-      <div className="flex justify-between items-center">
-        <h3 className="font-semibold text-gray-800">{todo.title}</h3>
+    <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition space-y-3">
+
+      {/* TITLE + STATUS */}
+      <div className="flex justify-between items-start">
+        <h3 className="text-gray-800 font-semibold text-sm sm:text-base">
+          {todo.title}
+        </h3>
 
         <span
-          className={`px-2 py-1 rounded text-xs capitalize ${statusStyles[todo.status]}`}
+          className={`px-2 py-1 rounded text-xs capitalize ${
+            statusStyles[todo.status] || "bg-gray-100 text-gray-600"
+          }`}
         >
           {todo.status}
         </span>
       </div>
 
-      {/* Description */}
-      <p className="text-sm text-gray-600">{todo.description}</p>
+      {/* DESCRIPTION */}
+      {todo.description && (
+        <p className="text-sm text-gray-600 line-clamp-2">
+          {todo.description}
+        </p>
+      )}
 
-      {/* Meta Info */}
+      {/* META INFO */}
       <div className="flex justify-between text-xs text-gray-500">
         <span className="capitalize">Priority: {todo.priority}</span>
-        <span>
-          Due: {new Date(todo.dueDate).toLocaleDateString()}
-        </span>
+        <span>Due: {formattedDate}</span>
       </div>
 
-      {/* Action Buttons */}
+      {/* ACTION BUTTONS */}
       <div className="flex items-center gap-3 pt-2">
 
-        {/* Status Buttons */}
+        {/* STATUS BUTTONS */}
+
         <button
           onClick={() => onStatusChange(todo._id, "pending")}
           className="text-gray-500 hover:text-yellow-600 transition"
+          title="Mark as Pending"
         >
           <Clock size={18} />
         </button>
 
         <button
-          onClick={() => onStatusChange(todo._id, "in-progress")}
+          onClick={() => onStatusChange(todo._id, "in progress")}
           className="text-gray-500 hover:text-blue-600 transition"
+          title="Mark as In Progress"
         >
           <PlayCircle size={18} />
         </button>
@@ -55,26 +69,25 @@ const TodoCard = ({ todo, onStatusChange, onDelete }) => {
         <button
           onClick={() => onStatusChange(todo._id, "completed")}
           className="text-gray-500 hover:text-green-600 transition"
+          title="Mark as Completed"
         >
           <CheckCircle size={18} />
         </button>
 
-        {/* Spacer */}
+        {/* RIGHT SIDE ACTIONS */}
         <div className="ml-auto flex gap-3">
 
-          {/* Edit Button */}
           <button
             onClick={() => navigate(`/todos/edit/${todo._id}`)}
-            className="text-gray-500 hover:text-violet-600 transition hover:cursor-pointer"
+            className="text-gray-500 hover:text-violet-600 transition"
             title="Edit Todo"
           >
             <Pencil size={18} />
           </button>
 
-          {/* Delete Button */}
           <button
             onClick={() => onDelete(todo)}
-            className="text-gray-500 hover:text-red-600 transition hover:cursor-pointer"
+            className="text-gray-500 hover:text-red-600 transition"
             title="Delete Todo"
           >
             <Trash2 size={18} />

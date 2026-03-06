@@ -1,5 +1,5 @@
 const express = require('express');
-const { createTodo, getAllTodos, deleteTodo, updateTodo, getTodoById, deleteAllTodos } = require('../controllers/todoController');
+const { createTodo, getAllTodos, deleteTodo, updateTodo, getTodoById, deleteAllTodos, updateTodoStatus } = require('../controllers/todoController');
 const { todoValidator } = require('../validators/todoValidator');
 const authMiddleware = require('../middlewares/authMiddleware');
 
@@ -22,5 +22,8 @@ router.delete("/:id", authMiddleware, deleteTodo);
 
 // Update a todo route
 router.patch("/:id", authMiddleware, updateTodo);
+
+// Todo status change route
+router.patch("/:id/status", authMiddleware, updateTodoStatus);
 
 module.exports = router;

@@ -92,9 +92,9 @@ const Todo = () => {
   const stats = {
     total: todos.length,
     completed: todos.filter((t) => t.status === "completed").length,
-    inProgress: todos.filter((t) => t.status === "in-progress").length,
+    inProgress: todos.filter((t) => t.status === "in progress").length,
     overdue: todos.filter(
-      (t) => new Date(t.dueDate) < new Date() && t.status !== "completed",
+      (t) => new Date(t.dueDate) < new Date() && t.status !== "Completed",
     ).length,
   };
 
@@ -108,8 +108,8 @@ const Todo = () => {
 
   // Filter todos dynamically
   const filteredTodos = (() => {
-    if (activeFilter === "in-progress") {
-      return todos.filter((t) => t.status === "in-progress");
+    if (activeFilter === "in progress") {
+      return todos.filter((t) => t.status === "in progress");
     }
 
     if (activeFilter === "completed") {
@@ -149,6 +149,39 @@ const Todo = () => {
       toast.error(error.message);
     }
   };
+
+  const handleStatusChange = async (todoId, newStatus) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`http://localhost:5000/api/todos/${todoId}/status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message);
+      }
+
+      // Update UI instantly
+    setTodos((prev) =>
+      prev.map((todo) =>
+        todo._id === todoId ? data.todo : todo
+      )
+    );
+
+    toast.success("Todo status updated");
+    }
+    catch (error) {
+      toast.error(error.message);
+    }
+  }
 
   return (
     <section className="min-h-screen bg-gray-50 px-6 py-8">
@@ -232,7 +265,7 @@ const Todo = () => {
       {filteredTodos.length > 0 && (
         <div className="space-y-3">
           {filteredTodos.map((todo) => (
-            <TodoCard key={todo._id} todo={todo} onDelete={handleDeleteClick} />
+            <TodoCard key={todo._id} todo={todo} onDelete={handleDeleteClick} onStatusChange={handleStatusChange} />
           ))}
         </div>
       )}
