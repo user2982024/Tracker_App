@@ -16,6 +16,7 @@ const Todo = () => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [selectedTodo, setSelectedTodo] = useState(null);
+  const [activeFilter, setActiveFilter] = useState("all");
 
   const navigate = useNavigate();
 
@@ -87,6 +88,7 @@ const Todo = () => {
     }
   }
 
+  // Stats
   const stats = {
     total: todos.length,
     completed: todos.filter((t) => t.status === "completed").length,
@@ -97,6 +99,31 @@ const Todo = () => {
         t.status !== "completed"
     ).length,
   };
+
+  // Filters
+  const filters = [
+    { label: "All Tasks", value: "all" },
+    { label: "In Progress", value: "in progress" },
+    { label: "Completed", value: "completed" },
+    { label: "Overdue", value: "overdue" },
+  ];
+
+  // Filter todos dynamically
+  const filteredTodos = (() => {
+    if (activeFilter === "in-progress") {
+      return todos.filter((t) => t.status === "in-progress");
+    }
+
+    if (activeFilter === "completed") {
+      return todos.filter((t) => t.status === "completed");
+    }
+
+    if (activeFilter === "overdue") {
+      return todos.filter((t) => t.status === "overdue");
+    }
+
+    return todos;
+  })();
 
   return (
     <section className="min-h-screen bg-gray-50 px-6 py-8">
@@ -154,44 +181,38 @@ const Todo = () => {
         />
       </div>
 
-      {/* Filters & Sort (UI only) */}
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex gap-2 rounded-xl bg-white p-1 shadow-sm">
-          {["All Tasks", "In progress", "Completed", "Overdue"].map((label, index) => (
-            <button
-              key={label}
-              className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
-                index === 0
-                  ? "bg-violet-600 text-white"
-                  : "text-gray-600 hover:bg-gray-100"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-
-        <select className="rounded-xl border border-gray-200 bg-white px-4 py-2 text-sm text-gray-600 focus:outline-none">
-          <option>Sort by: Due Date</option>
-          <option>Sort by: Priority</option>
-        </select>
+       {/* Filters */}
+      <div className="mb-6 flex gap-2 rounded-xl bg-white p-1 shadow-sm">
+        {filters.map((filter) => (
+          <button
+            key={filter.value}
+            onClick={() => setActiveFilter(filter.value)}
+            className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+              activeFilter === filter.value
+                ? "bg-violet-600 text-white"
+                : "text-gray-600 hover:bg-gray-100"
+            }`}
+          >
+            {filter.label}
+          </button>
+        ))}
       </div>
 
       {/* Todo List */}
-      {todos.length > 0 && (
+      {filteredTodos.length > 0 && (
         <div className="space-y-3">
-          {todos.map((todo, index) => (
-            <TodoCard 
-            key={todo._id || index} 
-            todo={todo} 
-            onDelete={handleDeleteClick}
+          {filteredTodos.map((todo) => (
+            <TodoCard
+              key={todo._id}
+              todo={todo}
+              onDelete={handleDeleteClick}
             />
           ))}
         </div>
       )}
 
       {/* Empty State */}
-      {todos.length === 0 && !loading && (
+      {filteredTodos.length === 0 && !loading && (
         <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-300 bg-white py-24 text-center">
           <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-violet-100">
             <ListTodo className="text-violet-600" size={28} />
@@ -200,10 +221,6 @@ const Todo = () => {
           <h2 className="text-lg font-semibold text-gray-800">
             No todos to show
           </h2>
-          <p className="mt-1 max-w-sm text-sm text-gray-500">
-            You haven't added any tasks yet. Start organizing your day by adding
-            your first todo.
-          </p>
 
           <button
             className="mt-6 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 text-sm font-medium text-white shadow transition hover:bg-violet-700"

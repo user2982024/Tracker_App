@@ -1,5 +1,5 @@
 const getTodoStatus = (todo) => {
-  const now = new Dtae();
+  const now = new Date();
 
   if (todo.completed) {
     return "Completed";

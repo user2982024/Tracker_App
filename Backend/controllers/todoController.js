@@ -1,4 +1,5 @@
 const Todo = require('../models/Todos');
+const getTodoStatus = require('../utils/getTodoStatus');
 
 // Creating a todo (POST)
 exports.createTodo = async (req, res) => {
@@ -14,10 +15,13 @@ exports.createTodo = async (req, res) => {
             user: req.user._id
         });
 
+        const todoObj = todo.toObject();
+        todoObj.status = getTodoStatus(todo);
+
         return res.status(200).json({
             success: true,
             message: "Todo created successfully", 
-            todo
+            todo: todoObj,
         });
     }
     catch (error) {
@@ -35,11 +39,17 @@ exports.getAllTodos = async (req, res) => {
         const todos = await Todo.find({ user: req.user._id })
         .sort({ createdAt: -1 });
 
+        const todosWithStatus = todos.map((todo) => {
+            const todoObj = todo.toObject();
+            todoObj.status = getTodoStatus(todo);
+            return todoObj;
+        })
+
         return res.status(200).json({
             success: true,
             message: "Todos fetched successfully",
-            count: todos.length,
-            todos
+            count: todosWithStatus.length,
+            todos: todosWithStatus
         });
     }
     catch (error) {
@@ -102,7 +112,6 @@ exports.updateTodo = async (req, res) => {
         if (description !== undefined) todo.description = description.trim();
         if (priority !== undefined) todo.priority = priority;
         if (dueDate !== undefined) todo.dueDate = dueDate;
-        if (status !== undefined) todo.status = status;
 
         await todo.save();
 
@@ -136,9 +145,12 @@ exports.getTodoById = async (req, res) => {
             });
         }
 
+        const todoObj = todo.toObject();
+        todoObj.status = getTodoStatus(todo);
+
         res.status(200).json({
             success: true,
-            todo,
+            todo: todoObj,
         });
     }
     catch (error) {
