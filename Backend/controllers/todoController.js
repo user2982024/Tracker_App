@@ -221,5 +221,5 @@ exports.updateTodoStatus = async (req, res) => {
       success: false,
       message: "Server error",
     });
-  }
+  };
 };
