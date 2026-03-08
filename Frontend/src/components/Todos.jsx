@@ -185,6 +185,55 @@ const Todo = () => {
     }
   };
 
+  const getEmptyMessage = () => {
+    if (todos.length === 0) {
+      return {
+        title: "No todos yet",
+        subtitle: "Create your first task to get started",
+        showButton: true,
+      };
+    }
+
+    switch (activeFilter) {
+      case "pending":
+        return {
+          title: "No pending tasks",
+          subtitle: "You're all caught up!",
+          showButton: false,
+        };
+
+      case "in progress":
+        return {
+          title: "No tasks in progress",
+          subtitle: "Start working on a task to see it here",
+          showButton: false,
+        };
+
+      case "completed":
+        return {
+          title: "No completed tasks",
+          subtitle: "Finish a task to see it here",
+          showButton: false,
+        };
+
+      case "overdue":
+        return {
+          title: "Nothing overdue",
+          subtitle: "Great job staying on track!",
+          showButton: false,
+        };
+
+      default:
+        return {
+          title: "No todos to show",
+          subtitle: "",
+          showButton: true,
+        };
+    }
+  };
+
+  const emptyState = getEmptyMessage();
+
   return (
     <section className="min-h-screen bg-gray-50 px-6 py-8">
       {/* Header */}
@@ -285,16 +334,22 @@ const Todo = () => {
           </div>
 
           <h2 className="text-lg font-semibold text-gray-800">
-            No todos to show
+            {emptyState.title}
           </h2>
 
-          <button
-            className="mt-6 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 text-sm font-medium text-white shadow transition hover:bg-violet-700"
-            onClick={() => navigate("/todos/add")}
-          >
-            <Plus size={18} />
-            Create your first task
-          </button>
+          {emptyState.subtitle && (
+            <p className="mt-2 text-sm text-gray-500">{emptyState.subtitle}</p>
+          )}
+
+          {emptyState.showButton && (
+            <button
+              className="mt-6 inline-flex items-center gap-2 rounded-xl bg-violet-600 px-6 py-3 text-sm font-medium text-white shadow transition hover:bg-violet-700"
+              onClick={() => navigate("/todos/add")}
+            >
+              <Plus size={18} />
+              Create your first task
+            </button>
+          )}
         </div>
       )}
 
