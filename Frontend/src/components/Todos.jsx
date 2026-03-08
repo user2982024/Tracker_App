@@ -8,6 +8,7 @@ import {
   AlertCircle,
   ListTodo,
   Trophy,
+  Timer,
 } from "lucide-react";
 import TodoCard from "./TodoCard";
 
@@ -91,6 +92,7 @@ const Todo = () => {
   // Stats
   const stats = {
     total: todos.length,
+    pending: todos.filter((t) => t.status === "pending").length,
     completed: todos.filter((t) => t.status === "completed").length,
     inProgress: todos.filter((t) => t.status === "in progress").length,
     overdue: todos.filter(
@@ -270,22 +272,28 @@ const Todo = () => {
       {/* Stats */}
       <div className="mb-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
-          title="Total Tasks"
+          title="All Tasks"
           value={stats.total}
           icon={ListTodo}
           color="violet"
+        />
+        <StatCard 
+          title="Pending"
+          value={stats.pending}
+          icon={Timer}
+          color="yellow"
+        />
+        <StatCard
+          title="In Progress"
+          value={stats.inProgress}
+          icon={Clock}
+          color="blue"
         />
         <StatCard
           title="Completed"
           value={stats.completed}
           icon={CheckCircle2}
           color="green"
-        />
-        <StatCard
-          title="In Progress"
-          value={stats.inProgress}
-          icon={Clock}
-          color="yellow"
         />
         <StatCard
           title="Overdue"
@@ -448,6 +456,7 @@ const Todo = () => {
 const StatCard = ({ title, value, icon: Icon, color }) => {
   const colors = {
     violet: "bg-violet-100 text-violet-600",
+    blue: "bg-blue-100 text-blue-600",
     green: "bg-green-100 text-green-600",
     yellow: "bg-yellow-100 text-yellow-600",
     red: "bg-red-100 text-red-600",
