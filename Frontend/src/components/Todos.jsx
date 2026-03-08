@@ -176,7 +176,7 @@ const Todo = () => {
       )
     );
 
-    toast.success("Todo status updated");
+    toast.success(`Todo status updated to ${newStatus}`);
     }
     catch (error) {
       toast.error(error.message);
