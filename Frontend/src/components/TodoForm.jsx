@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const TodoForm = () => {
-  const { id } = useParams(); // detect edit mode
+  const { id } = useParams();
   const navigate = useNavigate();
 
   const isEditMode = Boolean(id);
@@ -18,7 +18,11 @@ const TodoForm = () => {
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
 
-  // Fetch existing todo if editing
+  // Today's date for date validation
+  const today = new Date().toISOString().split("T")[0];
+
+  /* ================= FETCH TODO (EDIT MODE) ================= */
+
   useEffect(() => {
     if (!isEditMode) return;
 
@@ -28,14 +32,11 @@ const TodoForm = () => {
 
         const token = localStorage.getItem("token");
 
-        const res = await fetch(
-          `http://localhost:5000/api/todos/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await fetch(`http://localhost:5000/api/todos/${id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         const data = await res.json();
 
@@ -63,6 +64,8 @@ const TodoForm = () => {
     fetchTodo();
   }, [id, isEditMode, navigate]);
 
+  /* ================= HANDLE INPUT CHANGE ================= */
+
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -72,11 +75,26 @@ const TodoForm = () => {
     }));
   };
 
-  // Handle Submit (Create OR Update)
+  /* ================= HANDLE SUBMIT ================= */
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      // Frontend validation for past date
+      if (formData.dueDate) {
+        const todayDate = new Date();
+        todayDate.setHours(0, 0, 0, 0);
+
+        const selectedDate = new Date(formData.dueDate);
+        selectedDate.setHours(0, 0, 0, 0);
+
+        if (selectedDate < todayDate) {
+          toast.error("Due date cannot be in the past");
+          return;
+        }
+      }
+
       setLoading(true);
 
       const token = localStorage.getItem("token");
@@ -117,6 +135,8 @@ const TodoForm = () => {
     }
   };
 
+  /* ================= LOADING STATE ================= */
+
   if (fetching) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -125,19 +145,25 @@ const TodoForm = () => {
     );
   }
 
+  /* ================= UI ================= */
+
   return (
     <section className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <div className="w-full max-w-xl bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+
         <h2 className="text-xl font-semibold text-gray-800 mb-4">
           {isEditMode ? "Edit Todo" : "Create Todo"}
         </h2>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
-          {/* Title */}
+
+          {/* TITLE */}
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Title
             </label>
+
             <input
               type="text"
               name="title"
@@ -148,11 +174,13 @@ const TodoForm = () => {
             />
           </div>
 
-          {/* Description */}
+          {/* DESCRIPTION */}
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Description
             </label>
+
             <textarea
               rows="3"
               name="description"
@@ -162,12 +190,17 @@ const TodoForm = () => {
             />
           </div>
 
-          {/* Priority & Due Date */}
+          {/* PRIORITY + DUE DATE */}
+
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+            {/* PRIORITY */}
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Priority
               </label>
+
               <select
                 name="priority"
                 value={formData.priority}
@@ -180,22 +213,34 @@ const TodoForm = () => {
               </select>
             </div>
 
+            {/* DUE DATE */}
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Due Date
               </label>
+
               <input
                 type="date"
                 name="dueDate"
                 value={formData.dueDate}
+                min={today}
                 onChange={handleChange}
                 className="w-full rounded-lg border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+
+              <p className="text-xs text-gray-500 mt-1">
+                Due date must be today or a future date
+              </p>
+
             </div>
+
           </div>
 
-          {/* Actions */}
+          {/* ACTION BUTTONS */}
+
           <div className="flex justify-end gap-3 pt-2">
+
             <button
               type="button"
               onClick={() => navigate("/todos")}
@@ -217,11 +262,14 @@ const TodoForm = () => {
                 ? "Update Todo"
                 : "Add Todo"}
             </button>
+
           </div>
+
         </form>
+
       </div>
     </section>
-  )
+  );
 };
 
 export default TodoForm;

@@ -94,34 +94,36 @@ const Todo = () => {
     completed: todos.filter((t) => t.status === "completed").length,
     inProgress: todos.filter((t) => t.status === "in progress").length,
     overdue: todos.filter(
-      (t) => new Date(t.dueDate) < new Date() && t.status !== "Completed",
+      (t) => new Date(t.dueDate) < new Date() && t.status !== "completed",
     ).length,
   };
 
   // Filters
   const filters = [
     { label: "All Tasks", value: "all" },
+    { label: "Pending", value: "pending" },
     { label: "In Progress", value: "in progress" },
     { label: "Completed", value: "completed" },
     { label: "Overdue", value: "overdue" },
   ];
 
   // Filter todos dynamically
-  const filteredTodos = (() => {
-    if (activeFilter === "in progress") {
-      return todos.filter((t) => t.status === "in progress");
-    }
+  const filteredTodos = todos.filter((todo) => {
+    if (activeFilter === "pending") return todo.status === "pending";
 
-    if (activeFilter === "completed") {
-      return todos.filter((t) => t.status === "completed");
-    }
+    if (activeFilter === "in progress") return todo.status === "in progress";
 
-    if (activeFilter === "overdue") {
-      return todos.filter((t) => t.status === "overdue");
-    }
+    if (activeFilter === "completed") return todo.status === "completed";
 
-    return todos;
-  })();
+    if (activeFilter === "overdue")
+      return (
+        todo.dueDate &&
+        new Date(todo.dueDate) < new Date() &&
+        todo.status !== "completed"
+      );
+
+    return true;
+  });
 
   const deleteAllTodos = async () => {
     try {
@@ -154,14 +156,17 @@ const Todo = () => {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch(`http://localhost:5000/api/todos/${todoId}/status`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
+      const res = await fetch(
+        `http://localhost:5000/api/todos/${todoId}/status`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ status: newStatus }),
         },
-        body: JSON.stringify({ status: newStatus }),
-      });
+      );
 
       const data = await res.json();
 
@@ -170,18 +175,15 @@ const Todo = () => {
       }
 
       // Update UI instantly
-    setTodos((prev) =>
-      prev.map((todo) =>
-        todo._id === todoId ? data.todo : todo
-      )
-    );
+      setTodos((prev) =>
+        prev.map((todo) => (todo._id === todoId ? data.todo : todo)),
+      );
 
-    toast.success(`Todo status updated to ${newStatus}`);
-    }
-    catch (error) {
+      toast.success(`Todo status updated to ${newStatus}`);
+    } catch (error) {
       toast.error(error.message);
     }
-  }
+  };
 
   return (
     <section className="min-h-screen bg-gray-50 px-6 py-8">
@@ -265,7 +267,12 @@ const Todo = () => {
       {filteredTodos.length > 0 && (
         <div className="space-y-3">
           {filteredTodos.map((todo) => (
-            <TodoCard key={todo._id} todo={todo} onDelete={handleDeleteClick} onStatusChange={handleStatusChange} />
+            <TodoCard
+              key={todo._id}
+              todo={todo}
+              onDelete={handleDeleteClick}
+              onStatusChange={handleStatusChange}
+            />
           ))}
         </div>
       )}

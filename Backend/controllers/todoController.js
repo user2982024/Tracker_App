@@ -1,9 +1,18 @@
 const Todo = require("../models/Todos");
 
 // CREATE TODO
+// CREATE TODO
 exports.createTodo = async (req, res) => {
   try {
     const { title, description, priority, dueDate } = req.body;
+
+    // Validate due date first
+    if (dueDate && new Date(dueDate) < new Date()) {
+      return res.status(400).json({
+        success: false,
+        message: "Due date cannot be in the past",
+      });
+    }
 
     const todo = await Todo.create({
       title,
@@ -30,13 +39,12 @@ exports.createTodo = async (req, res) => {
   }
 };
 
-
 // GET ALL TODOS
 exports.getAllTodos = async (req, res) => {
   try {
-
-    const todos = await Todo.find({ user: req.user._id })
-      .sort({ createdAt: -1 });
+    const todos = await Todo.find({ user: req.user._id }).sort({
+      createdAt: -1,
+    });
 
     res.status(200).json({
       success: true,
@@ -44,9 +52,7 @@ exports.getAllTodos = async (req, res) => {
       count: todos.length,
       todos,
     });
-
   } catch (error) {
-
     console.error("Error fetching todos", error.message);
 
     res.status(500).json({
@@ -56,11 +62,9 @@ exports.getAllTodos = async (req, res) => {
   }
 };
 
-
 // DELETE SINGLE TODO
 exports.deleteTodo = async (req, res) => {
   try {
-
     const todo = await Todo.findOneAndDelete({
       _id: req.params.id,
       user: req.user._id,
@@ -77,9 +81,7 @@ exports.deleteTodo = async (req, res) => {
       success: true,
       message: "Todo deleted successfully",
     });
-
   } catch (error) {
-
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -88,11 +90,9 @@ exports.deleteTodo = async (req, res) => {
   }
 };
 
-
 // UPDATE TODO
 exports.updateTodo = async (req, res) => {
   try {
-
     const { title, description, priority, dueDate } = req.body;
 
     const todo = await Todo.findOne({
@@ -119,9 +119,7 @@ exports.updateTodo = async (req, res) => {
       message: "Todo updated successfully",
       todo,
     });
-
   } catch (error) {
-
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -130,11 +128,9 @@ exports.updateTodo = async (req, res) => {
   }
 };
 
-
 // GET SINGLE TODO
 exports.getTodoById = async (req, res) => {
   try {
-
     const todo = await Todo.findOne({
       _id: req.params.id,
       user: req.user._id,
@@ -151,9 +147,7 @@ exports.getTodoById = async (req, res) => {
       success: true,
       todo,
     });
-
   } catch (error) {
-
     res.status(500).json({
       success: false,
       message: "Server error",
@@ -162,11 +156,9 @@ exports.getTodoById = async (req, res) => {
   }
 };
 
-
 // DELETE ALL TODOS
 exports.deleteAllTodos = async (req, res) => {
   try {
-
     const result = await Todo.deleteMany({
       user: req.user._id,
     });
@@ -176,9 +168,7 @@ exports.deleteAllTodos = async (req, res) => {
       message: "All todos deleted successfully",
       deletedCount: result.deletedCount,
     });
-
   } catch (error) {
-
     res.status(500).json({
       success: false,
       message: "Server error while deleting todos",
@@ -186,11 +176,9 @@ exports.deleteAllTodos = async (req, res) => {
   }
 };
 
-
 // UPDATE STATUS
 exports.updateTodoStatus = async (req, res) => {
   try {
-
     const { status } = req.body;
 
     const todo = await Todo.findOne({
@@ -214,12 +202,10 @@ exports.updateTodoStatus = async (req, res) => {
       message: "Todo status updated",
       todo,
     });
-
   } catch (error) {
-
     res.status(500).json({
       success: false,
       message: "Server error",
     });
-  };
+  }
 };
