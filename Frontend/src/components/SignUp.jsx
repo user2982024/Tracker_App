@@ -129,6 +129,6 @@ const Signup = () => {
       </div>
     </section>
   );
-}
+};
 
 export default Signup;
