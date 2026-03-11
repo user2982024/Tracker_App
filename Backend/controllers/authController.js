@@ -75,7 +75,7 @@ exports.signin = async (req, res) => {
                 success: false,
                 message: "Invalid email or password",
             });
-        }
+        };
 
         // Generate JWT token
         const token = jwt.sign({ user: user._id }, process.env.JWT_SECRET, {
