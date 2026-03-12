@@ -38,7 +38,7 @@ const Signin = () => {
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
 
-      toast.success("Signin successful! 🎉");
+      toast.success("Signin successful!");
 
       setTimeout(() => {
         window.location.href = "/";
