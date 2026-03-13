@@ -8,6 +8,7 @@ import NoteForm from "./components/NoteForm";
 import ArchivedNotes from "./components/ArchivedNotes";
 import ProtectedRoute from "./components/ProtectedRoutes";
 import TodoForm from "./components/TodoForm";
+import Goals from "./components/Goals";
 
 import MainLayout from "./layouts/MainLayout"
 import EmptyLayout from "./layouts/EmptyLayout"
@@ -27,6 +28,7 @@ const App = () => {
             <Route path="/notes" element={<Notes />} />
             <Route path="/notes/archived" element={<ArchivedNotes />}/>
             <Route path="/todos" element={<Todos />} />
+            <Route path="/goals" element={<Goals />}/>
           </Route>
           <Route element={<EmptyLayout />}>
             <Route path="/notes/add" element={<NoteForm mode="create"/>}/>
