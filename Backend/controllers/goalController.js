@@ -44,4 +44,4 @@ exports.getGoals = async (req, res) => {
       message: "Failed to fetch goals",
     });
   }
-}
+};
