@@ -1,5 +1,6 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const cors = require("cors");
 const connectDB = require("./utils/db");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
@@ -8,6 +9,12 @@ const authRoutes = require("./routes/authRoutes");
 dotenv.config();
 
 const app = express();
+
+// Enable CORS
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 
 // Middleware
 app.use(express.json());

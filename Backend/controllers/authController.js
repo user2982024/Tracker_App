@@ -33,13 +33,13 @@ exports.signup = async (req, res) => {
 exports.signin = async (req, res) => {
   try {
     // Get validated data
-    const { email, passowrd } = req.body;
+    const { email, password } = req.body;
 
     // Call service
     const result = await authService.signin({ email, password });
 
     // Set cookie
-    res.cookie("token", token, {
+    res.cookie("token", result.token, {
       httpOnly: true, // cannot be accessed by JS (XSS protection)
       secure: process.env.NODE_ENV === "production", // only HTTPs in production
       sameSite: "strict",

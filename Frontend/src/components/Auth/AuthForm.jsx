@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { signinUser, signupUser } from "../../services/authServices";
+import toast from "react-hot-toast";
 
 const AuthForm = ({ mode = "signup" }) => {
   const isSignup = mode === "signup";
@@ -25,27 +27,45 @@ const AuthForm = ({ mode = "signup" }) => {
   };
 
   // Handle submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     setError("");
     setLoading(true);
 
-    setTimeout(() => {
-      setLoading(false);
-
+    try {
+      // Validation
       if (isSignup && !formData.name) {
         setError("Name is required");
+        setLoading(false);
         return;
       }
 
       if (!formData.email || !formData.password) {
         setError("Email and password are required");
+        setLoading(false);
         return;
       }
 
-      console.log("Form submitted:", formData);
-    }, 1000);
+      // API Call
+      const data = isSignup
+        ? await signupUser(formData)
+        : await signinUser(formData);
+
+      // Success toast
+      toast.success(
+        isSignup ? "Account created successfully" : "Login successful",
+      );
+
+      console.log("Response", data);
+    } catch (err) {
+      // Error toast
+      const message = err?.message || err || "Something went wrong";
+      toast.error(message);
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -80,6 +100,9 @@ const AuthForm = ({ mode = "signup" }) => {
                            focus:outline-none focus:ring-2 focus:ring-blue-500 
                            transition"
               />
+              <p className="text-xs text-gray-500 mt-1">
+                Name must be between 5 and 30 characters
+              </p>
             </div>
           )}
 
@@ -115,6 +138,10 @@ const AuthForm = ({ mode = "signup" }) => {
                          focus:outline-none focus:ring-2 focus:ring-blue-500 
                          transition"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              Must be at least 6 characters and include uppercase, lowercase,
+              and a number
+            </p>
           </div>
 
           {/* Button */}
@@ -124,14 +151,14 @@ const AuthForm = ({ mode = "signup" }) => {
             className="w-full bg-blue-600 text-white py-2.5 rounded-lg 
                        font-medium hover:bg-blue-700 transition duration-200"
           >
-            {isSignup ? "Sign Up" : "Sign In"}
+            {loading ? "Processing..." : isSignup ? "Sign Up" : "Sign In"}
           </button>
 
           {/* Switch Link */}
           <p className="text-sm text-center text-gray-500">
             {isSignup ? "Already have an account?" : "Don't have an account?"}
             <span className="text-blue-600 ml-1 cursor-pointer hover:underline">
-              {loading ? "Processing..." : isSignup ? "Sign Up" : "Sign In"}
+              {isSignup ? "Sign In" : "Sign Up"}
             </span>
           </p>
         </form>
