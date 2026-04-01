@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { use, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { signinUser, signupUser } from "../../services/authServices";
 import toast from "react-hot-toast";
 
 const AuthForm = ({ mode = "signup" }) => {
   const isSignup = mode === "signup";
+
+  const navigate = useNavigate();
 
   // Form state
   const [formData, setFormData] = useState({
@@ -67,7 +70,7 @@ const AuthForm = ({ mode = "signup" }) => {
       setLoading(false);
     }
   };
-  
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       {/* Card Container */}
@@ -149,7 +152,7 @@ const AuthForm = ({ mode = "signup" }) => {
             type="submit"
             disabled={loading}
             className="w-full bg-blue-600 text-white py-2.5 rounded-lg 
-                       font-medium hover:bg-blue-700 transition duration-200"
+                       font-medium hover:bg-blue-700 transition duration-200 hover:cursor-pointer"
           >
             {loading ? "Processing..." : isSignup ? "Sign Up" : "Sign In"}
           </button>
@@ -157,7 +160,7 @@ const AuthForm = ({ mode = "signup" }) => {
           {/* Switch Link */}
           <p className="text-sm text-center text-gray-500">
             {isSignup ? "Already have an account?" : "Don't have an account?"}
-            <span className="text-blue-600 ml-1 cursor-pointer hover:underline">
+            <span className="text-blue-600 ml-1 cursor-pointer hover:underline" onClick={() => navigate(`/${isSignup ? 'signin' : 'signup'}`)}>
               {isSignup ? "Sign In" : "Sign Up"}
             </span>
           </p>
