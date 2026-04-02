@@ -20,12 +20,7 @@ exports.signup = async (req, res) => {
       data: user,
     });
   } catch (error) {
-    console.error("Signup Controller Error:", error.message);
-
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    next(error);
   }
 };
 
@@ -54,12 +49,7 @@ exports.signin = async (req, res) => {
       data: result,
     });
   } catch (error) {
-    console.error("Signin Controller Error:", error.message);
-
-    return res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    next(error);
   }
 };
 
@@ -79,10 +69,6 @@ exports.signout = async (req, res) => {
       message: "User signed out successfully!",
     });
   } catch (error) {
-    console.error("Logout Error:", error.message);
-    return res.status(500).json({
-      success: false,
-      message: "Logout failed",
-    });
+    next(error);
   }
 };
