@@ -4,21 +4,16 @@ import { useAuth } from "../context/AuthContext";
 const PublicRoute = () => {
   const { user, loading } = useAuth();
 
-  // Wait for auth check
+  // AIT — do not render anything yet
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-gray-500">Loading...</p>
-      </div>
-    );
+    return null; // or loader
   }
 
-  // If already logged in → go to app
+  // If logged in → go to app
   if (user) {
     return <Navigate to="/app" replace />;
   }
 
-  // Not logged in → allow access
   return <Outlet />;
 };
 

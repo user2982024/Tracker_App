@@ -4,21 +4,15 @@ import { useAuth } from "../context/AuthContext";
 const ProtectedRoute = () => {
   const { user, loading } = useAuth();
 
-  // Wait until auth check finishes
+  // WAIT FIRST
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-gray-500">Checking authentication...</p>
-      </div>
-    );
+    return null; // or loader
   }
 
-  // Not logged in
   if (!user) {
     return <Navigate to="/" replace />;
   }
 
-  // Logged in
   return <Outlet />;
 };
 

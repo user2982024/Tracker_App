@@ -69,9 +69,11 @@ exports.signin = async ({ email, password }) => {
 };
 
 exports.getCurrentUser = async (userId) => {
-  // For now, we just return userId
-  // Later: fetch full user from DB
-  return {
-    id: userId,
-  };
+  const user = await User.findById(userId).select("-password");
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return user;
 };

@@ -17,8 +17,8 @@ exports.signup = async (req, res, next) => {
     res.cookie("token", result.token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days  
+      sameSite: "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
     // Send response
@@ -45,7 +45,7 @@ exports.signin = async (req, res, next) => {
     res.cookie("token", result.token, {
       httpOnly: true, // cannot be accessed by JS (XSS protection)
       secure: process.env.NODE_ENV === "production", // only HTTPs in production
-      sameSite: "strict",
+      sameSite: "lax",
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -67,7 +67,7 @@ exports.signout = async (req, res, next) => {
     res.clearCookie("token", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: "lax",
     });
 
     // Send response
@@ -88,12 +88,19 @@ exports.getCurrentUser = async (req, res, next) => {
 
     const user = await authService.getCurrentUser(userId);
 
-    return res.status(200).json({
-      success: true,
-      user,
-    });
-  }
-  catch (error) {
+    return res
+      .set(
+        "Cache-Control",
+        "no-store, no-cache, must-revalidate, proxy-revalidate",
+      )
+      .set("Pragma", "no-cache")
+      .set("Expires", "0")
+      .status(200)
+      .json({
+        success: true,
+        user,
+      });
+  } catch (error) {
     next(error);
   }
 };

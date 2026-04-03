@@ -58,7 +58,7 @@ const AuthForm = ({ mode = "signup" }) => {
         : await signinUser(formData);
 
       // Update global auth state
-      setUser(data.user);
+      setUser(data.data);
 
       // Success toast
       toast.success(
@@ -68,7 +68,7 @@ const AuthForm = ({ mode = "signup" }) => {
       console.log("Response", data);
 
       // Navigate after auth
-        navigate("/app");
+        navigate("/app", { replace: true });
 
     } catch (err) {
       // Error toast

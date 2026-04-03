@@ -22,13 +22,11 @@ import HabbitsPage from "../pages/HabbitsPage";
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Public Route */}
+
+      {/* ALL Public Routes in ONE wrapper */}
       <Route element={<PublicRoutes />}>
         <Route path="/" element={<LandingPage />} />
-      </Route>
 
-      {/* Auth Routes */}
-      <Route element={<PublicRoutes />}>
         <Route
           path="/signup"
           element={
@@ -37,6 +35,7 @@ const AppRoutes = () => {
             </AuthLayout>
           }
         />
+
         <Route
           path="/signin"
           element={
@@ -47,6 +46,7 @@ const AppRoutes = () => {
         />
       </Route>
 
+      {/* Protected Routes */}
       <Route element={<ProtectedRoutes />}>
         <Route path="/app" element={<AppLayout />}>
           <Route index element={<Dashboard />} />
@@ -56,6 +56,7 @@ const AppRoutes = () => {
           <Route path="habits" element={<HabbitsPage />} />
         </Route>
       </Route>
+
     </Routes>
   );
 };
