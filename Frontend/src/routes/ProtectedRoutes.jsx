@@ -1,26 +1,11 @@
-import { useState, useEffect } from "react";
 import { Navigate, Outlet } from "react-router-dom";
-import { getAuthenticatedUser } from "../services/authServices";
+import { useAuth } from "../context/AuthContext";
 
-const ProtectedRoutes = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(null);
+const ProtectedRoute = () => {
+  const { user, loading } = useAuth();
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                await getAuthenticatedUser();
-                setIsAuthenticated(true);
-            }
-            catch (error) {
-                setIsAuthenticated(false);
-            }
-        };
-
-        checkAuth();
-    }, []);
-
-    // while checking authentication
-    if (isAuthenticated === null) {
+  // Wait until auth check finishes
+  if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
         <p className="text-gray-500">Checking authentication...</p>
@@ -28,13 +13,13 @@ const ProtectedRoutes = () => {
     );
   }
 
-    // Not authenticated -> redirect
-    if (!isAuthenticated) {
-        return <Navigate to="/signin" replace/>
-    }
+  // Not logged in
+  if (!user) {
+    return <Navigate to="/" replace />;
+  }
 
-    // Authenticated -> allow access
-    return <Outlet />
-}
+  // Logged in
+  return <Outlet />;
+};
 
-export default ProtectedRoutes;
+export default ProtectedRoute;
