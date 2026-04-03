@@ -61,6 +61,12 @@ const AuthForm = ({ mode = "signup" }) => {
       );
 
       console.log("Response", data);
+
+      // Redirect
+      if (isSignup) {
+        navigate("/app");
+      }
+
     } catch (err) {
       // Error toast
       const message = err?.message || err || "Something went wrong";

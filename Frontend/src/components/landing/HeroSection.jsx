@@ -1,6 +1,9 @@
-
+import { useNavigate } from "react-router-dom";
 
 const HeroSection = () => {
+
+  const navigate = useNavigate();
+
   return (
     <section id="home" className="w-full bg-linear-to-r from-white-50 to-blue-200 pt-16 pb-20">
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
@@ -20,7 +23,7 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="mt-8 flex items-center gap-4">
-            <button className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition">
+            <button className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition" onClick={() => navigate("/signup")}>
               Get Started
             </button>
 

@@ -4,6 +4,7 @@ const cors = require("cors");
 const connectDB = require("./utils/db");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
+const errorHandler = require("./middlewares/errorMiddleware");
 
 // Load environment variables
 dotenv.config();
@@ -20,10 +21,11 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-//Auth routes
+// Auth routes
 app.use("/api/auth", authRoutes);
 
-const PORT = process.env.PORT || 5000;
+// Error handling middleware
+app.use(errorHandler);
 
 // Start server
 const startServer = async () => {

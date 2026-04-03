@@ -32,6 +32,7 @@ export const signupUser = async (data) => {
   }
 };
 
+// Signin API
 export const signinUser = async (data) => {
   try {
     const res = await fetch(`${BASE_URL}/signin`, {
@@ -59,4 +60,19 @@ export const signinUser = async (data) => {
       error.message || "An unexpected error occured during signin",
     );
   }
+};
+
+// Get current authenticated user API
+export const getAuthenticatedUser = async () => {
+  const response = await fetch(`${BASE_URL}/me`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Not authenticated");
+  }
+
+  const data = await response.json();
+  return data;
 };

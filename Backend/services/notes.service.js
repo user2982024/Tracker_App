@@ -12,6 +12,15 @@ const createNote = async ({ title, content, userId }) => {
     return note;
 };
 
+// Get all notes of a logged in user service
+const getAllNotes = async (userId) => {
+    const notes = await Note.find({ user: userId })
+    .sort({ isPinned: -1, createdAt: -1 });
+
+    return notes;
+}
+
 module.exports = {
     createNote,
+    getAllNotes,
 };

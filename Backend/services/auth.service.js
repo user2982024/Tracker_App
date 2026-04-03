@@ -1,5 +1,6 @@
-const User = require("../models/User");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
 exports.signup = async ({ name, email, password }) => {
   // Check if user already exists
@@ -20,43 +21,57 @@ exports.signup = async ({ name, email, password }) => {
     password: hashedPassword,
   });
 
+  // Generate token (same as signin)
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
+
   // Return safe user data
   return {
-    id: user._id,
-    name: user.name,
-    email: user.email,
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    },
+    token,
   };
 };
 
 exports.signin = async ({ email, password }) => {
-    // Find user
-    const user = await User.findOne({ email });
+  // Find user
+  const user = await User.findOne({ email });
 
-    if (!user) {
-        throw new Error("Invalid email or passowrd");
-    }
-    
-    // Compare password
-    const isMatch = await bcrypt.compare(password, user.password);
-    
-    if (!isMatch) {
-        throw new Error("Invalid email or passowrd");
-    }
+  if (!user) {
+    throw new Error("Invalid email or passowrd");
+  }
 
-    // Generate JWT
-    const token = jwt.sign(
-        { userId: user._id },
-        process.env.JWT_SECRET,
-        { expiresIn: "7d" }
-    );
+  // Compare password
+  const isMatch = await bcrypt.compare(password, user.password);
 
-    // Return safe data
-    return {
-        user: {
-            id: user._id,
-            name: user.name,
-            email: user.email,
-        },
-        token,
-    };
+  if (!isMatch) {
+    throw new Error("Invalid email or passowrd");
+  }
+
+  // Generate JWT
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
+
+  // Return safe data
+  return {
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    },
+    token,
+  };
+};
+
+exports.getCurrentUser = async (userId) => {
+  // For now, we just return userId
+  // Later: fetch full user from DB
+  return {
+    id: userId,
+  };
 };
