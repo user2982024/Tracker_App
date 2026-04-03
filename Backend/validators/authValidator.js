@@ -29,7 +29,7 @@ exports.signinValidator = [
     .withMessage("Please provide a valid email")
     .normalizeEmail(),
 
-    // Only basic validation beacuse the user signed up with valid password 
+    // Only basic validation because the user signed up with valid password 
     body("password")
     .trim()
     .notEmpty()

@@ -3,6 +3,9 @@ import { Routes, Route } from "react-router-dom";
 // Protected Routes
 import ProtectedRoutes from "./ProtectedRoutes";
 
+// Public Routes
+import PublicRoutes from "./PublicRoutes";
+
 // Layouts
 import AppLayout from "../Layouts/AppLayout";
 import AuthLayout from "../Layouts/AuthLayout";
@@ -20,25 +23,29 @@ const AppRoutes = () => {
   return (
     <Routes>
       {/* Public Route */}
-      <Route path="/" element={<LandingPage />} />
+      <Route element={<PublicRoutes />}>
+        <Route path="/" element={<LandingPage />} />
+      </Route>
 
       {/* Auth Routes */}
-      <Route
-        path="/signup"
-        element={
-          <AuthLayout>
-            <AuthForm mode="signup" />
-          </AuthLayout>
-        }
-      />
-      <Route
-        path="/signin"
-        element={
-          <AuthLayout>
-            <AuthForm mode="signin" />
-          </AuthLayout>
-        }
-      />
+      <Route element={<PublicRoutes />}>
+        <Route
+          path="/signup"
+          element={
+            <AuthLayout>
+              <AuthForm mode="signup" />
+            </AuthLayout>
+          }
+        />
+        <Route
+          path="/signin"
+          element={
+            <AuthLayout>
+              <AuthForm mode="signin" />
+            </AuthLayout>
+          }
+        />
+      </Route>
 
       <Route element={<ProtectedRoutes />}>
         <Route path="/app" element={<AppLayout />}>

@@ -1,6 +1,16 @@
 // Base URL
 const BASE_URL = "http://localhost:5000/api/auth";
 
+// Helper to extract error safely (VERY IMPORTANT)
+const extractErrorMessage = (result) => {
+  if (result?.errors?.length > 0) {
+    const err = result.errors[0];
+    return err.message || err.msg || "Validation error";
+  }
+
+  return result?.message || result?.error || "Request failed";
+};
+
 // Signup API
 export const signupUser = async (data) => {
   try {
@@ -9,25 +19,20 @@ export const signupUser = async (data) => {
       headers: {
         "Content-Type": "application/json",
       },
-      credentials: "include", // Important for cookies
+      credentials: "include",
       body: JSON.stringify(data),
     });
 
     const result = await res.json();
 
     if (!res.ok) {
-      // Handle validation errors
-      if (result.errors && result.errors.length > 0) {
-        throw result.errors[0].msg; // first validation message
-      }
-
-      throw result.message || "Request failed";
+      throw new Error(extractErrorMessage(result));
     }
 
     return result;
   } catch (error) {
     throw new Error(
-      error.message || "An unexpected error occurred during signup",
+      error.message || "An unexpected error occurred during signup"
     );
   }
 };
@@ -47,32 +52,53 @@ export const signinUser = async (data) => {
     const result = await res.json();
 
     if (!res.ok) {
-      if (result?.errors?.length > 0) {
-        throw new Error(result.errors[0].message);
-      }
-
-      throw new Error(result?.message || "Request failed");
+      throw new Error(extractErrorMessage(result));
     }
 
     return result;
   } catch (error) {
     throw new Error(
-      error.message || "An unexpected error occured during signin",
+      error.message || "An unexpected error occurred during signin"
     );
   }
 };
 
 // Get current authenticated user API
 export const getAuthenticatedUser = async () => {
-  const response = await fetch(`${BASE_URL}/me`, {
-    method: "GET",
-    credentials: "include",
-  });
+  try {
+    const res = await fetch(`${BASE_URL}/me`, {
+      method: "GET",
+      credentials: "include",
+    });
 
-  if (!response.ok) {
-    throw new Error("Not authenticated");
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data?.message || "Not authenticated");
+    }
+
+    return data;
+  } catch (error) {
+    throw new Error(error.message || "Failed to fetch user");
   }
+};
 
-  const data = await response.json();
-  return data;
+// Logout API (future-ready)
+export const logoutUser = async () => {
+  try {
+    const res = await fetch(`${BASE_URL}/signout`, {
+      method: "POST",
+      credentials: "include",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data?.message || "Logout failed");
+    }
+
+    return data;
+  } catch (error) {
+    throw new Error(error.message || "Logout failed");
+  }
 };

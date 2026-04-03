@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signinUser, signupUser } from "../../services/authServices";
 import toast from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext";
+import { signinUser, signupUser } from "../../services/authServices";
 
 const AuthForm = ({ mode = "signup" }) => {
+  const { setUser } = useAuth();
   const isSignup = mode === "signup";
 
   const navigate = useNavigate();
@@ -55,6 +57,9 @@ const AuthForm = ({ mode = "signup" }) => {
         ? await signupUser(formData)
         : await signinUser(formData);
 
+      // Update global auth state
+      setUser(data.user);
+
       // Success toast
       toast.success(
         isSignup ? "Account created successfully" : "Login successful",
@@ -62,10 +67,8 @@ const AuthForm = ({ mode = "signup" }) => {
 
       console.log("Response", data);
 
-      // Redirect
-      if (isSignup) {
+      // Navigate after auth
         navigate("/app");
-      }
 
     } catch (err) {
       // Error toast
