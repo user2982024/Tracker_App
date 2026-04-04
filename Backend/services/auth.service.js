@@ -42,7 +42,7 @@ exports.signin = async ({ email, password }) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new Error("Invalid email or passowrd");
+    throw new Error("Invalid email or password");
   }
 
   // Compare password

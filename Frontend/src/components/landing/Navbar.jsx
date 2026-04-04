@@ -66,7 +66,7 @@ const Navbar = () => {
 
               {/* 🔵 Underline */}
               <span
-                className={`absolute left-0 -bottom-1 h-[2px] bg-blue-600 transition-all duration-300 ${
+                className={`absolute left-0 -bottom-1 h-0.5 bg-blue-600 transition-all duration-300 ${
                   activeSection === section ? "w-full" : "w-0"
                 }`}
               ></span>

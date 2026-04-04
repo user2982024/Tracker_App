@@ -4,6 +4,7 @@ const cors = require("cors");
 const connectDB = require("./utils/db");
 const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
+const notesRoutes = require("./routes/notesRoutes");
 const errorHandler = require("./middlewares/errorMiddleware");
 
 // Load environment variables
@@ -23,6 +24,9 @@ app.use(cookieParser());
 
 // Auth routes
 app.use("/api/auth", authRoutes);
+
+// Notes authRoutes
+app.use("/api/notes", notesRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

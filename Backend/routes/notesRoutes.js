@@ -3,14 +3,14 @@ const express = require("express");
 const { validateCreateNote } = require("../validators/notesValidator");
 const validateRequest = require("../middlewares/validateRequest");
 const authMiddleware = require("../middlewares/authMiddleware");
-const { createNote } = require("../controllers/notesController");
+const { createNote, getAllNotes } = require("../controllers/notesController");
 
 const router = express.Router();
 
 // Get all notes of a logged in user route
-app.get("/", authMiddleware)
+router.get("/", authMiddleware, getAllNotes)
 
 // Create note route
-Router.post("/", authMiddleware, validateCreateNote, validateRequest, createNote);
+router.post("/create-note", authMiddleware, validateCreateNote, validateRequest, createNote);
 
 module.exports = router;

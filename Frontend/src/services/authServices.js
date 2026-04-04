@@ -83,8 +83,8 @@ export const getAuthenticatedUser = async () => {
   }
 };
 
-// Logout API (future-ready)
-export const logoutUser = async () => {
+// Signout API 
+export const signoutUser = async () => {
   try {
     const res = await fetch(`${BASE_URL}/signout`, {
       method: "POST",

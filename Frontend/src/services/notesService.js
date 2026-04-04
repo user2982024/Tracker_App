@@ -2,9 +2,9 @@ const BASE_URL = "http://localhost:5000/api/notes";
 
 // Create note
 export const createNote = async (formData) => {
-  const response = await fetch(BASE_URL, {
+  const response = await fetch(`${BASE_URL}/create-note`, {
     method: "POST",
-    credentials: "include", // importnat for cookies (JWT)
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
     },
@@ -20,17 +20,20 @@ export const createNote = async (formData) => {
   return data;
 };
 
-// Get all notes
-export const getNotes = async () => {
-  const response = await fetch(BASE_URL, {
-    method: "GET",
-    credentials: "include",
-  });
+// Get all notes (with pagination)
+export const getNotes = async (page = 1, limit = 8) => {
+  const response = await fetch(
+    `${BASE_URL}?page=${page}&limit=${limit}`,
+    {
+      method: "GET",
+      credentials: "include",
+    }
+  );
 
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message || "Fialed to fetch notes");
+    throw new Error(data.message || "Failed to fetch notes");
   }
 
   return data;

@@ -12,18 +12,19 @@ import AuthLayout from "../Layouts/AuthLayout";
 
 // Pages
 import LandingPage from "../pages/LandingPage";
-import AuthForm from "../components/Auth/AuthForm";
 import Dashboard from "../pages/Dashboard";
 import NotesPage from "../pages/NotesPage";
 import TodosPage from "../pages/TodosPage";
 import GoalsPage from "../pages/GoalsPage";
 import HabbitsPage from "../pages/HabbitsPage";
 
+// Forms
+import AuthForm from "../components/Auth/AuthForm";
+
 const AppRoutes = () => {
   return (
     <Routes>
-
-      {/* ALL Public Routes in ONE wrapper */}
+      {/* Public Routes */}
       <Route element={<PublicRoutes />}>
         <Route path="/" element={<LandingPage />} />
 
@@ -50,13 +51,13 @@ const AppRoutes = () => {
       <Route element={<ProtectedRoutes />}>
         <Route path="/app" element={<AppLayout />}>
           <Route index element={<Dashboard />} />
+
           <Route path="notes" element={<NotesPage />} />
           <Route path="todos" element={<TodosPage />} />
           <Route path="goals" element={<GoalsPage />} />
           <Route path="habits" element={<HabbitsPage />} />
         </Route>
       </Route>
-
     </Routes>
   );
 };

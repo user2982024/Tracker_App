@@ -1,55 +1,36 @@
 import { useState, useEffect, createContext, useContext } from "react";
+import { signoutUser, getAuthenticatedUser } from "../services/authServices";
 
-// Create context
 const AuthContext = createContext();
 
-// Custom hook to use auth context
-export const useAuth = () => {
-    return useContext(AuthContext);
-};
+export const useAuth = () => useContext(AuthContext);
 
-// Provider component
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-    // Check auth on app load
-    useEffect(() => {
-        const checkAuth = async () => {
-            try {
-                const res = await fetch("http://localhost:5000/api/auth/me", {
-                    method: "GET",
-                    credentials: "include",
-                });
+  // Check auth on app load
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const data = await getAuthenticatedUser();
+        setUser(data.user);
+      } catch (error) {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-                if (!res.ok) {
-                    throw new Error("Not authenticated");
-                }
+    checkAuth();
+  }, []);
 
-                const data = await res.json();
-
-                setUser(data.user);
-            }
-            catch (error) {
-                setUser(null);
-            }
-            finally {
-                setLoading(false);
-            }
-        };
-
-        checkAuth();
-    }, []);
-
-    // Logout handler
-    const logout = async () => {
+  // Logout
+  const logout = async () => {
     try {
-      await fetch("http://localhost:5000/api/auth/signout", {
-        method: "POST",
-        credentials: "include",
-      });
+      await signoutUser();
     } catch (error) {
-      console.error("Logout failed", error);
+      console.error("Logout failed:", error.message);
     } finally {
       setUser(null);
     }
@@ -60,11 +41,12 @@ export const AuthProvider = ({ children }) => {
     setUser,
     loading,
     logout,
+    isAuthenticated: !!user,
   };
 
   return (
     <AuthContext.Provider value={value}>
-        {children}
+      {children}
     </AuthContext.Provider>
-  )
-}
+  );
+};

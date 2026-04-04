@@ -2,43 +2,57 @@ const notesService = require("../services/notes.service");
 
 // Create note controller
 const createNote = async (req, res, next) => {
-    try {
-        // Extract data
-        const userId = req.user._id;
-        const { title, content } = req.body;
+  try {
+    // Extract data
+    const userId = req.user.userId;
+    const { title, content } = req.body;
 
-        // Call service
-        const note = await notesService.createNote({
-            title,
-            content, 
-            userId,
-        });
-    }
-    catch (error) {
-        next(error);
-    }
+    // Call service
+    const note = await notesService.createNote({
+      title,
+      content,
+      userId,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Note created successfully",
+      note,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // Get all notes controller
 const getAllNotes = async (req, res, next) => {
-    try {
-        const userId = req.user._id;
+  try {
+    const userId = req.user.userId;
 
-        const notes = await notesService.getAllNotes(userId);
+    // Extract query params
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(20, parseInt(req.query.limit) || 8);
 
-        return res.status(200).json({
-            success: true,
-            message: "Notes fetched successfully",
-            data: notes,
-        });
-    }
-    catch (error) {
-        next(error);
-    }
-}
+    // Call service
+    const { notes, total } = await notesService.getAllNotes(
+      userId,
+      page,
+      limit,
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Notes fetched successfully",
+      notes,
+      total,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // Exports
 module.exports = {
-    createNote,
-    getAllNotes,
+  createNote,
+  getAllNotes,
 };
