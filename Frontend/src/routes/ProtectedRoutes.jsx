@@ -6,7 +6,9 @@ const ProtectedRoute = () => {
 
   // WAIT FIRST
   if (loading) {
-    return null; // or loader
+    return (
+      <div className="text-gray-600 text-center mt-[20%]">Loading ...</div>
+    );
   }
 
   if (!user) {

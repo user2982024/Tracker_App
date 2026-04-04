@@ -4,9 +4,10 @@ import { useAuth } from "../context/AuthContext";
 const PublicRoute = () => {
   const { user, loading } = useAuth();
 
-  // AIT — do not render anything yet
   if (loading) {
-    return null; // or loader
+    return (
+      <div className="text-gray-600">Loading ...</div>
+    ); 
   }
 
   // If logged in → go to app
