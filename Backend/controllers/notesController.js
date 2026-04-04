@@ -31,7 +31,7 @@ const getAllNotes = async (req, res, next) => {
 
     // Extract query params
     const page = Math.max(1, parseInt(req.query.page) || 1);
-    const limit = Math.min(20, parseInt(req.query.limit) || 8);
+    const limit = Math.min(20, parseInt(req.query.limit) || 9);
 
     // Call service
     const { notes, total } = await notesService.getAllNotes(

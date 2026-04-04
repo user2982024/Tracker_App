@@ -21,7 +21,7 @@ export const createNote = async (formData) => {
 };
 
 // Get all notes (with pagination)
-export const getNotes = async (page = 1, limit = 8) => {
+export const getNotes = async (page = 1, limit = 9) => {
   const response = await fetch(
     `${BASE_URL}?page=${page}&limit=${limit}`,
     {

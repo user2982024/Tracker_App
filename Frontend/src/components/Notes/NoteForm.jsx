@@ -18,26 +18,32 @@ const NoteForm = ({ onSubmit, initialData = {}, isEditing = false }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Basic guard (extra safety, backend already validates)
     if (!formData.title.trim() || !formData.content.trim()) {
       return;
     }
 
     onSubmit(formData);
 
-    // reset form only for create mode
     if (!isEditing) {
-        setFormData({
-            title: "",
-            content: "",
-        });
+      setFormData({
+        title: "",
+        content: "",
+      });
     }
   };
 
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white p-4 rounded-2xl shadow-md space-y-4"
+      className="
+        bg-white
+        p-4 sm:p-6
+        rounded-2xl
+        shadow-md
+        space-y-4
+        max-w-2xl
+        mx-auto
+      "
     >
       {/* Title */}
       <input
@@ -47,7 +53,7 @@ const NoteForm = ({ onSubmit, initialData = {}, isEditing = false }) => {
         placeholder="Title..."
         value={formData.title}
         onChange={handleChange}
-        className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full border rounded-lg px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
 
       {/* Content */}
@@ -58,13 +64,13 @@ const NoteForm = ({ onSubmit, initialData = {}, isEditing = false }) => {
         value={formData.content}
         onChange={handleChange}
         rows="4"
-        className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full border rounded-lg px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
 
       {/* Button */}
       <button
         type="submit"
-        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+        className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
       >
         {isEditing ? "Update Note" : "Save Note"}
       </button>

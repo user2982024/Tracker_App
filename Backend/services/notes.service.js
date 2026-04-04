@@ -13,7 +13,7 @@ const createNote = async ({ title, content, userId }) => {
 };
 
 // Get all notes of a logged in user service
-const getAllNotes = async (userId, page = 1, limit = 8) => {
+const getAllNotes = async (userId, page = 1, limit = 9) => {
     const skip = (page - 1) * limit;
 
     const notes = await Note.find({ user: userId })
