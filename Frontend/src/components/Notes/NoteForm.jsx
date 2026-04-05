@@ -12,7 +12,7 @@ const NoteForm = ({ onSubmit, initialData = {}, isEditing = false }) => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }));
+    }))
   };
 
   const handleSubmit = (e) => {
