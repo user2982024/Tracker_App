@@ -1,6 +1,6 @@
 const NoteCard = ({ note }) => {
   return (
-    <div className="bg-white p-4 rounded-xl shadow-sm border-2 border-blue-200 hover:shadow-md hover:shadow-blue-300 transition">
+    <div className="bg-blue-50 p-4 rounded-xl shadow-sm border-2 border-blue-200 hover:shadow-md hover:shadow-blue-300 transition hover:cursor-pointer">
 
       {/* Title */}
       <h3 className="text-lg font-semibold mb-2">

@@ -73,7 +73,7 @@ const NoteForm = ({ onSubmit, initialData = {}, isEditing = false }) => {
       <div className="flex justify-center">
         <button
           type="submit"
-          className="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+          className="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition hover:cursor-pointer"
         >
           {isEditing ? "Update Note" : "Save Note"}
         </button>
