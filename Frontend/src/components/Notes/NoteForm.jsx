@@ -12,7 +12,7 @@ const NoteForm = ({ onSubmit, initialData = {}, isEditing = false }) => {
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }))
+    }));
   };
 
   const handleSubmit = (e) => {
@@ -68,12 +68,14 @@ const NoteForm = ({ onSubmit, initialData = {}, isEditing = false }) => {
       />
 
       {/* Button */}
-      <button
-        type="submit"
-        className="w-full sm:w-auto bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-      >
-        {isEditing ? "Update Note" : "Save Note"}
-      </button>
+      <div className="flex justify-center">
+        <button
+          type="submit"
+          className="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
+        >
+          {isEditing ? "Update Note" : "Save Note"}
+        </button>
+      </div>
     </form>
   );
 };

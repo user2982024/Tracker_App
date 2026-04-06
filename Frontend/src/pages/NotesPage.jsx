@@ -12,7 +12,7 @@ const NotesPage = () => {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const notesPerPage = 8;
+  const notesPerPage = 9;
   const [totalNotes, setTotalNotes] = useState(0);
 
   // Form toggle
@@ -67,12 +67,14 @@ const NotesPage = () => {
             <NoteForm onSubmit={handleCreateNote} />
 
             {/* Cancel Button (VERY IMPORTANT UX) */}
-            <button
-              onClick={() => setShowForm(false)}
-              className="mt-4 w-full border py-2 rounded-lg hover:bg-gray-100 transition"
-            >
-              Cancel
-            </button>
+            <div className="mt-4 flex justify-center">
+              <button
+                onClick={() => setShowForm(false)}
+                className="w-full sm:w-auto px-6 py-2 bg-gray-400 border rounded-lg text-white hover:bg-gray-300 transition cursor-pointer"
+              >
+                Cancel
+              </button>
+            </div>
           </div>
         </div>
       ) : (
@@ -90,7 +92,7 @@ const NotesPage = () => {
               <button
                 key={i}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-1 rounded ${
+                className={`px-3 py-1 rounded hover:cursor-pointer ${
                   currentPage === i + 1
                     ? "bg-blue-600 text-white"
                     : "bg-gray-200"
