@@ -55,3 +55,24 @@ export const updateNote = async (id, formData) => {
     throw new Error(data.message || "Failed to update note");
   }
 };
+
+// Delete a single note
+export const deleteNote = async (noteId) => {
+  try {
+    const response = await fetch(`${BASE_URL}/${noteId}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+            throw new Error(data.message || "Failed to delete note");
+        }
+
+        return data;
+  }
+  catch (error) {
+    throw new Error("Failed to delete note");
+  }
+};

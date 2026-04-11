@@ -74,9 +74,31 @@ const updateNote = async (req, res, next) => {
   }
 };
 
+// Delete note controller
+const deleteNote = async (req, res, next) => {
+  try {
+    // Extract data
+    const noteId = req.params.id;
+    const userId = req.user.userId;
+
+    // Call service
+    const deletedNote = await notesService.deleteNote(noteId, userId);
+
+    res.status(200).json({
+      success: true,
+      message: "Note deleted successfully",
+      data: deletedNote,
+    })
+  }
+  catch (error) {
+    next(error);
+  }
+};
+
 // Exports
 module.exports = {
   createNote,
   getAllNotes,
   updateNote,
+  deleteNote,
 };

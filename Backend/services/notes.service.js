@@ -55,9 +55,35 @@ const updateNote = async (noteId, userId, updateData) => {
     return updatedNote;
 };
 
+// Delete note service
+const deleteNote = async (noteId, userId) => {
+    try {
+        // Find note with ownership check
+        const note = await Note.findOne({
+            _id: noteId, 
+            user: userId,
+        });
+
+        // If not found throw error
+        if (!note) {
+            throw new Error("Note not found or unauthorized");
+        }
+
+        // Delete note
+        await note.deleteOne();
+
+        // Return deleted note
+        return note;
+    }
+    catch (error) {
+        throw(error);
+    }
+}
+
 module.exports = {
     createNote,
     getAllNotes,
     updateNote,
+    deleteNote,
 };
 

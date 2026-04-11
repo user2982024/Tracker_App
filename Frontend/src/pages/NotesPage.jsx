@@ -3,7 +3,12 @@ import NotesHeader from "../components/Notes/NotesHeader";
 import NotesList from "../components/Notes/NotesList";
 import NoteForm from "../components/Notes/NoteForm";
 
-import { getNotes, createNote, updateNote } from "../services/notesService";
+import {
+  getNotes,
+  createNote,
+  updateNote,
+  deleteNote,
+} from "../services/notesService";
 
 const NotesPage = () => {
   const [notes, setNotes] = useState([]);
@@ -18,7 +23,7 @@ const NotesPage = () => {
 
   const [showForm, setShowForm] = useState(false);
 
-  // FETCH NOTES
+  // Fetch notes
   const fetchNotes = async () => {
     try {
       setLoading(true);
@@ -38,7 +43,7 @@ const NotesPage = () => {
     fetchNotes();
   }, [currentPage]);
 
-  // SMART SUBMIT HANDLER
+  // Smart submit handler
   const handleSubmit = async (formData) => {
     try {
       if (isEditMode) {
@@ -47,31 +52,43 @@ const NotesPage = () => {
         await createNote(formData);
       }
 
-      // IMPORTANT: wait for refresh
+      // Wait for refresh
       await fetchNotes();
 
       // Reset UI state
       setShowForm(false);
       setIsEditMode(false);
       setSelectedNote(null);
-
     } catch (error) {
       console.error("Error saving note:", error.message);
     }
   };
 
-  // HANDLE EDIT
+  // Handle edit
   const handleEdit = (note) => {
     setSelectedNote(note);
     setIsEditMode(true);
     setShowForm(true);
   };
 
+  // Handle delete
+  const handleDelete = async (note) => {
+    try {
+      // Call backend
+      await deleteNote(note._id);
+
+      // Update UI
+      // Remove deleted note
+      setNotes((prevNotes) => prevNotes.filter((n) => n._id !== note._id));
+    } catch (error) {
+      console.error("Delete failed:", error.message);
+    }
+  };
+
   const totalPages = Math.ceil(totalNotes / notesPerPage);
 
   return (
     <div className="h-full flex flex-col">
-      
       {/* Header */}
       <NotesHeader onAddClick={() => setShowForm(true)} />
 
@@ -79,7 +96,6 @@ const NotesPage = () => {
       {showForm ? (
         <div className="flex-1 flex items-center justify-center">
           <div className="w-full max-w-xl">
-            
             <NoteForm
               onSubmit={handleSubmit}
               isEditMode={isEditMode}
@@ -99,7 +115,6 @@ const NotesPage = () => {
                 Cancel
               </button>
             </div>
-
           </div>
         </div>
       ) : (
@@ -108,7 +123,7 @@ const NotesPage = () => {
           {loading ? (
             <p className="text-gray-500 mt-4">Loading notes...</p>
           ) : (
-            <NotesList notes={notes} onEdit={handleEdit} />
+            <NotesList notes={notes} onEdit={handleEdit} onDelete={handleDelete} />
           )}
 
           {/* PAGINATION */}
