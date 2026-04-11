@@ -10,6 +10,8 @@ import {
   deleteNote,
 } from "../services/notesService";
 
+import { toast } from "react-hot-toast";
+
 const NotesPage = () => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -34,6 +36,7 @@ const NotesPage = () => {
       setTotalNotes(data.total || 0);
     } catch (error) {
       console.error("Error fetching notes:", error.message);
+      toast.error(error.message || "Failed to fetch notes");
     } finally {
       setLoading(false);
     }
@@ -48,19 +51,22 @@ const NotesPage = () => {
     try {
       if (isEditMode) {
         await updateNote(selectedNote._id, formData);
+        toast.success("Note updated successfully");
       } else {
         await createNote(formData);
+        toast.success("Note created successfully");
       }
 
-      // Wait for refresh
       await fetchNotes();
 
-      // Reset UI state
+      // Reset UI
       setShowForm(false);
       setIsEditMode(false);
       setSelectedNote(null);
+
     } catch (error) {
       console.error("Error saving note:", error.message);
+      toast.error(error.message || "Failed to save note");
     }
   };
 
@@ -74,14 +80,18 @@ const NotesPage = () => {
   // Handle delete
   const handleDelete = async (note) => {
     try {
-      // Call backend
       await deleteNote(note._id);
 
-      // Update UI
-      // Remove deleted note
-      setNotes((prevNotes) => prevNotes.filter((n) => n._id !== note._id));
+      // Optimistic UI update
+      setNotes((prevNotes) =>
+        prevNotes.filter((n) => n._id !== note._id)
+      );
+
+      toast.success("Note deleted successfully");
+
     } catch (error) {
       console.error("Delete failed:", error.message);
+      toast.error(error.message || "Failed to delete note");
     }
   };
 
@@ -123,7 +133,11 @@ const NotesPage = () => {
           {loading ? (
             <p className="text-gray-500 mt-4">Loading notes...</p>
           ) : (
-            <NotesList notes={notes} onEdit={handleEdit} onDelete={handleDelete} />
+            <NotesList
+              notes={notes}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
           )}
 
           {/* PAGINATION */}
