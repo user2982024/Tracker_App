@@ -1,11 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const NoteForm = ({ onSubmit, initialData = {}, isEditing = false }) => {
+const NoteForm = ({ onSubmit, isEditMode, selectedNote }) => {
   const [formData, setFormData] = useState({
-    title: initialData.title || "",
-    content: initialData.content || "",
+    title: "",
+    content: "",
   });
 
+  // Pre-fill form in edit mode
+  useEffect(() => {
+    if (isEditMode && selectedNote) {
+      setFormData({
+        title: selectedNote.title || "",
+        content: selectedNote.content || "",
+      });
+    }
+    else {
+      // Reset when switching to create mode
+      setFormData({
+        title: "",
+        content: "",
+      });
+    }
+  }, [isEditMode, selectedNote]);
+
+  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -15,6 +33,7 @@ const NoteForm = ({ onSubmit, initialData = {}, isEditing = false }) => {
     }));
   };
 
+  // Handle submit
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -23,13 +42,6 @@ const NoteForm = ({ onSubmit, initialData = {}, isEditing = false }) => {
     }
 
     onSubmit(formData);
-
-    if (!isEditing) {
-      setFormData({
-        title: "",
-        content: "",
-      });
-    }
   };
 
   return (
@@ -75,7 +87,7 @@ const NoteForm = ({ onSubmit, initialData = {}, isEditing = false }) => {
           type="submit"
           className="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition hover:cursor-pointer"
         >
-          {isEditing ? "Update Note" : "Save Note"}
+          {isEditMode ? "Update Note" : "Save Note"}
         </button>
       </div>
     </form>

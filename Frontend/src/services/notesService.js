@@ -38,3 +38,20 @@ export const getNotes = async (page = 1, limit = 9) => {
 
   return data;
 };
+
+// Update note
+export const updateNote = async (id, formData) => {
+  const response = await fetch(`${BASE_URL}/${id}`, {
+    method: "PUT",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    }, body: JSON.stringify(formData),
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to update note");
+  }
+};

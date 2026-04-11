@@ -55,7 +55,7 @@ const getAllNotes = async (req, res, next) => {
 const updateNote = async (req, res, next) => {
   try {
     const noteId = req.params.id;
-    const userId = req.user._id;
+    const userId = req.user.userId;
 
     const updatedNote = await notesService.updateNote(
       noteId, 

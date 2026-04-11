@@ -3,24 +3,22 @@ import NotesHeader from "../components/Notes/NotesHeader";
 import NotesList from "../components/Notes/NotesList";
 import NoteForm from "../components/Notes/NoteForm";
 
-// Import service layer
-import { getNotes, createNote } from "../services/notesService";
+import { getNotes, createNote, updateNote } from "../services/notesService";
 
 const NotesPage = () => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(false);
+
   const [selectedNote, setSelectedNote] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
-  // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const notesPerPage = 9;
   const [totalNotes, setTotalNotes] = useState(0);
 
-  // Form toggle
   const [showForm, setShowForm] = useState(false);
 
-  // Fetch notes (using service)
+  // FETCH NOTES
   const fetchNotes = async () => {
     try {
       setLoading(true);
@@ -40,61 +38,80 @@ const NotesPage = () => {
     fetchNotes();
   }, [currentPage]);
 
-  // Create note (using service)
-  const handleCreateNote = async (formData) => {
+  // SMART SUBMIT HANDLER
+  const handleSubmit = async (formData) => {
     try {
-      await createNote(formData);
+      if (isEditMode) {
+        await updateNote(selectedNote._id, formData);
+      } else {
+        await createNote(formData);
+      }
 
-      // Refresh notes after creation
-      fetchNotes();
+      // IMPORTANT: wait for refresh
+      await fetchNotes();
 
-      // Close form
+      // Reset UI state
       setShowForm(false);
+      setIsEditMode(false);
+      setSelectedNote(null);
+
     } catch (error) {
-      console.error("Error creating note:", error.message);
+      console.error("Error saving note:", error.message);
     }
+  };
+
+  // HANDLE EDIT
+  const handleEdit = (note) => {
+    setSelectedNote(note);
+    setIsEditMode(true);
+    setShowForm(true);
   };
 
   const totalPages = Math.ceil(totalNotes / notesPerPage);
 
-  // Handle edit click
-  const handleEdit = (note) => {
-    setSelectedNote(note);
-    setIsEditMode(true);
-  }
-
   return (
     <div className="h-full flex flex-col">
-      {/* Header ALWAYS visible */}
+      
+      {/* Header */}
       <NotesHeader onAddClick={() => setShowForm(true)} />
 
       {/* FORM MODE */}
       {showForm ? (
         <div className="flex-1 flex items-center justify-center">
           <div className="w-full max-w-xl">
-            <NoteForm onSubmit={handleCreateNote} />
+            
+            <NoteForm
+              onSubmit={handleSubmit}
+              isEditMode={isEditMode}
+              selectedNote={selectedNote}
+            />
 
-            {/* Cancel Button (VERY IMPORTANT UX) */}
+            {/* Cancel Button */}
             <div className="mt-4 flex justify-center">
               <button
-                onClick={() => setShowForm(false)}
+                onClick={() => {
+                  setShowForm(false);
+                  setIsEditMode(false);
+                  setSelectedNote(null);
+                }}
                 className="w-full sm:w-auto px-6 py-2 bg-gray-400 border rounded-lg text-white hover:bg-gray-300 transition cursor-pointer"
               >
                 Cancel
               </button>
             </div>
+
           </div>
         </div>
       ) : (
-        /* NORMAL MODE */
         <>
+          {/* NOTES LIST */}
           {loading ? (
             <p className="text-gray-500 mt-4">Loading notes...</p>
           ) : (
-            <NotesList notes={notes} />
+            <NotesList notes={notes} onEdit={handleEdit} />
           )}
 
-          {/* Pagination */}
+          {/* PAGINATION */}
           <div className="flex gap-2 mt-4 justify-center">
             {Array.from({ length: totalPages }, (_, i) => (
               <button
