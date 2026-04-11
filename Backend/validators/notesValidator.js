@@ -1,6 +1,6 @@
 const { body, param } = require("express-validator");
 
-// Create Note Validator
+// CREATE NOTE VALIDATOR
 const validateCreateNote = [
   body("title")
     .notEmpty()
@@ -17,13 +17,9 @@ const validateCreateNote = [
     .trim(),
 ];
 
-// Update Note Validator
+// UPDATE NOTE VALIDATOR 
 const validateUpdateNote = [
-    param("id")
-    .isMongoId()
-    .withMessage("Invalid note ID"),
-
-    body("title")
+  body("title")
     .optional()
     .isLength({ max: 100 })
     .withMessage("Title cannot exceed 100 characters")
@@ -36,15 +32,15 @@ const validateUpdateNote = [
     .trim(),
 ];
 
-// Note ID Validator (for get, delete, archive, etc.)
+// NOTE ID VALIDATOR
 const validateNoteId = [
-    param("id")
+  param("id")
     .isMongoId()
     .withMessage("Invalid note ID"),
 ];
 
 module.exports = {
-    validateCreateNote,
-    validateUpdateNote,
-    validateNoteId,
+  validateCreateNote,
+  validateUpdateNote,
+  validateNoteId,
 };

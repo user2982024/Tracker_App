@@ -1,7 +1,9 @@
-const NoteCard = ({ note }) => {
-  return (
-    <div className="bg-blue-50 p-4 rounded-xl shadow-sm border-2 border-blue-200 hover:shadow-md hover:shadow-blue-300 transition hover:cursor-pointer">
+import { Pencil } from "lucide-react";
 
+const NoteCard = ({ note, onEdit }) => {
+  return (
+    <div className="bg-blue-50 p-4 rounded-xl shadow-sm border-2 border-blue-200 hover:shadow-md hover:shadow-blue-300 transition">
+      
       {/* Title */}
       <h3 className="text-lg font-semibold mb-2">
         {note.title}
@@ -15,15 +17,23 @@ const NoteCard = ({ note }) => {
       {/* Footer */}
       <div className="mt-4 flex justify-between items-center text-sm text-gray-400">
 
-        {/* Date */}
-        <span>
-          {new Date(note.createdAt).toLocaleDateString()}
-        </span>
+        {/* Left Side (Date + Pin) */}
+        <div className="flex items-center gap-2">
+          <span>
+            {new Date(note.createdAt).toLocaleDateString()}
+          </span>
 
-        {/* Status (future: pin/archive) */}
-        <span>
-          {note.isPinned ? "📌" : ""}
-        </span>
+          {note.isPinned && <span>📌</span>}
+        </div>
+
+        {/* Right Side (Edit Icon) */}
+        <button
+          onClick={() => onEdit(note)}
+          className="text-gray-500 hover:text-blue-600 transition"
+          title="Edit Note"
+        >
+          <Pencil size={14} />
+        </button>
 
       </div>
 

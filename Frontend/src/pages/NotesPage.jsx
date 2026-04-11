@@ -9,6 +9,8 @@ import { getNotes, createNote } from "../services/notesService";
 const NotesPage = () => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [selectedNote, setSelectedNote] = useState(null);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -54,6 +56,12 @@ const NotesPage = () => {
   };
 
   const totalPages = Math.ceil(totalNotes / notesPerPage);
+
+  // Handle edit click
+  const handleEdit = (note) => {
+    setSelectedNote(note);
+    setIsEditMode(true);
+  }
 
   return (
     <div className="h-full flex flex-col">

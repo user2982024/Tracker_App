@@ -26,7 +26,38 @@ const getAllNotes = async (userId, page = 1, limit = 9) => {
     return { notes, total };
 }
 
+// Update note service
+const updateNote = async (noteId, userId, updateData) => {
+    const { title, content } = updateData;
+
+    // Validation
+    if (!title || !content) {
+        throw new Error("Title and content are required");
+    }
+
+    // Find note belonging to user
+    const note = await Note.findOne({
+        _id: noteId,
+        user: userId,
+    });
+
+    if (!note) {
+        throw new Error("Note not found or unauthorized");
+    }
+
+    // Update fields
+    note.title = title;
+    note.content = content;
+
+    // Save updated note
+    const updatedNote = await note.save();
+
+    return updatedNote;
+};
+
 module.exports = {
     createNote,
     getAllNotes,
+    updateNote,
 };
+

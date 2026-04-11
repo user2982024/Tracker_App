@@ -1,9 +1,9 @@
 const express = require("express");
 
-const { validateCreateNote } = require("../validators/notesValidator");
+const { validateCreateNote, validateUpdateNote, validateNoteId } = require("../validators/notesValidator");
 const validateRequest = require("../middlewares/validateRequest");
 const authMiddleware = require("../middlewares/authMiddleware");
-const { createNote, getAllNotes } = require("../controllers/notesController");
+const { createNote, getAllNotes, updateNote } = require("../controllers/notesController");
 
 const router = express.Router();
 
@@ -12,5 +12,8 @@ router.get("/", authMiddleware, getAllNotes)
 
 // Create note route
 router.post("/create-note", authMiddleware, validateCreateNote, validateRequest, createNote);
+
+// Update note route
+router.put("/:id", authMiddleware, validateNoteId, validateUpdateNote, validateRequest, updateNote);
 
 module.exports = router;

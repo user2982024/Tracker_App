@@ -51,8 +51,32 @@ const getAllNotes = async (req, res, next) => {
   }
 };
 
+// Update note controller
+const updateNote = async (req, res, next) => {
+  try {
+    const noteId = req.params.id;
+    const userId = req.user._id;
+
+    const updatedNote = await notesService.updateNote(
+      noteId, 
+      userId, 
+      req.body,
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Note updated successfully",
+      note: updatedNote,
+    })
+  }
+  catch (error) {
+    next(error);
+  }
+};
+
 // Exports
 module.exports = {
   createNote,
   getAllNotes,
+  updateNote,
 };
