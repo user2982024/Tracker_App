@@ -20,10 +20,10 @@ const NotesPage = () => {
   const [isEditMode, setIsEditMode] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const notesPerPage = 9;
   const [totalNotes, setTotalNotes] = useState(0);
-
+  
   const [showForm, setShowForm] = useState(false);
+  const notesPerPage = 9;
 
   // Fetch notes
   const fetchNotes = async () => {

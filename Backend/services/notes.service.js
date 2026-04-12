@@ -78,12 +78,31 @@ const deleteNote = async (noteId, userId) => {
     catch (error) {
         throw(error);
     }
-}
+};
+
+// Delete all notes service 
+const deleteAllNotes = async (userId) => {
+    try {
+        if (!userId) {
+            throw new Error("User ID is required");
+        }
+
+        const result = await Note.deleteMany({ use: userId });
+
+        return {
+            deletedCount: result.deletedCount,
+        }
+    }
+    catch (error) {
+        throw error;
+    }
+};
 
 module.exports = {
     createNote,
     getAllNotes,
     updateNote,
     deleteNote,
+    deleteAllNotes,
 };
 

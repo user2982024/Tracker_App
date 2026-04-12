@@ -95,10 +95,38 @@ const deleteNote = async (req, res, next) => {
   }
 };
 
+// Delete all notes controller
+const deleteAllNotes = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+
+    const { deletedCount } = await notesService.deleteAllNotes(userId);
+
+    // In case of no notes to delete
+    if (deletedCount === 0) {
+      res.status(200).json({
+        success: true,
+        message: "No notes to delete",
+        deletedCount: 0.
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "All note deleted successfully",
+      deletedCount,
+    });
+  }
+  catch (error) {
+    next(error);
+  }
+}
+;
 // Exports
 module.exports = {
   createNote,
   getAllNotes,
   updateNote,
   deleteNote,
+  deleteAllNotes,
 };

@@ -2,7 +2,7 @@ const BASE_URL = "http://localhost:5000/api/notes";
 
 // Create note
 export const createNote = async (formData) => {
-  const response = await fetch(`${BASE_URL}/create-note`, {
+  const response = await fetch(`${BASE_URL}`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -54,6 +54,8 @@ export const updateNote = async (id, formData) => {
   if (!response.ok) {
     throw new Error(data.message || "Failed to update note");
   }
+
+  return data;
 };
 
 // Delete a single note
