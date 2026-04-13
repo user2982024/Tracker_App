@@ -8,6 +8,7 @@ import {
   createNote,
   updateNote,
   deleteNote,
+  deleteAllNotes
 } from "../services/notesService";
 
 import { toast } from "react-hot-toast";
@@ -21,8 +22,10 @@ const NotesPage = () => {
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalNotes, setTotalNotes] = useState(0);
-  
+
   const [showForm, setShowForm] = useState(false);
+  const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
+
   const notesPerPage = 9;
 
   // Fetch notes
@@ -46,15 +49,15 @@ const NotesPage = () => {
     fetchNotes();
   }, [currentPage]);
 
-  // Smart submit handler
+  // Submit (Create / Update)
   const handleSubmit = async (formData) => {
     try {
       if (isEditMode) {
-        await updateNote(selectedNote._id, formData);
-        toast.success("Note updated successfully");
+        const res = await updateNote(selectedNote._id, formData);
+        toast.success(res?.message || "Note updated successfully");
       } else {
-        await createNote(formData);
-        toast.success("Note created successfully");
+        const res = await createNote(formData);
+        toast.success(res?.message || "Note created successfully");
       }
 
       await fetchNotes();
@@ -70,28 +73,40 @@ const NotesPage = () => {
     }
   };
 
-  // Handle edit
+  // Edit note
   const handleEdit = (note) => {
     setSelectedNote(note);
     setIsEditMode(true);
     setShowForm(true);
   };
 
-  // Handle delete
+  // Delete single note
   const handleDelete = async (note) => {
     try {
-      await deleteNote(note._id);
+      const res = await deleteNote(note._id);
 
-      // Optimistic UI update
-      setNotes((prevNotes) =>
-        prevNotes.filter((n) => n._id !== note._id)
-      );
+      // Optimistic UI
+      setNotes((prev) => prev.filter((n) => n._id !== note._id));
 
-      toast.success("Note deleted successfully");
+      toast.success(res?.message || "Note deleted successfully");
 
     } catch (error) {
       console.error("Delete failed:", error.message);
       toast.error(error.message || "Failed to delete note");
+    }
+  };
+
+  // Delete ALL notes (FIXED)
+  const handleDeleteAll = async () => {
+    try {
+      const res = await deleteAllNotes();
+
+      setNotes([]); 
+      setShowDeleteAllModal(false); 
+
+      toast.success(res.message);
+    } catch (error) {
+      toast.error(error.message || "Failed to delete all notes");
     }
   };
 
@@ -100,7 +115,10 @@ const NotesPage = () => {
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
-      <NotesHeader onAddClick={() => setShowForm(true)} />
+      <NotesHeader
+        onAddClick={() => setShowForm(true)}
+        onDeleteAllClick={() => setShowDeleteAllModal(true)} 
+      />
 
       {/* FORM MODE */}
       {showForm ? (
@@ -120,7 +138,7 @@ const NotesPage = () => {
                   setIsEditMode(false);
                   setSelectedNote(null);
                 }}
-                className="w-full sm:w-auto px-6 py-2 bg-gray-400 border rounded-lg text-white hover:bg-gray-300 transition cursor-pointer"
+                className="w-full sm:w-auto px-6 py-2 bg-gray-400 border rounded-lg text-white hover:bg-gray-500 transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -146,7 +164,7 @@ const NotesPage = () => {
               <button
                 key={i}
                 onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-1 rounded hover:cursor-pointer ${
+                className={`px-3 py-1 rounded cursor-pointer ${
                   currentPage === i + 1
                     ? "bg-blue-600 text-white"
                     : "bg-gray-200"
@@ -157,6 +175,39 @@ const NotesPage = () => {
             ))}
           </div>
         </>
+      )}
+
+      {/* DELETE ALL MODAL */}
+      {showDeleteAllModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+          <div className="bg-white rounded-2xl shadow-xl w-[90%] max-w-md p-6 animate-fadeIn">
+            
+            <h2 className="text-xl font-semibold text-gray-800 mb-3">
+              Delete All Notes?
+            </h2>
+
+            <p className="text-gray-600 mb-6">
+              This action <span className="font-semibold text-red-500">cannot be undone</span>.
+              All your notes will be permanently deleted.
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowDeleteAllModal(false)}
+                className="px-4 py-2 rounded-lg border text-gray-700 hover:bg-gray-100 transition hover:cursor-pointer"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleDeleteAll}
+                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition hover:cursor-pointer"
+              >
+                Delete All
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

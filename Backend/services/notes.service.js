@@ -87,7 +87,7 @@ const deleteAllNotes = async (userId) => {
             throw new Error("User ID is required");
         }
 
-        const result = await Note.deleteMany({ use: userId });
+        const result = await Note.deleteMany({ user: userId });
 
         return {
             deletedCount: result.deletedCount,

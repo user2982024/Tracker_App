@@ -104,24 +104,24 @@ const deleteAllNotes = async (req, res, next) => {
 
     // In case of no notes to delete
     if (deletedCount === 0) {
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         message: "No notes to delete",
         deletedCount: 0.
       });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-      message: "All note deleted successfully",
+      message: "All notes deleted successfully",
       deletedCount,
     });
   }
   catch (error) {
     next(error);
   }
-}
-;
+};
+
 // Exports
 module.exports = {
   createNote,

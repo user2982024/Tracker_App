@@ -1,4 +1,4 @@
-const NotesHeader = ({ onAddClick }) => {
+const NotesHeader = ({ onAddClick, onDeleteAllClick }) => {
   return (
     <div className="flex justify-between items-center mb-8">
       <h1 className="text-2xl font-bold">Notes</h1>
@@ -10,9 +10,18 @@ const NotesHeader = ({ onAddClick }) => {
           className="border rounded-lg px-3 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
+        {/* Delete All Button */}
+        <button
+          onClick={onDeleteAllClick}
+          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition cursor-pointer"
+        >
+          Delete All
+        </button>
+
+        {/* Add Note Button */}
         <button
           onClick={onAddClick}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition hover:cursor-pointer"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer"
         >
           Add Note
         </button>
