@@ -22,13 +22,10 @@ export const createNote = async (formData) => {
 
 // Get all notes (with pagination)
 export const getNotes = async (page = 1, limit = 9) => {
-  const response = await fetch(
-    `${BASE_URL}?page=${page}&limit=${limit}`,
-    {
-      method: "GET",
-      credentials: "include",
-    }
-  );
+  const response = await fetch(`${BASE_URL}?page=${page}&limit=${limit}`, {
+    method: "GET",
+    credentials: "include",
+  });
 
   const data = await response.json();
 
@@ -46,7 +43,8 @@ export const updateNote = async (id, formData) => {
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-    }, body: JSON.stringify(formData),
+    },
+    body: JSON.stringify(formData),
   });
 
   const data = await response.json();
@@ -60,7 +58,6 @@ export const updateNote = async (id, formData) => {
 
 // Delete a single note
 export const deleteNote = async (noteId) => {
-  try {
     const response = await fetch(`${BASE_URL}/${noteId}`, {
       method: "DELETE",
       credentials: "include",
@@ -69,12 +66,24 @@ export const deleteNote = async (noteId) => {
     const data = await response.json();
 
     if (!response.ok) {
-            throw new Error(data.message || "Failed to delete note");
-        }
+      throw new Error(data.message || "Failed to delete note");
+    }
 
-        return data;
-  }
-  catch (error) {
-    throw new Error("Failed to delete note");
-  }
+    return data;
+};
+
+// Dlete all notes
+export const deleteAllNotes = async () => {
+    const response = await fetch(`${BASE_URL}`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to delete notes");
+    }
+
+    return data;
 };
