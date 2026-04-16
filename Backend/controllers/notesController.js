@@ -120,7 +120,7 @@ const deleteAllNotes = async (req, res, next) => {
   catch (error) {
     next(error);
   }
-};
+}
 
 // Exports
 module.exports = {
