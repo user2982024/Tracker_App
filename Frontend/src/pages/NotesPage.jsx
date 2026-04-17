@@ -174,6 +174,7 @@ const NotesPage = () => {
               onEdit={handleEdit}
               onDelete={handleDelete}
               onArchive={handleArchive}
+              mode="active"
             />
           )}
 

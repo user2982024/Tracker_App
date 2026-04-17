@@ -45,11 +45,6 @@ const ArchivedNotesPage = () => {
     }
   };
 
-  // Edit handler (redirect to NotesPage)
-  const handleEdit = (note) => {
-    navigate("/app/notes", { state: { editNote: note } });
-  };
-
   return (
     <div className="p-4">
       {/* Header */}
@@ -78,7 +73,7 @@ const ArchivedNotesPage = () => {
       {!loading && notes.length > 0 && (
         <NotesList
           notes={notes}
-          onEdit={handleEdit}
+          onEdit={null}
           onDelete={handleDelete}
           onArchive={() => {}} 
           mode="archived"
