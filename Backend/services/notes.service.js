@@ -125,6 +125,26 @@ const archiveNote = async (noteId, userId) => {
     return note;
 }
 
+// Get all archive notes service
+const getArchivedNotes = async (userId, page = 1, limit = 9) => {
+    const skip = (page - 1) * limit;
+
+    const notes = await Note.find({
+        user: userId,
+        isArchived: true,
+    })
+    .sort({ archivedAt: -1 })
+    .skip(skip)
+    .limit(limit);
+
+    const total = await Note.countDocuments({
+        user: userId,
+        isArchived: true,
+    });
+    
+    return { notes, total };
+}
+
 module.exports = {
     createNote,
     getAllNotes,
@@ -132,5 +152,6 @@ module.exports = {
     deleteNote,
     deleteAllNotes,
     archiveNote,
+    getArchivedNotes,
 };
 

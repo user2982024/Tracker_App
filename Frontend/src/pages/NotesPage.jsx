@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import NotesHeader from "../components/Notes/NotesHeader";
 import NotesList from "../components/Notes/NotesList";
 import NoteForm from "../components/Notes/NoteForm";
@@ -28,6 +29,7 @@ const NotesPage = () => {
   const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
 
   const notesPerPage = 9;
+  const navigate = useNavigate();
 
   // Fetch notes
   const fetchNotes = async () => {
@@ -67,7 +69,6 @@ const NotesPage = () => {
       setShowForm(false);
       setIsEditMode(false);
       setSelectedNote(null);
-
     } catch (error) {
       console.error("Error saving note:", error.message);
       toast.error(error.message || "Failed to save note");
@@ -90,7 +91,6 @@ const NotesPage = () => {
       setNotes((prev) => prev.filter((n) => n._id !== note._id));
 
       toast.success(res?.message || "Note deleted successfully");
-
     } catch (error) {
       console.error("Delete failed:", error.message);
       toast.error(error.message || "Failed to delete note");
@@ -102,8 +102,8 @@ const NotesPage = () => {
     try {
       const res = await deleteAllNotes();
 
-      setNotes([]); 
-      setShowDeleteAllModal(false); 
+      setNotes([]);
+      setShowDeleteAllModal(false);
 
       toast.success(res.message);
     } catch (error) {
@@ -123,8 +123,7 @@ const NotesPage = () => {
       setTotalNotes((prev) => prev - 1);
 
       toast.success(res.message || "Note archived successfully");
-    }
-    catch (error) {
+    } catch (error) {
       toast.error(error.message || "Failed to archive note");
     }
   };
@@ -136,7 +135,7 @@ const NotesPage = () => {
       {/* Header */}
       <NotesHeader
         onAddClick={() => setShowForm(true)}
-        onDeleteAllClick={() => setShowDeleteAllModal(true)} 
+        onDeleteAllClick={() => setShowDeleteAllModal(true)}
       />
 
       {/* FORM MODE */}
@@ -197,18 +196,28 @@ const NotesPage = () => {
         </>
       )}
 
+      {/* Archived Notes Button */}
+      <button
+        onClick={() => navigate("/app/notes/archive")}
+        className="absolute bottom-6 right-6 px-4 py-2 bg-gray-800 text-white rounded-lg shadow-lg hover:bg-gray-900 transition cursor-pointer"
+      >
+        Archived Notes
+      </button>
+
       {/* DELETE ALL MODAL */}
       {showDeleteAllModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
           <div className="bg-white rounded-2xl shadow-xl w-[90%] max-w-md p-6 animate-fadeIn">
-            
             <h2 className="text-xl font-semibold text-gray-800 mb-3">
               Delete All Notes?
             </h2>
 
             <p className="text-gray-600 mb-6">
-              This action <span className="font-semibold text-red-500">cannot be undone</span>.
-              All your notes will be permanently deleted.
+              This action{" "}
+              <span className="font-semibold text-red-500">
+                cannot be undone
+              </span>
+              . All your notes will be permanently deleted.
             </p>
 
             <div className="flex justify-end gap-3">

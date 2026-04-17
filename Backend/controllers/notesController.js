@@ -57,19 +57,14 @@ const updateNote = async (req, res, next) => {
     const noteId = req.params.id;
     const userId = req.user.userId;
 
-    const updatedNote = await notesService.updateNote(
-      noteId, 
-      userId, 
-      req.body,
-    );
+    const updatedNote = await notesService.updateNote(noteId, userId, req.body);
 
     res.status(200).json({
       success: true,
       message: "Note updated successfully",
       note: updatedNote,
-    })
-  }
-  catch (error) {
+    });
+  } catch (error) {
     next(error);
   }
 };
@@ -88,9 +83,8 @@ const deleteNote = async (req, res, next) => {
       success: true,
       message: "Note deleted successfully",
       data: deletedNote,
-    })
-  }
-  catch (error) {
+    });
+  } catch (error) {
     next(error);
   }
 };
@@ -116,8 +110,7 @@ const deleteAllNotes = async (req, res, next) => {
       message: "All notes deleted successfully",
       deletedCount,
     });
-  }
-  catch (error) {
+  } catch (error) {
     next(error);
   }
 };
@@ -135,11 +128,35 @@ const archiveNote = async (req, res, next) => {
       message: "Note archived successfully",
       note: archivedNote,
     });
-  }
-  catch (error) {
+  } catch (error) {
     next(error);
   }
-}
+};
+
+const getArchivedNotes = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+
+    // Querry params for pagination
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(20, parseInt(req.query.limit) || 9);
+
+    const { notes, total } = await notesService.getArchivedNotes(
+      userId,
+      page,
+      limit,
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Archived notes fetched successfully",
+      notes,
+      total,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // Exports
 module.exports = {
@@ -149,4 +166,5 @@ module.exports = {
   deleteNote,
   deleteAllNotes,
   archiveNote,
-}
+  getArchivedNotes,
+};

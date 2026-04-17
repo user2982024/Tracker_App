@@ -103,3 +103,21 @@ export const archiveNote = async (id) => {
 
   return data;
 };
+
+// Get all archived notes
+export const getArchivedNotes = async(page = 1, limit = 9) => {
+  const response = await fetch(`${BASE_URL}/archived?page=${page}&limit=${limit}`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch archived notes");
+  }
+
+  return data;
+};
+
+
