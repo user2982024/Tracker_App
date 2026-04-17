@@ -3,7 +3,7 @@ const express = require("express");
 const { validateCreateNote, validateUpdateNote, validateNoteId } = require("../validators/notesValidator");
 const validateRequest = require("../middlewares/validateRequest");
 const authMiddleware = require("../middlewares/authMiddleware");
-const { createNote, getAllNotes, updateNote, deleteNote, deleteAllNotes } = require("../controllers/notesController");
+const { createNote, getAllNotes, updateNote, deleteNote, deleteAllNotes, archiveNote } = require("../controllers/notesController");
 
 const router = express.Router();
 
@@ -21,5 +21,8 @@ router.put("/:id", authMiddleware, validateNoteId, validateUpdateNote, validateR
 
 // Delete note route
 router.delete("/:id", authMiddleware, validateNoteId, deleteNote);
+
+// Archive note route
+router.patch("/:id/archive", authMiddleware, validateNoteId, archiveNote);
 
 module.exports = router;

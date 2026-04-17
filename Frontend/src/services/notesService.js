@@ -87,3 +87,19 @@ export const deleteAllNotes = async () => {
 
     return data;
 };
+
+// Archive a note
+export const archiveNote = async (id) => {
+  const response = await fetch(`${BASE_URL}/${id}/archive`, {
+    method: "PATCH",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to archive note");
+  }
+
+  return data;
+};

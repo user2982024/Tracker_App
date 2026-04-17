@@ -16,7 +16,10 @@ const createNote = async ({ title, content, userId }) => {
 const getAllNotes = async (userId, page = 1, limit = 9) => {
     const skip = (page - 1) * limit;
 
-    const notes = await Note.find({ user: userId })
+    const notes = await Note.find({ 
+        user: userId,
+        isArchived: false,                                // Exclude archived notes from main listing
+     })
     .sort({ isPinned: -1, createdAt: -1 })
     .skip(skip)
     .limit(limit);
@@ -98,11 +101,36 @@ const deleteAllNotes = async (userId) => {
     }
 };
 
+// Archive note service
+const archiveNote = async (noteId, userId) => {
+    // Atomic update with protection
+    const note = await Note.findOneAndUpdate(
+        {
+            _id: noteId,
+            user: userId,
+            isArchived: false,
+        },
+        {
+            isArchived: true,
+            isPinned: false,                                 // Unpin when archiving
+            archivedAt: new Date(),
+        },
+        { new: true},                                        // By default, MongoDB will return the old object, but with this filed it will return su the new object with updated value
+    );
+
+    if (!note) {
+        throw new Error("Note not found, already archived, or unauthorized");
+    }
+
+    return note;
+}
+
 module.exports = {
     createNote,
     getAllNotes,
     updateNote,
     deleteNote,
     deleteAllNotes,
+    archiveNote,
 };
 

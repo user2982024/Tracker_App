@@ -33,6 +33,11 @@ const noteSchema = new mongoose.Schema({
         default: false,
         index: true,
     },
+
+    archivedAt: {
+        type: Date,
+        default: null,
+    }
 }, 
 {
     timestamps: true

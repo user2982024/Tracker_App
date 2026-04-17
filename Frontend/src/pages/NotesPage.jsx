@@ -8,7 +8,8 @@ import {
   createNote,
   updateNote,
   deleteNote,
-  deleteAllNotes
+  deleteAllNotes,
+  archiveNote,
 } from "../services/notesService";
 
 import { toast } from "react-hot-toast";
@@ -110,6 +111,24 @@ const NotesPage = () => {
     }
   };
 
+  // Archive note
+  const handleArchive = async (noteId) => {
+    try {
+      const res = await archiveNote(noteId);
+
+      // Remove archive note from UI
+      setNotes((prev) => prev.filter((note) => note._id !== noteId));
+
+      // Update total count
+      setTotalNotes((prev) => prev - 1);
+
+      toast.success(res.message || "Note archived successfully");
+    }
+    catch (error) {
+      toast.error(error.message || "Failed to archive note");
+    }
+  };
+
   const totalPages = Math.ceil(totalNotes / notesPerPage);
 
   return (
@@ -155,6 +174,7 @@ const NotesPage = () => {
               notes={notes}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onArchive={handleArchive}
             />
           )}
 

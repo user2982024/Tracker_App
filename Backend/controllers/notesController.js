@@ -107,7 +107,7 @@ const deleteAllNotes = async (req, res, next) => {
       return res.status(200).json({
         success: true,
         message: "No notes to delete",
-        deletedCount: 0.
+        deletedCount: 0,
       });
     }
 
@@ -115,6 +115,25 @@ const deleteAllNotes = async (req, res, next) => {
       success: true,
       message: "All notes deleted successfully",
       deletedCount,
+    });
+  }
+  catch (error) {
+    next(error);
+  }
+};
+
+// Archive note controller
+const archiveNote = async (req, res, next) => {
+  try {
+    const noteId = req.params.id;
+    const userId = req.user.userId;
+
+    const archivedNote = await notesService.archiveNote(noteId, userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Note archived successfully",
+      note: archivedNote,
     });
   }
   catch (error) {
@@ -129,4 +148,5 @@ module.exports = {
   updateNote,
   deleteNote,
   deleteAllNotes,
+  archiveNote,
 }
