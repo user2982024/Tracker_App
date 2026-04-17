@@ -1,6 +1,6 @@
 import NoteCard from "./NotesCard";
 
-const NotesList = ({ notes = [], onEdit, onDelete, onArchive }) => {
+const NotesList = ({ notes = [], onEdit, onDelete, onArchive, mode }) => {
   if (notes.length === 0) {
     return (
       <p className="text-gray-500 text-sm sm:text-base mt-4">
@@ -20,7 +20,7 @@ const NotesList = ({ notes = [], onEdit, onDelete, onArchive }) => {
       "
     >
       {notes.map((note) => (
-        <NoteCard key={note._id} note={note} onEdit={onEdit} onDelete={onDelete} onArchive={onArchive} />
+        <NoteCard key={note._id} note={note} onEdit={onEdit} onDelete={onDelete} onArchive={onArchive} mode={mode} />
       ))}
     </div>
   );
