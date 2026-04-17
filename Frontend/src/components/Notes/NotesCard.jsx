@@ -41,13 +41,15 @@ const NoteCard = ({ note, onEdit, onDelete, onArchive, mode }) => {
           )}
 
           {/* Edit icon */}
-          <button
-            onClick={() => onEdit(note)}
-            className="text-gray-500 hover:text-blue-600 transition hover:cursor-pointer"
-            title="Edit Note"
-          >
-            <Pencil size={14} />
-          </button>
+          {mode !== "archived" && (
+            <button
+              onClick={() => onEdit(note)}
+              className="text-gray-500 hover:text-blue-600 transition hover:cursor-pointer"
+              title="Edit Note"
+            >
+              <Pencil size={14} />
+            </button>
+          )}
 
           {/* Delete icon */}
           <button
