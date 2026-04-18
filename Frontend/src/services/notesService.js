@@ -151,3 +151,19 @@ export const pinNote = async (id) => {
 
   return data;
 };
+
+// Unpin a note
+export const unpinNote = async (id) => {
+  const response = await fetch(`${BASE_URL}/${id}/unpin`, {
+    method: "PATCH",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to unpin note");
+  }
+
+  return data;
+};

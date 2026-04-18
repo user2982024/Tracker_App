@@ -12,6 +12,7 @@ import {
   deleteAllNotes,
   archiveNote,
   pinNote,
+  unpinNote,
 } from "../services/notesService";
 
 import { toast } from "react-hot-toast";
@@ -147,6 +148,25 @@ const NotesPage = () => {
     }
   };
 
+  // Unpin note
+  const handleUnpin = async (noteId) => {
+    try {
+      const res = await unpinNote(noteId);
+
+      // Update state instantly
+      setNotes((prev) =>
+        prev.map((note) =>
+          note._id === noteId ? { ...note, isPinned: false } : note,
+        ),
+      );
+
+      toast.success(res.message || "Note unpinned successfully");
+    }
+    catch (error) {
+      toast.error(error.message || "Failed to unpin note");
+    }
+  };
+
   const totalPages = Math.ceil(totalNotes / notesPerPage);
 
   return (
@@ -194,6 +214,7 @@ const NotesPage = () => {
               onDelete={handleDelete}
               onArchive={handleArchive}
               onPin={handlePin}
+              onUnpin={handleUnpin}
               mode="active"
             />
           )}

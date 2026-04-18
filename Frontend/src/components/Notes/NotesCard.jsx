@@ -7,6 +7,7 @@ const NoteCard = ({
   onArchive,
   onUnarchive,
   onPin,
+  onUnpin,
   mode,
 }) => {
   return (
@@ -33,14 +34,15 @@ const NoteCard = ({
           {/* Pin icon */}
           {mode !== "archived" && (
             <button
-              onClick={() => onPin(note._id)}
-              disabled={note.isPinned}
+              onClick={() =>
+                note.isPinned ? onUnpin(note._id) : onPin(note._id)
+              }
               className={`transition hover:cursor-pointer ${
                 note.isPinned
-                  ? "text-yellow-500 cursor-not-allowed"
+                  ? "text-yellow-500"
                   : "text-gray-500 hover:text-yellow-600"
               }`}
-              title={note.isPinned ? "Pinned" : "Pin Note"}
+              title={note.isPinned ? "Unpin Note" : "Pin Note"}
             >
               <Pin size={14} fill={note.isPinned ? "currentColor" : "none"} />
             </button>
