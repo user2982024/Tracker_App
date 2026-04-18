@@ -11,7 +11,13 @@ const NoteCard = ({
   mode,
 }) => {
   return (
-    <div className="bg-blue-50 p-4 rounded-xl shadow-sm border-2 border-blue-200 hover:shadow-md hover:shadow-blue-300 transition">
+    <div
+      className={`p-4 rounded-xl border-2 transition ${
+        note.isPinned
+          ? "bg-yellow-50 border-yellow-300 shadow-sm shadow-yellow-200 hover:shadow-md"
+          : "bg-blue-50 border-blue-200 shadow-sm hover:shadow-md hover:shadow-blue-300"
+      }`}
+    >
       {/* Title */}
       <h3 className="text-lg font-semibold mb-2">{note.title}</h3>
 
