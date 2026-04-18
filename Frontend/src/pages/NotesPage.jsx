@@ -132,40 +132,68 @@ const NotesPage = () => {
 
   // Pin note
   const handlePin = async (noteId) => {
-    try {
-      const res = await pinNote(noteId);
+  try {
+    const res = await pinNote(noteId);
 
-      // Update state instantly
-      setNotes((prev) =>
-        prev.map((note) =>
-          note._id === noteId ? { ...note, isPinned: true } : note,
-        ),
+    setNotes((prev) => {
+      // Update the note
+      const updated = prev.map((note) =>
+        note._id === noteId
+          ? { ...note, isPinned: true }
+          : note
       );
 
-      toast.success(res.message || "Note pinned successfully");
-    } catch (error) {
-      toast.error(error.message || "Failed to pin note");
-    }
-  };
+      // Separate pinned & unpinned
+      const pinned = updated.filter((n) => n.isPinned);
+      const unpinned = updated.filter((n) => !n.isPinned);
+
+      // Move newly pinned note to top
+      const newlyPinned = pinned.find((n) => n._id === noteId);
+      const otherPinned = pinned.filter((n) => n._id !== noteId);
+
+      return [
+        newlyPinned,
+        ...otherPinned,
+        ...unpinned.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        ),
+      ];
+    });
+
+    toast.success(res.message || "Note pinned successfully");
+  } catch (error) {
+    toast.error(error.message || "Failed to pin note");
+  }
+};
 
   // Unpin note
   const handleUnpin = async (noteId) => {
-    try {
-      const res = await unpinNote(noteId);
+  try {
+    const res = await unpinNote(noteId);
 
-      // Update state instantly
-      setNotes((prev) =>
-        prev.map((note) =>
-          note._id === noteId ? { ...note, isPinned: false } : note,
-        ),
+    setNotes((prev) => {
+      const updated = prev.map((note) =>
+        note._id === noteId
+          ? { ...note, isPinned: false }
+          : note
       );
 
-      toast.success(res.message || "Note unpinned successfully");
-    }
-    catch (error) {
-      toast.error(error.message || "Failed to unpin note");
-    }
-  };
+      const pinned = updated.filter((n) => n.isPinned);
+      const unpinned = updated.filter((n) => !n.isPinned);
+
+      return [
+        ...pinned,
+        ...unpinned.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        ),
+      ];
+    });
+
+    toast.success(res.message || "Note unpinned successfully");
+  } catch (error) {
+    toast.error(error.message || "Failed to unpin note");
+  }
+};
 
   const totalPages = Math.ceil(totalNotes / notesPerPage);
 
