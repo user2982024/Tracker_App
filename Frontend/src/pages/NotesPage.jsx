@@ -33,17 +33,13 @@ const NotesPage = () => {
   const notesPerPage = 9;
   const navigate = useNavigate();
 
-  // Fetch notes
   const fetchNotes = async () => {
     try {
       setLoading(true);
-
       const data = await getNotes(currentPage, notesPerPage);
-
       setNotes(data.notes || []);
       setTotalNotes(data.total || 0);
     } catch (error) {
-      console.error("Error fetching notes:", error.message);
       toast.error(error.message || "Failed to fetch notes");
     } finally {
       setLoading(false);
@@ -54,7 +50,6 @@ const NotesPage = () => {
     fetchNotes();
   }, [currentPage]);
 
-  // Submit (Create / Update)
   const handleSubmit = async (formData) => {
     try {
       if (isEditMode) {
@@ -67,133 +62,107 @@ const NotesPage = () => {
 
       await fetchNotes();
 
-      // Reset UI
       setShowForm(false);
       setIsEditMode(false);
       setSelectedNote(null);
     } catch (error) {
-      console.error("Error saving note:", error.message);
       toast.error(error.message || "Failed to save note");
     }
   };
 
-  // Edit note
   const handleEdit = (note) => {
     setSelectedNote(note);
     setIsEditMode(true);
     setShowForm(true);
   };
 
-  // Delete single note
   const handleDelete = async (note) => {
     try {
       const res = await deleteNote(note._id);
-
-      // Optimistic UI
       setNotes((prev) => prev.filter((n) => n._id !== note._id));
-
       toast.success(res?.message || "Note deleted successfully");
     } catch (error) {
-      console.error("Delete failed:", error.message);
       toast.error(error.message || "Failed to delete note");
     }
   };
 
-  // Delete ALL notes
   const handleDeleteAll = async () => {
     try {
       const res = await deleteAllNotes();
-
       setNotes([]);
       setShowDeleteAllModal(false);
-
       toast.success(res.message);
     } catch (error) {
       toast.error(error.message || "Failed to delete all notes");
     }
   };
 
-  // Archive note
   const handleArchive = async (noteId) => {
     try {
       const res = await archiveNote(noteId);
-
-      // Remove archive note from UI
       setNotes((prev) => prev.filter((note) => note._id !== noteId));
-
-      // Update total count
       setTotalNotes((prev) => prev - 1);
-
       toast.success(res.message || "Note archived successfully");
     } catch (error) {
       toast.error(error.message || "Failed to archive note");
     }
   };
 
-  // Pin note
   const handlePin = async (noteId) => {
-  try {
-    const res = await pinNote(noteId);
+    try {
+      const res = await pinNote(noteId);
 
-    setNotes((prev) => {
-      // Update the note
-      const updated = prev.map((note) =>
-        note._id === noteId
-          ? { ...note, isPinned: true }
-          : note
-      );
+      setNotes((prev) => {
+        const updated = prev.map((note) =>
+          note._id === noteId ? { ...note, isPinned: true } : note
+        );
 
-      // Separate pinned & unpinned
-      const pinned = updated.filter((n) => n.isPinned);
-      const unpinned = updated.filter((n) => !n.isPinned);
+        const pinned = updated.filter((n) => n.isPinned);
+        const unpinned = updated.filter((n) => !n.isPinned);
 
-      // Move newly pinned note to top
-      const newlyPinned = pinned.find((n) => n._id === noteId);
-      const otherPinned = pinned.filter((n) => n._id !== noteId);
+        const newlyPinned = pinned.find((n) => n._id === noteId);
+        const otherPinned = pinned.filter((n) => n._id !== noteId);
 
-      return [
-        newlyPinned,
-        ...otherPinned,
-        ...unpinned.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        ),
-      ];
-    });
+        return [
+          newlyPinned,
+          ...otherPinned,
+          ...unpinned.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          ),
+        ];
+      });
 
-    toast.success(res.message || "Note pinned successfully");
-  } catch (error) {
-    toast.error(error.message || "Failed to pin note");
-  }
-};
+      toast.success(res.message || "Note pinned successfully");
+    } catch (error) {
+      toast.error(error.message || "Failed to pin note");
+    }
+  };
 
-  // Unpin note
   const handleUnpin = async (noteId) => {
-  try {
-    const res = await unpinNote(noteId);
+    try {
+      const res = await unpinNote(noteId);
 
-    setNotes((prev) => {
-      const updated = prev.map((note) =>
-        note._id === noteId
-          ? { ...note, isPinned: false }
-          : note
-      );
+      setNotes((prev) => {
+        const updated = prev.map((note) =>
+          note._id === noteId ? { ...note, isPinned: false } : note
+        );
 
-      const pinned = updated.filter((n) => n.isPinned);
-      const unpinned = updated.filter((n) => !n.isPinned);
+        const pinned = updated.filter((n) => n.isPinned);
+        const unpinned = updated.filter((n) => !n.isPinned);
 
-      return [
-        ...pinned,
-        ...unpinned.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-        ),
-      ];
-    });
+        return [
+          ...pinned,
+          ...unpinned.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          ),
+        ];
+      });
 
-    toast.success(res.message || "Note unpinned successfully");
-  } catch (error) {
-    toast.error(error.message || "Failed to unpin note");
-  }
-};
+      toast.success(res.message || "Note unpinned successfully");
+    } catch (error) {
+      toast.error(error.message || "Failed to unpin note");
+    }
+  };
 
   const totalPages = Math.ceil(totalNotes / notesPerPage);
 
@@ -205,7 +174,18 @@ const NotesPage = () => {
         onDeleteAllClick={() => setShowDeleteAllModal(true)}
       />
 
-      {/* FORM MODE */}
+      {/* 🔥 Archived Button (BEST POSITION) */}
+      {!showForm && (
+        <div className="flex justify-end mt-4">
+          <button
+            onClick={() => navigate("/app/notes/archive")}
+            className="px-4 py-2 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-900 transition cursor-pointer"
+          >
+            Archived Notes
+          </button>
+        </div>
+      )}
+
       {showForm ? (
         <div className="flex-1 flex items-center justify-center">
           <div className="w-full max-w-xl">
@@ -215,7 +195,6 @@ const NotesPage = () => {
               selectedNote={selectedNote}
             />
 
-            {/* Cancel Button */}
             <div className="mt-4 flex justify-center">
               <button
                 onClick={() => {
@@ -223,7 +202,7 @@ const NotesPage = () => {
                   setIsEditMode(false);
                   setSelectedNote(null);
                 }}
-                className="w-full sm:w-auto px-6 py-2 bg-gray-400 border rounded-lg text-white hover:bg-gray-500 transition cursor-pointer"
+                className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -232,7 +211,6 @@ const NotesPage = () => {
         </div>
       ) : (
         <>
-          {/* NOTES LIST */}
           {loading ? (
             <p className="text-gray-500 mt-4">Loading notes...</p>
           ) : (
@@ -247,8 +225,8 @@ const NotesPage = () => {
             />
           )}
 
-          {/* PAGINATION */}
-          <div className="flex gap-2 mt-4 justify-center">
+          {/* Pagination */}
+          <div className="flex gap-2 mt-6 justify-center">
             {Array.from({ length: totalPages }, (_, i) => (
               <button
                 key={i}
@@ -266,41 +244,32 @@ const NotesPage = () => {
         </>
       )}
 
-      {/* Archived Notes Button */}
-      <button
-        onClick={() => navigate("/app/notes/archive")}
-        className="absolute bottom-6 right-6 px-4 py-2 bg-gray-800 text-white rounded-lg shadow-lg hover:bg-gray-900 transition cursor-pointer"
-      >
-        Archived Notes
-      </button>
-
-      {/* DELETE ALL MODAL */}
+      {/* Delete Modal */}
       {showDeleteAllModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl w-[90%] max-w-md p-6 animate-fadeIn">
-            <h2 className="text-xl font-semibold text-gray-800 mb-3">
+          <div className="bg-white rounded-2xl shadow-xl w-[90%] max-w-md p-6">
+            <h2 className="text-xl font-semibold mb-3">
               Delete All Notes?
             </h2>
 
             <p className="text-gray-600 mb-6">
               This action{" "}
-              <span className="font-semibold text-red-500">
+              <span className="text-red-500 font-semibold">
                 cannot be undone
-              </span>
-              . All your notes will be permanently deleted.
+              </span>.
             </p>
 
             <div className="flex justify-end gap-3">
               <button
                 onClick={() => setShowDeleteAllModal(false)}
-                className="px-4 py-2 rounded-lg border text-gray-700 hover:bg-gray-100 transition hover:cursor-pointer"
+                className="px-4 py-2 border rounded-lg hover:bg-gray-100 cursor-pointer"
               >
                 Cancel
               </button>
 
               <button
                 onClick={handleDeleteAll}
-                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition hover:cursor-pointer"
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 cursor-pointer"
               >
                 Delete All
               </button>

@@ -19,7 +19,15 @@ const NoteCard = ({
       }`}
     >
       {/* Title */}
-      <h3 className="text-lg font-semibold mb-2">{note.title}</h3>
+      <div className="flex items-start justify-between mb-2">
+        <h3 className="text-lg font-semibold">{note.title}</h3>
+
+        {note.isPinned && (
+          <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-yellow-200 text-yellow-800 rounded-full">
+            Pinned
+          </span>
+        )}
+      </div>
 
       {/* Content */}
       <p className="text-gray-700 line-clamp-3">{note.content}</p>
