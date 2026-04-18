@@ -120,4 +120,18 @@ export const getArchivedNotes = async(page = 1, limit = 9) => {
   return data;
 };
 
+// Unarchive a note
+export const unarchiveNote = async (id) => {
+  const response = await fetch(`${BASE_URL}/${id}/unarchive`, {
+    method: "PATCH",
+    credentials: "include",
+  });
 
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to unarchive note");
+  }
+
+  return data;
+};

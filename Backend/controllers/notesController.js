@@ -59,7 +59,7 @@ const updateNote = async (req, res, next) => {
 
     const updatedNote = await notesService.updateNote(noteId, userId, req.body);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Note updated successfully",
       note: updatedNote,
@@ -79,7 +79,7 @@ const deleteNote = async (req, res, next) => {
     // Call service
     const deletedNote = await notesService.deleteNote(noteId, userId);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Note deleted successfully",
       data: deletedNote,
@@ -133,6 +133,7 @@ const archiveNote = async (req, res, next) => {
   }
 };
 
+// Get archived notes of a user controller
 const getArchivedNotes = async (req, res, next) => {
   try {
     const userId = req.user.userId;
@@ -158,6 +159,25 @@ const getArchivedNotes = async (req, res, next) => {
   }
 };
 
+// Unarchive note controller
+const unarchiveNote = async (req, res, next) => {
+  try {
+    const noteId = req.params.id;
+    const userId = req.user.userId;
+
+    const unarchivedNote = await notesService.unarchiveNote(noteId, userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Note unarchived successfully",
+      note: unarchivedNote,
+    });
+  }
+  catch (error) {
+    next(error);
+  }
+};
+
 // Exports
 module.exports = {
   createNote,
@@ -167,4 +187,5 @@ module.exports = {
   deleteAllNotes,
   archiveNote,
   getArchivedNotes,
+  unarchiveNote,
 };

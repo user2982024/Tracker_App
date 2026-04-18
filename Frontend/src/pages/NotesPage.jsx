@@ -97,7 +97,7 @@ const NotesPage = () => {
     }
   };
 
-  // Delete ALL notes (FIXED)
+  // Delete ALL notes
   const handleDeleteAll = async () => {
     try {
       const res = await deleteAllNotes();

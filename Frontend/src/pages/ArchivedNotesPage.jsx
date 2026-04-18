@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getArchivedNotes, deleteNote } from "../services/notesService";
+import { getArchivedNotes, deleteNote, unarchiveNote } from "../services/notesService";
 import NotesList from "../components/Notes/NotesList";
 import { toast } from "react-hot-toast";
 
@@ -26,10 +26,7 @@ const ArchivedNotesPage = () => {
 
   useEffect(() => {
     fetchArchivedNotes();
-  }, []);
-
-  // Unarchive handler (to implement next)
-  
+  }, []);  
 
   // Delete handler
   const handleDelete = async (note) => {
@@ -42,6 +39,21 @@ const ArchivedNotesPage = () => {
       toast.success(res.message || "Note deleted successfully");
     } catch (error) {
       toast.error(error.message || "Failed to delete note");
+    }
+  };
+
+  // Unarchive handler 
+  const handleUnarchive = async (noteId) => {
+    try {
+      const res = await unarchiveNote(noteId);
+
+      // Remove from UI
+      setNotes((prev) => prev.filter((note) => note._id !== noteId));
+
+      toast.success(res.message || "Note unarchived successfully");
+    }
+    catch (error) {
+      toast.error(error.message || "Failed to unarchive note");
     }
   };
 
@@ -75,7 +87,8 @@ const ArchivedNotesPage = () => {
           notes={notes}
           onEdit={null}
           onDelete={handleDelete}
-          onArchive={() => {}} 
+          onArchive={null}
+          onUnarchive={handleUnarchive}
           mode="archived"
         />
       )}

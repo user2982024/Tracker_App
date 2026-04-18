@@ -15,6 +15,7 @@ const {
   deleteAllNotes,
   archiveNote,
   getArchivedNotes,
+  unarchiveNote,
 } = require("../controllers/notesController");
 
 const router = express.Router();
@@ -52,5 +53,8 @@ router.delete("/:id", authMiddleware, validateNoteId, deleteNote);
 
 // Archive note route
 router.patch("/:id/archive", authMiddleware, validateNoteId, archiveNote);
+
+// Unarchive note route
+router.patch("/:id/unarchive", authMiddleware, validateNoteId, unarchiveNote);
 
 module.exports = router;

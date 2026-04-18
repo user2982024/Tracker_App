@@ -24,7 +24,10 @@ const getAllNotes = async (userId, page = 1, limit = 9) => {
     .skip(skip)
     .limit(limit);
 
-    const total = await Note.countDocuments({ user: userId });
+    const total = await Note.countDocuments({ 
+        user: userId,
+        isArchived: false,                                // Count only non-archived notes
+     });
 
     return { notes, total };
 }
@@ -123,9 +126,9 @@ const archiveNote = async (noteId, userId) => {
     }
 
     return note;
-}
+};
 
-// Get all archive notes service
+// Get all archived notes service
 const getArchivedNotes = async (userId, page = 1, limit = 9) => {
     const skip = (page - 1) * limit;
 
@@ -143,6 +146,30 @@ const getArchivedNotes = async (userId, page = 1, limit = 9) => {
     });
     
     return { notes, total };
+};
+
+// Unarchive and archived note service
+const unarchiveNote = async (noteId, userId) => {
+    // Get archived note
+    const note = await Note.findOneAndUpdate(
+        {
+            _id: noteId,
+            user: userId,
+            isArchived: true,
+        },
+        {
+            isArchived: false,
+            archivedAt: null,
+        },
+        { new: true },
+    );
+
+    // If not found throw error
+    if (!note) {
+        throw new Error("Note not found, not archived, or unauthorized");
+    }
+
+    return note;
 }
 
 module.exports = {
@@ -153,5 +180,6 @@ module.exports = {
     deleteAllNotes,
     archiveNote,
     getArchivedNotes,
+    unarchiveNote,
 };
 

@@ -1,6 +1,6 @@
 import { Pencil, Trash2, Archive, ArchiveRestore } from "lucide-react";
 
-const NoteCard = ({ note, onEdit, onDelete, onArchive, mode }) => {
+const NoteCard = ({ note, onEdit, onDelete, onArchive, onUnarchive, mode }) => {
   return (
     <div className="bg-blue-50 p-4 rounded-xl shadow-sm border-2 border-blue-200 hover:shadow-md hover:shadow-blue-300 transition">
       {/* Title */}
@@ -23,7 +23,7 @@ const NoteCard = ({ note, onEdit, onDelete, onArchive, mode }) => {
           {/* Unarchive icon */}
           {mode === "archived" ? (
             <button
-              onClick={() => {}}
+              onClick={() => onUnarchive(note._id)}
               className="text-gray-500 hover:text-green-600 transition hover:cursor-pointer"
               title="Unarchive Note"
             >
