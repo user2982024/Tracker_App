@@ -1,6 +1,14 @@
-import { Pencil, Trash2, Archive, ArchiveRestore } from "lucide-react";
+import { Pencil, Trash2, Archive, ArchiveRestore, Pin } from "lucide-react";
 
-const NoteCard = ({ note, onEdit, onDelete, onArchive, onUnarchive, mode }) => {
+const NoteCard = ({
+  note,
+  onEdit,
+  onDelete,
+  onArchive,
+  onUnarchive,
+  onPin,
+  mode,
+}) => {
   return (
     <div className="bg-blue-50 p-4 rounded-xl shadow-sm border-2 border-blue-200 hover:shadow-md hover:shadow-blue-300 transition">
       {/* Title */}
@@ -15,11 +23,29 @@ const NoteCard = ({ note, onEdit, onDelete, onArchive, onUnarchive, mode }) => {
         <div className="flex items-center gap-2">
           <span>{new Date(note.createdAt).toLocaleDateString()}</span>
 
-          {note.isPinned && <span>📌</span>}
+          {note.isPinned && (
+            <Pin size={14} className="text-yellow-500" fill="currentColor" />
+          )}
         </div>
 
         {/* Icons */}
         <div className="flex items-center gap-3">
+          {/* Pin icon */}
+          {mode !== "archived" && (
+            <button
+              onClick={() => onPin(note._id)}
+              disabled={note.isPinned}
+              className={`transition hover:cursor-pointer ${
+                note.isPinned
+                  ? "text-yellow-500 cursor-not-allowed"
+                  : "text-gray-500 hover:text-yellow-600"
+              }`}
+              title={note.isPinned ? "Pinned" : "Pin Note"}
+            >
+              <Pin size={14} fill={note.isPinned ? "currentColor" : "none"} />
+            </button>
+          )}
+
           {/* Unarchive icon */}
           {mode === "archived" ? (
             <button

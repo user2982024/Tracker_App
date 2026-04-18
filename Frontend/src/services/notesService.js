@@ -135,3 +135,19 @@ export const unarchiveNote = async (id) => {
 
   return data;
 };
+
+// Pin a note
+export const pinNote = async (id) => {
+  const response = await fetch(`${BASE_URL}/${id}/pin`, {
+    method: "PATCH",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to pin note");
+  }
+
+  return data;
+};

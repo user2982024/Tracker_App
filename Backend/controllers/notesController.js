@@ -178,6 +178,25 @@ const unarchiveNote = async (req, res, next) => {
   }
 };
 
+// Pin note controller
+const pinNote = async (req, res, next) => {
+  try {
+    const noteId = req.params.id;
+    const userId = req.user.userId;
+
+    const pinnedNote = await notesService.pinNote(noteId, userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Note pinned successfully",
+      note: pinnedNote,
+    });
+  }
+  catch (error) {
+    next(error);
+  }
+};
+
 // Exports
 module.exports = {
   createNote,
@@ -188,4 +207,5 @@ module.exports = {
   archiveNote,
   getArchivedNotes,
   unarchiveNote,
+  pinNote,
 };

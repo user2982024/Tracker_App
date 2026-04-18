@@ -170,7 +170,29 @@ const unarchiveNote = async (noteId, userId) => {
     }
 
     return note;
-}
+};
+
+// Pin a note service
+const pinNote = async (noteId, userId) => {
+    const note = await Note.findOneAndUpdate(
+        {
+            _id: noteId,
+            user: userId,
+            isArchived: false,
+            isPinned: false,
+        },
+        {
+            isPinned: true,
+        },
+        { new: true },
+    );
+
+    if (!note) {
+        throw new Error("Note not found, already pinned, archived, or unauthorized");``
+    }
+
+    return note;
+};
 
 module.exports = {
     createNote,
@@ -181,5 +203,6 @@ module.exports = {
     archiveNote,
     getArchivedNotes,
     unarchiveNote,
+    pinNote,
 };
 

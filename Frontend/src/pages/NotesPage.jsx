@@ -11,6 +11,7 @@ import {
   deleteNote,
   deleteAllNotes,
   archiveNote,
+  pinNote,
 } from "../services/notesService";
 
 import { toast } from "react-hot-toast";
@@ -128,6 +129,24 @@ const NotesPage = () => {
     }
   };
 
+  // Pin note
+  const handlePin = async (noteId) => {
+    try {
+      const res = await pinNote(noteId);
+
+      // Update state instantly
+      setNotes((prev) =>
+        prev.map((note) =>
+          note._id === noteId ? { ...note, isPinned: true } : note,
+        ),
+      );
+
+      toast.success(res.message || "Note pinned successfully");
+    } catch (error) {
+      toast.error(error.message || "Failed to pin note");
+    }
+  };
+
   const totalPages = Math.ceil(totalNotes / notesPerPage);
 
   return (
@@ -174,6 +193,7 @@ const NotesPage = () => {
               onEdit={handleEdit}
               onDelete={handleDelete}
               onArchive={handleArchive}
+              onPin={handlePin}
               mode="active"
             />
           )}
