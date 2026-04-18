@@ -216,6 +216,46 @@ const unpinNote = async (noteId, userId) => {
   return note;
 };
 
+// Search notes service
+const searchNotes = async (userId, query, page = 1, limit = 9) => {
+  const skip = (page - 1) * limit;
+
+  // Base filter
+  const baseFilter = {
+    user: userId,
+    isArchived: false,
+  };
+
+  // If query exists, add search condition
+  let searchFilter = {};
+
+  if (query && query.trim() !== "") {
+    searchFilter = {
+      $or: [
+        { title: { $regex: query.trim(), $options: "i" } },
+        { content: { $regex: query.trim(), $options: "i" } },
+      ],
+    };
+  }
+
+  // Merge filters
+  const finalFilter = {
+    ...baseFilter,
+    ...searchFilter,
+  };
+
+  // Fetch notes
+  const notes = await Note.find(finalFilter)
+    .sort({ isPinned: -1, createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+
+    // Total count for pagination
+    const total = await Note.countDocuments(finalFilter);
+
+    return { notes, total };
+}
+
 // Exports
 module.exports = {
   createNote,
@@ -228,4 +268,5 @@ module.exports = {
   unarchiveNote,
   pinNote,
   unpinNote,
+  searchNotes,
 };

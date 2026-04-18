@@ -18,6 +18,7 @@ const {
   unarchiveNote,
   pinNote,
   unpinNote,
+  searchNotes,
 } = require("../controllers/notesController");
 
 const router = express.Router();
@@ -39,6 +40,9 @@ router.post(
 
 // Delete all notes route
 router.delete("/", authMiddleware, deleteAllNotes);
+
+// Search notes route
+router.get("/search", authMiddleware, searchNotes);
 
 // Update note route
 router.put(

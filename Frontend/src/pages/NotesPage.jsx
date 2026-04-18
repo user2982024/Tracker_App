@@ -174,12 +174,12 @@ const NotesPage = () => {
         onDeleteAllClick={() => setShowDeleteAllModal(true)}
       />
 
-      {/* 🔥 Archived Button (BEST POSITION) */}
+      {/* Archived Button */}
       {!showForm && (
         <div className="flex justify-end mt-4">
           <button
             onClick={() => navigate("/app/notes/archive")}
-            className="px-4 py-2 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-900 transition cursor-pointer"
+            className="px-4 py-2 bg-blue-100 text-blue-600 rounded-3xl shadow hover:bg-blue-200 transition cursor-pointer"
           >
             Archived Notes
           </button>

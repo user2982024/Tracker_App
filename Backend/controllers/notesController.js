@@ -216,6 +216,33 @@ const unpinNote = async (req, res, next) => {
   }
 };
 
+// Search notes controller
+const searchNotes = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+
+    // Extract query params
+    const q = req.query.q;
+
+    // Pagination 
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(20, parseInt(req.query.limit) || 9);
+
+    // Call service 
+    const { notes, total } = await notesService.searchNotes(userId, q, page, limit);
+
+    return res.status(200).json({
+      success: true, 
+      message: "Notes search results",
+      notes, 
+      total,
+    });
+  }
+  catch (error) {
+    next(error);
+  }
+};
+
 // Exports
 module.exports = {
   createNote,
@@ -228,4 +255,5 @@ module.exports = {
   unarchiveNote,
   pinNote,
   unpinNote,
+  searchNotes,
 };
