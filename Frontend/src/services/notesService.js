@@ -167,3 +167,27 @@ export const unpinNote = async (id) => {
 
   return data;
 };
+
+// Search notes service
+export const searchNotes = async (query = "", page = 1, limit = 9) => {
+  // Build query string dynamically
+  let url = `${BASE_URL}/search?page=${page}&limit=${limit}`;
+
+  if (query && query.trim() !== "") {
+    url += `&q=${encodeURIComponent(query.trim())}`;
+  }
+
+  // Call API
+  const response = await fetch(url, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to search notes");
+  }
+
+  return data;
+}
