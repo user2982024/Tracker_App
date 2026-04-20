@@ -190,4 +190,4 @@ export const searchNotes = async (query = "", page = 1, limit = 9) => {
   }
 
   return data;
-}
+};
