@@ -243,6 +243,46 @@ const searchNotes = async (req, res, next) => {
   }
 };
 
+// Search archived notes controller
+const searchArchivedNotes = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+
+    // Extract query
+    const query = req.query.query;
+
+    // Pagination
+    const page = Math.max(1, parseInt(req.query.page) || 1);
+    const limit = Math.min(20, parseInt(req.query.limit) || 9);
+
+    // Validation
+    if (!query || !query.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Search query is required",
+      });
+    }
+
+    // Call service
+    const { notes, total} = await notesService.searchArchivedNotes(
+      userId, 
+      query.trim(), 
+      page, 
+      limit,
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Archived notes search results fetched successfully",
+      notes, 
+      total,
+    });
+  }
+  catch (error) {
+    next(error);
+  }
+};
+
 // Exports
 module.exports = {
   createNote,
@@ -256,4 +296,5 @@ module.exports = {
   pinNote,
   unpinNote,
   searchNotes,
+  searchArchivedNotes,
 };

@@ -19,6 +19,7 @@ const {
   pinNote,
   unpinNote,
   searchNotes,
+  searchArchivedNotes,
 } = require("../controllers/notesController");
 
 const router = express.Router();
@@ -28,6 +29,9 @@ router.get("/", authMiddleware, getAllNotes);
 
 // Get all archived notes of a logged in user route
 router.get("/archived", authMiddleware, getArchivedNotes);
+
+// Search archived notes route
+router.get("/archived/search", authMiddleware, searchArchivedNotes);
 
 // Create note route
 router.post(

@@ -203,7 +203,7 @@ const NotesPage = () => {
         <div className="flex justify-end mt-4">
           <button
             onClick={() => navigate("/app/notes/archive")}
-            className="px-4 py-2 bg-blue-100 text-blue-600 rounded-3xl shadow hover:bg-blue-200 transition cursor-pointer"
+            className="px-4 py-2 bg-blue-100 mb-4 text-blue-600 rounded-3xl shadow hover:bg-blue-200 transition cursor-pointer"
           >
             Archived Notes
           </button>

@@ -189,7 +189,6 @@ const pinNote = async (noteId, userId) => {
     throw new Error(
       "Note not found, already pinned, archived, or unauthorized",
     );
-    ``;
   }
 
   return note;
@@ -254,7 +253,50 @@ const searchNotes = async (userId, query, page = 1, limit = 9) => {
     const total = await Note.countDocuments(finalFilter);
 
     return { notes, total };
-}
+};
+
+// Search archived notes service
+const searchArchivedNotes = async (userId, query, page = 1, limit = 9) => {
+  const skip = (page - 1) * limit;
+
+  // Base filter
+  const baseFilter = {
+    user: userId,
+    isArchived: true,
+  };
+
+  // If query exists, add search condition
+  let searchFilter = {};
+
+  if (query && query.trim() !== "") {
+    searchFilter = {
+      $or: [
+        { title: { $regex: query.trim(), $options: "i" }  },
+        { content: { $regex: query.trim(), $options: "i" } },
+      ],
+    };
+  }
+
+  // Merge filter
+  const finalFilter = {
+    ...baseFilter,
+    ...searchFilter,
+  };
+
+  // Fetch archived note
+  const notes = await Note.find(finalFilter)
+  .sort({ archivedAt: -1  })
+  .skip(skip)
+  .limit(limit);
+
+  // Total count for pagination
+  const total = await Note.countDocuments(finalFilter);
+
+  return { 
+    notes,
+    total,
+   }
+};
 
 // Exports
 module.exports = {
@@ -269,4 +311,5 @@ module.exports = {
   pinNote,
   unpinNote,
   searchNotes,
+  searchArchivedNotes,
 };

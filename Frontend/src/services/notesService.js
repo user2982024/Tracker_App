@@ -191,3 +191,26 @@ export const searchNotes = async (query = "", page = 1, limit = 9) => {
 
   return data;
 };
+
+// Search archived notes
+export const searchArchivedNotes = async (query = "", page = 1, limit = 9) => {
+  // Build URL
+  let url = `${BASE_URL}/archived/search?page=${page}&limit=${limit}`;
+
+  if (query && query.trim() !== "") {
+    url += `&query=${encodeURIComponent(query.trim())}`;
+  }
+
+  const response = await fetch(url, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to search archived notes");
+  }
+
+  return data;
+};
