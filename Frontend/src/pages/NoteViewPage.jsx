@@ -75,7 +75,7 @@ const NoteViewPage = () => {
   };
 
   const handleEdit = () => {
-    navigate(`/app/notes?edit=${id}`);
+    navigate(`/app/notes/${id}/edit`);
   };
 
   if (loading) {
