@@ -1,4 +1,19 @@
-const NotesHeader = ({ onAddClick, onDeleteAllClick }) => {
+import { useState } from "react";
+
+const NotesHeader = ({ onAddClick, onDeleteAllClick, onSearch }) => {
+
+  // State for input
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Hndle input change
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+
+    // Send value to parent
+    onSearch(value);
+  };
+
   return (
     <div className="flex justify-between items-center mb-8">
       <h1 className="text-2xl font-bold">Notes</h1>
@@ -7,6 +22,8 @@ const NotesHeader = ({ onAddClick, onDeleteAllClick }) => {
         <input
           type="text"
           placeholder="Search notes..."
+          value={searchQuery}
+          onChange={handleSearchChange}
           className="border rounded-lg px-3 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 

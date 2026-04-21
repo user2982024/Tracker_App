@@ -13,6 +13,7 @@ import {
   archiveNote,
   pinNote,
   unpinNote,
+  searchNotes,
 } from "../services/notesService";
 
 import { toast } from "react-hot-toast";
@@ -29,6 +30,8 @@ const NotesPage = () => {
 
   const [showForm, setShowForm] = useState(false);
   const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
+  
+  const [searchQuery, setSearchQuery] = useState("");
 
   const notesPerPage = 9;
   const navigate = useNavigate();
@@ -36,9 +39,21 @@ const NotesPage = () => {
   const fetchNotes = async () => {
     try {
       setLoading(true);
-      const data = await getNotes(currentPage, notesPerPage);
+      
+      let data;
+
+      if (searchQuery && searchQuery.trim() !== "") {
+        // Search mode
+        data = await searchNotes(searchQuery, currentPage, notesPerPage);
+      }
+      else {
+        // Normal mode
+        data = await getNotes(currentPage, notesPerPage);
+      }
+
       setNotes(data.notes || []);
       setTotalNotes(data.total || 0);
+
     } catch (error) {
       toast.error(error.message || "Failed to fetch notes");
     } finally {
@@ -48,7 +63,7 @@ const NotesPage = () => {
 
   useEffect(() => {
     fetchNotes();
-  }, [currentPage]);
+  }, [currentPage, searchQuery]);
 
   const handleSubmit = async (formData) => {
     try {
@@ -172,6 +187,12 @@ const NotesPage = () => {
       <NotesHeader
         onAddClick={() => setShowForm(true)}
         onDeleteAllClick={() => setShowDeleteAllModal(true)}
+        onSearch={
+          (value) => {
+            setCurrentPage(1);
+            setSearchQuery(value);
+          }
+        }
       />
 
       {/* Archived Button */}

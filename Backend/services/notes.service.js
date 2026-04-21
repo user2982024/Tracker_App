@@ -248,7 +248,7 @@ const searchNotes = async (userId, query, page = 1, limit = 9) => {
   const notes = await Note.find(finalFilter)
     .sort({ isPinned: -1, createdAt: -1 })
     .skip(skip)
-    .limit(limit)
+    .limit(limit);
 
     // Total count for pagination
     const total = await Note.countDocuments(finalFilter);
