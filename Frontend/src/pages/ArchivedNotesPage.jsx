@@ -98,7 +98,7 @@ const ArchivedNotesPage = () => {
             onClick={() => navigate("/app/notes")}
             className="px-4 py-2 bg-blue-100 text-blue-600 rounded-3xl hover:bg-blue-200 transition hover:cursor-pointer"
           >
-            Back to notes
+            ← Back to notes
           </button>
         </div>
       </div>

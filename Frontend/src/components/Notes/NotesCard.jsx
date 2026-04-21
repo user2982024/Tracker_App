@@ -52,7 +52,7 @@ const NoteCard = ({
           {/* View icon */}
           <button
             onClick={() => navigate(`/app/notes/${note._id}`)}
-            className="text-gray-500 hover:text-indigo-600 transition hover:cursor-pointer"
+            className="text-gray-500 hover:text-indigo-600 transition hover:cursor-pointer hover:scale-125"
             title="View Note"
           >
             <Eye size={14} />
@@ -65,8 +65,8 @@ const NoteCard = ({
               }
               className={`transition hover:cursor-pointer ${
                 note.isPinned
-                  ? "text-yellow-500"
-                  : "text-gray-500 hover:text-yellow-600"
+                  ? "text-yellow-500 hover:scale-125"
+                  : "text-gray-500 hover:text-yellow-600 hover:scale-125"
               }`}
               title={note.isPinned ? "Unpin Note" : "Pin Note"}
             >
@@ -78,7 +78,7 @@ const NoteCard = ({
           {mode === "archived" ? (
             <button
               onClick={() => onUnarchive(note._id)}
-              className="text-gray-500 hover:text-green-600 transition hover:cursor-pointer"
+              className="text-gray-500 hover:text-green-600 transition hover:cursor-pointer hover:scale-125"
               title="Unarchive Note"
             >
               <ArchiveRestore size={14} />
@@ -87,7 +87,7 @@ const NoteCard = ({
             // If not archived, show the archive icon
             <button
               onClick={() => onArchive(note._id)}
-              className="text-gray-500 hover:text-yellow-600 transition hover:cursor-pointer"
+              className="text-gray-500 hover:text-yellow-600 transition hover:cursor-pointer hover:scale-125"
               title="Archive Note"
             >
               <Archive size={14} />
@@ -98,7 +98,7 @@ const NoteCard = ({
           {mode !== "archived" && (
             <button
               onClick={() => onEdit(note)}
-              className="text-gray-500 hover:text-blue-600 transition hover:cursor-pointer"
+              className="text-gray-500 hover:text-blue-600 transition hover:cursor-pointer hover:scale-125"
               title="Edit Note"
             >
               <Pencil size={14} />
@@ -108,7 +108,7 @@ const NoteCard = ({
           {/* Delete icon */}
           <button
             onClick={() => onDelete(note)}
-            className="text-gray-500 hover:text-red-600 transition hover:cursor-pointer"
+            className="text-gray-500 hover:text-red-600 transition hover:cursor-pointer hover:scale-125"
             title="Delete Note"
           >
             <Trash2 size={14} />
