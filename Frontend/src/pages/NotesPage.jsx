@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import useDebounce from "../hooks/useDebounce";
 import NotesHeader from "../components/Notes/NotesHeader";
 import NotesList from "../components/Notes/NotesList";
 import NoteForm from "../components/Notes/NoteForm";
@@ -33,6 +34,8 @@ const NotesPage = () => {
   
   const [searchQuery, setSearchQuery] = useState("");
 
+  const debouncedQuery = useDebounce(searchQuery, 300);
+
   const notesPerPage = 9;
   const navigate = useNavigate();
 
@@ -42,9 +45,9 @@ const NotesPage = () => {
       
       let data;
 
-      if (searchQuery && searchQuery.trim() !== "") {
+      if (debouncedQuery && debouncedQuery.trim() !== "") {
         // Search mode
-        data = await searchNotes(searchQuery, currentPage, notesPerPage);
+        data = await searchNotes(debouncedQuery, currentPage, notesPerPage);
       }
       else {
         // Normal mode
@@ -63,7 +66,7 @@ const NotesPage = () => {
 
   useEffect(() => {
     fetchNotes();
-  }, [currentPage, searchQuery]);
+  }, [currentPage, debouncedQuery]);
 
   const handleSubmit = async (formData) => {
     try {
