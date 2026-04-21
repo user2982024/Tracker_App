@@ -10,6 +10,7 @@ import {
 } from "../services/notesService";
 import { toast } from "react-hot-toast";
 import { Pencil, Trash2, Archive, ArchiveRestore, Pin } from "lucide-react";
+import Modal from "../components/UI/Modal";
 
 const NoteViewPage = () => {
   const { id } = useParams();
@@ -17,6 +18,7 @@ const NoteViewPage = () => {
 
   const [note, setNote] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Fetch note
   useEffect(() => {
@@ -37,10 +39,8 @@ const NoteViewPage = () => {
     fetchNote();
   }, [id, navigate]);
 
+  // DELETE (NO window.confirm anymore)
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this note?")) return;
-    // Modal to be added here
-
     try {
       await deleteNote(id);
       toast.success("Note deleted successfully");
@@ -99,7 +99,7 @@ const NoteViewPage = () => {
         {/* Back */}
         <button
           onClick={() => navigate(-1)}
-          className="bg-blue-100 hover:bg-blue-200 px-3 py-2 rounded-3xl text-sm text-blue-600 cursor-pointer"
+          className="bg-blue-100 hover:bg-blue-200 px-3 py-2 rounded-3xl text-sm text-blue-600 cursor-pointer transition-all hover:scale-105"
         >
           ← Back
         </button>
@@ -151,7 +151,7 @@ const NoteViewPage = () => {
 
           {/* Delete */}
           <button
-            onClick={handleDelete}
+            onClick={() => setShowDeleteModal(true)}
             className="text-gray-500 hover:text-red-600 transition-all duration-200 cursor-pointer hover:scale-110"
             title="Delete Note"
           >
@@ -162,8 +162,10 @@ const NoteViewPage = () => {
 
       {/* Note Content */}
       <div
-        className={`rounded-2xl p-6 border shadow ${
-          note.isPinned ? "bg-yellow-50 border-yellow-300 shadow-sm shadow-yellow-200 hover:shadow-md" : "bg-white"
+        className={`rounded-2xl p-6 border shadow transition ${
+          note.isPinned
+            ? "bg-yellow-50 border-yellow-300 shadow-yellow-200"
+            : "bg-white"
         }`}
       >
         {/* Title */}
@@ -171,7 +173,7 @@ const NoteViewPage = () => {
           <h1 className="text-2xl font-semibold">{note.title}</h1>
 
           {note.isPinned && (
-            <span className="ml-4 px-2 py-0.5 text-xs font-medium bg-yellow-200 text-yellow-800 rounded-full">
+            <span className="ml-4 px-2 py-0.5 text-xs font-medium bg-yellow-200 text-yellow-800 rounded-full shadow-sm">
               Pinned
             </span>
           )}
@@ -187,6 +189,33 @@ const NoteViewPage = () => {
           Created: {new Date(note.createdAt).toLocaleString()}
         </div>
       </div>
+
+      {/* DELETE MODAL */}
+      <Modal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        title="Delete Note?"
+        actions={
+          <>
+            <button
+              onClick={() => setShowDeleteModal(false)}
+              className="px-4 py-2 border rounded-lg hover:bg-gray-100 transition"
+            >
+              Cancel
+            </button>
+
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+            >
+              Delete
+            </button>
+          </>
+        }
+      >
+        This action{" "}
+        <span className="text-red-500 font-semibold">cannot be undone</span>.
+      </Modal>
     </div>
   );
 };

@@ -8,6 +8,7 @@ import {
   searchArchivedNotes,
 } from "../services/notesService";
 import NotesList from "../components/Notes/NotesList";
+import Modal from "../components/UI/Modal";
 import { toast } from "react-hot-toast";
 
 const ArchivedNotesPage = () => {
@@ -17,6 +18,10 @@ const ArchivedNotesPage = () => {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
+
+  // Modal state
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState(null);
 
   const limit = 9;
 
@@ -49,12 +54,28 @@ const ArchivedNotesPage = () => {
 
   const totalPages = Math.ceil(total / limit);
 
-  // Delete
-  const handleDelete = async (note) => {
+  // OLD delete removed
+  // const handleDelete = async (note) => {...}
+
+  // Trigger modal
+  const handleDeleteClick = (note) => {
+    setNoteToDelete(note);
+    setShowDeleteModal(true);
+  };
+
+  // Confirm delete
+  const handleConfirmDelete = async () => {
     try {
-      const res = await deleteNote(note._id);
-      setNotes((prev) => prev.filter((n) => n._id !== note._id));
+      const res = await deleteNote(noteToDelete._id);
+
+      setNotes((prev) =>
+        prev.filter((n) => n._id !== noteToDelete._id)
+      );
+
       toast.success(res.message || "Note deleted successfully");
+
+      setShowDeleteModal(false);
+      setNoteToDelete(null);
     } catch (error) {
       toast.error(error.message || "Failed to delete note");
     }
@@ -80,7 +101,6 @@ const ArchivedNotesPage = () => {
         <div className="flex gap-2 w-full md:w-auto items-center">
           {/* Search */}
           <div className="relative w-full md:w-80">
-            {/* Input */}
             <input
               type="text"
               placeholder="Search archived notes..."
@@ -96,7 +116,7 @@ const ArchivedNotesPage = () => {
           {/* Back */}
           <button
             onClick={() => navigate("/app/notes")}
-            className="px-4 py-2 bg-blue-100 text-blue-600 rounded-3xl hover:bg-blue-200 transition hover:cursor-pointer"
+            className="px-4 py-2 bg-blue-100 text-blue-600 rounded-3xl hover:bg-blue-200 transition cursor-pointer"
           >
             ← Back to notes
           </button>
@@ -123,7 +143,7 @@ const ArchivedNotesPage = () => {
           <NotesList
             notes={notes}
             onEdit={null}
-            onDelete={handleDelete}
+            onDelete={handleDeleteClick}   
             onArchive={null}
             onUnarchive={handleUnarchive}
             mode="archived"
@@ -136,7 +156,9 @@ const ArchivedNotesPage = () => {
                 key={i}
                 onClick={() => setPage(i + 1)}
                 className={`px-3 py-1 rounded cursor-pointer ${
-                  page === i + 1 ? "bg-blue-600 text-white" : "bg-gray-200"
+                  page === i + 1
+                    ? "bg-blue-600 text-white"
+                    : "bg-gray-200"
                 }`}
               >
                 {i + 1}
@@ -145,6 +167,39 @@ const ArchivedNotesPage = () => {
           </div>
         </>
       )}
+
+      {/* DELETE MODAL */}
+      <Modal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setNoteToDelete(null);
+        }}
+        title="Delete Archived Note?"
+        actions={
+          <>
+            <button
+              onClick={() => {
+                setShowDeleteModal(false);
+                setNoteToDelete(null);
+              }}
+              className="px-4 py-2 border rounded-lg hover:bg-gray-100 transition"
+            >
+              Cancel
+            </button>
+
+            <button
+              onClick={handleConfirmDelete}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+            >
+              Delete
+            </button>
+          </>
+        }
+      >
+        This action{" "}
+        <span className="text-red-500 font-semibold">cannot be undone</span>.
+      </Modal>
     </div>
   );
 };

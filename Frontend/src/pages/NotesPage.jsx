@@ -4,6 +4,7 @@ import useDebounce from "../hooks/useDebounce";
 import NotesHeader from "../components/Notes/NotesHeader";
 import NotesList from "../components/Notes/NotesList";
 import NoteForm from "../components/Notes/NoteForm";
+import Modal from "../components/UI/Modal";
 
 import {
   getNotes,
@@ -30,8 +31,12 @@ const NotesPage = () => {
   const [totalNotes, setTotalNotes] = useState(0);
 
   const [showForm, setShowForm] = useState(false);
+
+  // ✅ Modal states
   const [showDeleteAllModal, setShowDeleteAllModal] = useState(false);
-  
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [noteToDelete, setNoteToDelete] = useState(null);
+
   const [searchQuery, setSearchQuery] = useState("");
 
   const debouncedQuery = useDebounce(searchQuery, 300);
@@ -42,21 +47,17 @@ const NotesPage = () => {
   const fetchNotes = async () => {
     try {
       setLoading(true);
-      
+
       let data;
 
       if (debouncedQuery && debouncedQuery.trim() !== "") {
-        // Search mode
         data = await searchNotes(debouncedQuery, currentPage, notesPerPage);
-      }
-      else {
-        // Normal mode
+      } else {
         data = await getNotes(currentPage, notesPerPage);
       }
 
       setNotes(data.notes || []);
       setTotalNotes(data.total || 0);
-
     } catch (error) {
       toast.error(error.message || "Failed to fetch notes");
     } finally {
@@ -68,6 +69,9 @@ const NotesPage = () => {
     fetchNotes();
   }, [currentPage, debouncedQuery]);
 
+  // ======================
+  // CREATE / UPDATE
+  // ======================
   const handleSubmit = async (formData) => {
     try {
       if (isEditMode) {
@@ -94,16 +98,34 @@ const NotesPage = () => {
     setShowForm(true);
   };
 
-  const handleDelete = async (note) => {
+  // ======================
+  // DELETE SINGLE (MODAL)
+  // ======================
+  const handleDeleteClick = (note) => {
+    setNoteToDelete(note);
+    setShowDeleteModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
     try {
-      const res = await deleteNote(note._id);
-      setNotes((prev) => prev.filter((n) => n._id !== note._id));
+      const res = await deleteNote(noteToDelete._id);
+
+      setNotes((prev) =>
+        prev.filter((n) => n._id !== noteToDelete._id)
+      );
+
       toast.success(res?.message || "Note deleted successfully");
+
+      setShowDeleteModal(false);
+      setNoteToDelete(null);
     } catch (error) {
       toast.error(error.message || "Failed to delete note");
     }
   };
 
+  // ======================
+  // DELETE ALL
+  // ======================
   const handleDeleteAll = async () => {
     try {
       const res = await deleteAllNotes();
@@ -115,6 +137,9 @@ const NotesPage = () => {
     }
   };
 
+  // ======================
+  // ARCHIVE
+  // ======================
   const handleArchive = async (noteId) => {
     try {
       const res = await archiveNote(noteId);
@@ -126,6 +151,9 @@ const NotesPage = () => {
     }
   };
 
+  // ======================
+  // PIN / UNPIN
+  // ======================
   const handlePin = async (noteId) => {
     try {
       const res = await pinNote(noteId);
@@ -190,12 +218,10 @@ const NotesPage = () => {
       <NotesHeader
         onAddClick={() => setShowForm(true)}
         onDeleteAllClick={() => setShowDeleteAllModal(true)}
-        onSearch={
-          (value) => {
-            setCurrentPage(1);
-            setSearchQuery(value);
-          }
-        }
+        onSearch={(value) => {
+          setCurrentPage(1);
+          setSearchQuery(value);
+        }}
       />
 
       {/* Archived Button */}
@@ -241,7 +267,7 @@ const NotesPage = () => {
             <NotesList
               notes={notes}
               onEdit={handleEdit}
-              onDelete={handleDelete}
+              onDelete={handleDeleteClick}   // ✅ UPDATED
               onArchive={handleArchive}
               onPin={handlePin}
               onUnpin={handleUnpin}
@@ -268,39 +294,70 @@ const NotesPage = () => {
         </>
       )}
 
-      {/* Delete Modal */}
-      {showDeleteAllModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl shadow-xl w-[90%] max-w-md p-6">
-            <h2 className="text-xl font-semibold mb-3">
-              Delete All Notes?
-            </h2>
+      {/* ======================
+          DELETE SINGLE MODAL
+      ====================== */}
+      <Modal
+        isOpen={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setNoteToDelete(null);
+        }}
+        title="Delete Note?"
+        actions={
+          <>
+            <button
+              onClick={() => {
+                setShowDeleteModal(false);
+                setNoteToDelete(null);
+              }}
+              className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+            >
+              Cancel
+            </button>
 
-            <p className="text-gray-600 mb-6">
-              This action{" "}
-              <span className="text-red-500 font-semibold">
-                cannot be undone
-              </span>.
-            </p>
+            <button
+              onClick={handleConfirmDelete}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+            >
+              Delete
+            </button>
+          </>
+        }
+      >
+        This action cannot be undone.
+      </Modal>
 
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setShowDeleteAllModal(false)}
-                className="px-4 py-2 border rounded-lg hover:bg-gray-100 cursor-pointer"
-              >
-                Cancel
-              </button>
+      {/* ======================
+          DELETE ALL MODAL
+      ====================== */}
+      <Modal
+        isOpen={showDeleteAllModal}
+        onClose={() => setShowDeleteAllModal(false)}
+        title="Delete All Notes?"
+        actions={
+          <>
+            <button
+              onClick={() => setShowDeleteAllModal(false)}
+              className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+            >
+              Cancel
+            </button>
 
-              <button
-                onClick={handleDeleteAll}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 cursor-pointer"
-              >
-                Delete All
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+            <button
+              onClick={handleDeleteAll}
+              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+            >
+              Delete All
+            </button>
+          </>
+        }
+      >
+        This action
+        <span className="text-red-500 font-semibold">
+          cannot be undone
+        </span>.
+      </Modal>
     </div>
   );
 };
