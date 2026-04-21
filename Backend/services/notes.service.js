@@ -298,6 +298,22 @@ const searchArchivedNotes = async (userId, query, page = 1, limit = 9) => {
    }
 };
 
+// Get a single note by id service
+const getNoteById = async (noteId, userId) => {
+  // Find note with ownership check
+  const note = await Note.findOne({
+    _id: noteId,
+    user: userId,
+  });
+
+  // If note found
+  if (!note) {
+    throw new Error("Note not found or unauthorized");
+  }
+
+  return note;
+};
+
 // Exports
 module.exports = {
   createNote,
@@ -312,4 +328,5 @@ module.exports = {
   unpinNote,
   searchNotes,
   searchArchivedNotes,
+  getNoteById,
 };

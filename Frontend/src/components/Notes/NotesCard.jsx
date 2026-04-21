@@ -1,4 +1,5 @@
-import { Pencil, Trash2, Archive, ArchiveRestore, Pin } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Pencil, Trash2, Archive, ArchiveRestore, Pin, Eye } from "lucide-react";
 
 const NoteCard = ({
   note,
@@ -10,6 +11,9 @@ const NoteCard = ({
   onUnpin,
   mode,
 }) => {
+
+  const navigate = useNavigate();
+
   return (
     <div
       className={`p-4 rounded-xl border-2 transition ${
@@ -45,6 +49,14 @@ const NoteCard = ({
 
         {/* Icons */}
         <div className="flex items-center gap-3">
+          {/* View icon */}
+          <button
+            onClick={() => navigate(`/app/notes/${note._id}`)}
+            className="text-gray-500 hover:text-indigo-600 transition hover:cursor-pointer"
+            title="View Note"
+          >
+            <Eye size={14} />
+          </button>
           {/* Pin icon */}
           {mode !== "archived" && (
             <button

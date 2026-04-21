@@ -214,3 +214,19 @@ export const searchArchivedNotes = async (query = "", page = 1, limit = 9) => {
 
   return data;
 };
+
+// Get note by id
+export const getNoteById = async (id) => {
+  const response = await fetch (`${BASE_URL}/${id}`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch note");
+  }
+
+  return data;
+};

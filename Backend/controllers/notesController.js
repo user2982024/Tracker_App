@@ -172,8 +172,7 @@ const unarchiveNote = async (req, res, next) => {
       message: "Note unarchived successfully",
       note: unarchivedNote,
     });
-  }
-  catch (error) {
+  } catch (error) {
     next(error);
   }
 };
@@ -191,8 +190,7 @@ const pinNote = async (req, res, next) => {
       message: "Note pinned successfully",
       note: pinnedNote,
     });
-  }
-  catch (error) {
+  } catch (error) {
     next(error);
   }
 };
@@ -210,8 +208,7 @@ const unpinNote = async (req, res, next) => {
       message: "Note unpinned successfully",
       note: unpinnedNote,
     });
-  }
-  catch (error) {
+  } catch (error) {
     next(error);
   }
 };
@@ -224,21 +221,25 @@ const searchNotes = async (req, res, next) => {
     // Extract query params
     const q = req.query.q;
 
-    // Pagination 
+    // Pagination
     const page = Math.max(1, parseInt(req.query.page) || 1);
     const limit = Math.min(20, parseInt(req.query.limit) || 9);
 
-    // Call service 
-    const { notes, total } = await notesService.searchNotes(userId, q, page, limit);
+    // Call service
+    const { notes, total } = await notesService.searchNotes(
+      userId,
+      q,
+      page,
+      limit,
+    );
 
     return res.status(200).json({
-      success: true, 
+      success: true,
       message: "Notes search results",
-      notes, 
+      notes,
       total,
     });
-  }
-  catch (error) {
+  } catch (error) {
     next(error);
   }
 };
@@ -264,21 +265,38 @@ const searchArchivedNotes = async (req, res, next) => {
     }
 
     // Call service
-    const { notes, total} = await notesService.searchArchivedNotes(
-      userId, 
-      query.trim(), 
-      page, 
+    const { notes, total } = await notesService.searchArchivedNotes(
+      userId,
+      query.trim(),
+      page,
       limit,
     );
 
     return res.status(200).json({
       success: true,
       message: "Archived notes search results fetched successfully",
-      notes, 
+      notes,
       total,
     });
+  } catch (error) {
+    next(error);
   }
-  catch (error) {
+};
+
+// Get note by id controller
+const getNoteById = async (req, res, next) => {
+  try {
+    const noteId = req.params.id;
+    const userId = req.user.userId;
+
+    const note = await notesService.getNoteById(noteId, userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Note fetched successfully",
+      note,
+    });
+  } catch (error) {
     next(error);
   }
 };
@@ -297,4 +315,5 @@ module.exports = {
   unpinNote,
   searchNotes,
   searchArchivedNotes,
+  getNoteById,
 };

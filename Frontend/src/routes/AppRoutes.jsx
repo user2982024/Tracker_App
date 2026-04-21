@@ -18,6 +18,7 @@ import TodosPage from "../pages/TodosPage";
 import GoalsPage from "../pages/GoalsPage";
 import HabbitsPage from "../pages/HabbitsPage";
 import ArchivedNotesPage from "../pages/ArchivedNotesPage";
+import NoteViewPage from "../pages/NoteViewPage";
 
 // Forms
 import AuthForm from "../components/Auth/AuthForm";
@@ -55,6 +56,7 @@ const AppRoutes = () => {
 
           <Route path="notes" element={<NotesPage />} />
           <Route path="notes/archive" element={<ArchivedNotesPage />}/>
+          <Route path="notes/:id" element={<NoteViewPage />}/>
           <Route path="todos" element={<TodosPage />} />
           <Route path="goals" element={<GoalsPage />} />
           <Route path="habits" element={<HabbitsPage />} />

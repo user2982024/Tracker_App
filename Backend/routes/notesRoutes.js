@@ -20,6 +20,7 @@ const {
   unpinNote,
   searchNotes,
   searchArchivedNotes,
+  getNoteById,
 } = require("../controllers/notesController");
 
 const router = express.Router();
@@ -72,5 +73,8 @@ router.patch("/:id/pin", authMiddleware, validateNoteId, pinNote);
 
 // Unpin note route
 router.patch("/:id/unpin", authMiddleware, validateNoteId, unpinNote);
+
+// Get note by id route
+router.get("/:id", authMiddleware, validateNoteId, getNoteById);
 
 module.exports = router;
