@@ -1,6 +1,7 @@
 const Todo = require("../models/Todo");
 
-const createTodoService = async (title, description, user, dueDate, priority) => {
+// Create todo service
+const createTodoService = async (title, description, userId, dueDate, priority) => {
     if (!title) {
         throw new Error("Title is required");
     }
@@ -18,7 +19,7 @@ const createTodoService = async (title, description, user, dueDate, priority) =>
     // Add optional fields
     if (description) todoData.description = description;
     if (dueDate) todoData.dueDate = dueDate;
-    if (priority) totoData.dueDate = dueDate;
+    if (priority) todoData.priority = priority;
 
     // Create todo
     const todo = await Todo.create(todoData);
@@ -26,7 +27,20 @@ const createTodoService = async (title, description, user, dueDate, priority) =>
     return todo;
 };
 
+// Get all todos of a user service
+const getAllTodosService = async (userId) => {
+    if (!userId) {
+        throw new Error("User not authenticated");
+    }
+
+    const todos = await Todo.find({ user: userId })
+    .sort({ createdAt: -1 });       // Latest first
+
+    return todos;
+}
+
 // Exports
 module.exports = {
     createTodoService,
+    getAllTodosService,
 }

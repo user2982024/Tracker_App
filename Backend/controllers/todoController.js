@@ -23,7 +23,26 @@ const createTodo = async (req, res, next) => {
     }
 };
 
+// Get all todos of a user controller
+const getAllTodos = async (req, res, next) => {
+    try {
+        const userId = req.user.userId;
+
+        const todos = await todoService.getAllTodosService(userId);
+
+        return res.status(200).json({
+            success: true,
+            message: "Todos fetched successfully",
+            data: todos,
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+}
+
 // Exports 
 module.exports = {
     createTodo,
+    getAllTodos,
 }
