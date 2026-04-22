@@ -116,7 +116,7 @@ const archiveNote = async (noteId, userId) => {
       isPinned: false, // Unpin when archiving
       archivedAt: new Date(),
     },
-    { new: true }, // By default, MongoDB will return the old object, but with this filed it will return su the new object with updated value
+    { new: true }, // By default, MongoDB will return the old object, but with this field it will return the new object with updated value
   );
 
   if (!note) {
