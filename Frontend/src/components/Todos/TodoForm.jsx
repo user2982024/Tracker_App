@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 
 import { createTodo } from "../../services/todoServices";
 
@@ -30,12 +31,16 @@ const TodoForm = ({ onTodoCreated, onCancel }) => {
     try {
       setLoading(true);
 
-      console.log("Sending data", formData);
-
       // API call to create todo
       const res = await createTodo(formData);
 
-      console.log("Response", res);
+      // SUCCESS TOAST
+      toast.success(res.message || "Todo created successfully");
+
+      // Notify parent (refresh + close form)
+      if (onTodoCreated) {
+        onTodoCreated();
+      }
 
       // Reset form after success
       setFormData({
@@ -44,8 +49,10 @@ const TodoForm = ({ onTodoCreated, onCancel }) => {
         dueDate: "",
         priority: "medium",
       });
+
+      
     } catch (error) {
-      console.error("Error creating todo", error.message);
+      toast.error(error.message || "Failed to create todo");
     } finally {
       setLoading(false);
     }
@@ -114,7 +121,7 @@ const TodoForm = ({ onTodoCreated, onCancel }) => {
           <button
             type="button"
             onClick={onCancel}
-            className="w-1/2 border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-100 transition"
+            className="w-1/2 border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-100 transition hover:cursor-pointer"
           >
             Cancel
           </button>
@@ -123,7 +130,7 @@ const TodoForm = ({ onTodoCreated, onCancel }) => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition hover:cursor-pointer"
           >
             Create Todo
           </button>
