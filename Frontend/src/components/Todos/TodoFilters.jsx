@@ -20,27 +20,6 @@ const TodosFilters = () => {
 
         <FilterButton icon={<AlertCircle size={16} />} label="Overdue" />
       </div>
-
-      {/* Right: Search + Filter Icon */}
-      <div className="flex items-center gap-3">
-        {/* Search Input */}
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Search todos..."
-            className="border border-gray-300 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <Search
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-          />
-        </div>
-
-        {/* Filter Button */}
-        <button className="p-2 border rounded-lg hover:bg-gray-100 transition">
-          <SlidersHorizontal size={16} />
-        </button>
-      </div>
     </div>
   );
 };
