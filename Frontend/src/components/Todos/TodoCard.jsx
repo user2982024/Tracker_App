@@ -1,24 +1,45 @@
-import { CalendarDays, Flag, MoreVertical } from "lucide-react";
+import { CalendarDays, Check, Flag, MoreVertical } from "lucide-react";
 
-const TodoCard = () => {
+const TodoCard = ({ todo }) => {
+  const { title, description, dueDate, priority, completed } = todo;
+
+  // Format date
+  const formattedDate = dueDate
+    ? new Date(dueDate).toLocaleDateString()
+    : "No due date";
+
+  // Priority color
+  const priorityColor =
+    priority === "high"
+      ? "text-red-500"
+      : priority === "medium"
+        ? "text-yellow-500"
+        : "text-green-500";
+
   return (
     <div className="flex items-center justify-between p-4 hover:bg-gray-50 transition">
       {/* Left Section */}
       <div className="flex items-center gap-4">
         {/* Checkbox */}
-        <div className="w-5 h-5 rounded-full border-2 border-blue-500 flex items-center justify-center">
-          {/* Empty circle (unchecked) */}
+        <div
+          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${completed ? "bg-green-500 border-green-500" : "border-blue-500"}`}
+        >
+          {completed && <Check size={14} className="text-white" />}
         </div>
 
         {/* Content */}
         <div className="flex flex-col">
-          <h3 className="text-sm font-medium text-gray-800">
-            Design new landing page
+          <h3
+            className={`text-sm font-medium ${completed ? "line-through text-gray-400" : "text-gray-800"}`}
+          >
+            {title}
           </h3>
 
-          <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded w-fit mt-1">
-            Work
-          </span>
+          {description && (
+            <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded w-fit mt-1">
+              {description}
+            </span>
+          )}
         </div>
       </div>
 
@@ -27,13 +48,13 @@ const TodoCard = () => {
         {/* Due Date */}
         <div className="flex items-center gap-2 text-sm text-gray-500">
           <CalendarDays size={16} />
-          <span>21/04/2026</span>
+          <span>{formattedDate}</span>
         </div>
 
         {/* Priority */}
-        <div className="flex items-center gap-2 text-sm text-red-500">
+        <div className={`flex items-center gap-2 text-sm ${priorityColor}`}>
           <Flag size={16} />
-          <span>High</span>
+          <span className="capitalize">{priority}</span>
         </div>
 
         {/* Actions */}

@@ -1,6 +1,6 @@
 import { Plus, Search } from "lucide-react";
 
-const TodosHeader = () => {
+const TodosHeader = ({ onAddTodo }) => {
   return (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       {/* Left Side */}
@@ -8,7 +8,6 @@ const TodosHeader = () => {
         <h1 className="text-2xl font-bold text-gray-800">Todos</h1>
         <p className="text-sm text-gray-500 flex items-center gap-2">
           Stay organized and get things done
-          <span className="text-blue-500">✔</span>
         </p>
       </div>
 
@@ -28,7 +27,10 @@ const TodosHeader = () => {
         </div>
 
         {/* Add Todo Button */}
-        <button className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+        <button
+          onClick={onAddTodo}
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+        >
           <Plus size={16} />
           Add Todo
         </button>

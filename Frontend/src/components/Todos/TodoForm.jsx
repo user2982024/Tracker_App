@@ -1,10 +1,8 @@
 import { useState } from "react";
 
-import {
-    createTodo,
-} from "../../services/todoServices";
+import { createTodo } from "../../services/todoServices";
 
-const TodoForm = () => {
+const TodoForm = ({ onTodoCreated, onCancel }) => {
   // Single source of truth
   const [formData, setFormData] = useState({
     title: "",
@@ -30,28 +28,26 @@ const TodoForm = () => {
     e.preventDefault();
 
     try {
-        setLoading(true);
+      setLoading(true);
 
-        console.log("Sending data", formData);
+      console.log("Sending data", formData);
 
-        // API call to create todo
-        const res = await createTodo(formData);
+      // API call to create todo
+      const res = await createTodo(formData);
 
-        console.log("Response", res);
+      console.log("Response", res);
 
-        // Reset form after success
-        setFormData({
-            title: "",
-            description: "",
-            dueDate: "",
-            priority: "medium",
-        });
-    }
-    catch (error) {
-        console.error("Error creating todo", error.message);
-    }
-    finally {
-        setLoading(false);
+      // Reset form after success
+      setFormData({
+        title: "",
+        description: "",
+        dueDate: "",
+        priority: "medium",
+      });
+    } catch (error) {
+      console.error("Error creating todo", error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -108,21 +104,30 @@ const TodoForm = () => {
             className="w-full border rounded-lg px-3 py-2 text-sm"
           >
             <option value="low">Low</option>
-            <option value="medium">
-              Medium
-            </option>
+            <option value="medium">Medium</option>
             <option value="high">High</option>
           </select>
         </div>
+        {/* Action buttons */}
+        <div className="flex gap-3 pt-2 mx-[30%]">
+          {/* Cancel */}
+          <button
+            type="button"
+            onClick={onCancel}
+            className="w-1/2 border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-100 transition"
+          >
+            Cancel
+          </button>
 
-        {/* Submit */}
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-        >
-          Create Todo
-        </button>
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+          >
+            Create Todo
+          </button>
+        </div>
       </form>
     </div>
   );

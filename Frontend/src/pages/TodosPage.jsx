@@ -5,15 +5,15 @@ import TodoStats from "../components/Todos/TodoStats";
 import TodoFilters from "../components/Todos/TodoFilters";
 import TodoList from "../components/Todos/TodoList";
 import TodoPagination from "../components/Todos/TodoPagination";
+import TodoForm from "../components/Todos/TodoForm";
 
-import {
-  getAllTodos,
-} from "../services/todoServices";
+import { getAllTodos } from "../services/todoServices";
 
 const TodosPage = () => {
-
   const [todos, setTodos] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  const [showForm, setShowForm] = useState(false);
 
   // Fetch todos from backend
   const fetchTodos = async () => {
@@ -25,11 +25,9 @@ const TodosPage = () => {
       console.log("Fetched todos:", res);
 
       setTodos(res.data);
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error fetching todos:", error.message);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -41,22 +39,33 @@ const TodosPage = () => {
 
   return (
     <div className="p-6 space-y-6">
-
       {/* Header */}
-      <TodoHeader onAddTodo={() => console.log("Open create todo modal")} />
+      {/* Pass handler to header */}
+      <TodoHeader onAddTodo={() => setShowForm(true)} />
 
-      {/* Stats */}
-      <TodoStats />
+      {/* Conditional rendering */}
+      {showForm ? (
+        <TodoForm
+          onTodoCreated={() => {
+            (fetchTodos(), setShowForm(false));
+          }}
+          onCancel={() => setShowForm(false)}
+        />
+      ) : (
+        <>
+          {/* Stats */}
+          <TodoStats />
 
-      {/* Filters */}
-      <TodoFilters />
+          {/* Filters */}
+          <TodoFilters />
 
-      {/* List */}
-      <TodoList  todos={todos} loading={loading}/>
+          {/* List */}
+          <TodoList todos={todos} loading={loading} />
 
-      {/* Pagination */}
-      <TodoPagination />
-
+          {/* Pagination */}
+          <TodoPagination />
+        </>
+      )}
     </div>
   );
 };

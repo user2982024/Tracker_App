@@ -7,7 +7,7 @@ const createTodoService = async (title, description, userId, dueDate, priority) 
     }
     
     // Authentication check
-    if (!user) {
+    if (!userId) {
         throw new Error("User not authenticated");
     }
 
