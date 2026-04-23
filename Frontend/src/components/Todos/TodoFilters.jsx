@@ -7,27 +7,47 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 
-const TodosFilters = () => {
+const TodosFilters = ({ activeFilter, onFilterChange }) => {
   return (
     <div className="bg-white border rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       {/* Left: Filter Tabs */}
       <div className="flex items-center gap-2 flex-wrap">
-        <FilterButton active icon={<List size={16} />} label="All" />
+        <FilterButton
+          active={activeFilter === "all"}
+          icon={<List size={16} />}
+          label="All"
+          onClick={() => onFilterChange("all")}
+        />
 
-        <FilterButton icon={<Clock size={16} />} label="Pending" />
+        <FilterButton
+          active={activeFilter === "completed"}
+          icon={<CheckCircle2 size={16} />}
+          label="Completed"
+          onClick={() => onFilterChange("completed")}
+        />
+        <FilterButton
+          active={activeFilter === "pending"}
+          icon={<Clock size={16} />}
+          label="Pending"
+          onClick={() => onFilterChange("pending")}
+        />
 
-        <FilterButton icon={<CheckCircle2 size={16} />} label="Completed" />
-
-        <FilterButton icon={<AlertCircle size={16} />} label="Overdue" />
+        <FilterButton
+          active={activeFilter === "overdue"}
+          icon={<AlertCircle size={16} />}
+          label="Overdue"
+          onClick={() => onFilterChange("overdue")}
+        />
       </div>
     </div>
   );
 };
 
 // Reusable Filter Button
-const FilterButton = ({ icon, label, active }) => {
+const FilterButton = ({ icon, label, active, onClick }) => {
   return (
     <button
+      onClick={onClick}
       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition
         ${
           active

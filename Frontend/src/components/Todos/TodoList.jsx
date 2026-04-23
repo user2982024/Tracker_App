@@ -1,6 +1,6 @@
 import TodoCard from "./TodoCard";
 
-const TodosList = ({ todos, loading }) => {
+const TodosList = ({ todos, loading, activeFilter }) => {
   // Loading state
   if (loading) {
     return (
@@ -12,9 +12,16 @@ const TodosList = ({ todos, loading }) => {
 
   // Empty state
   if (!todos || todos.length === 0) {
+    const messages = {
+      all: "No todos found. Create your first todo",
+      pending: "No pending todos",
+      completed: "No completed todos yet",
+      overdue: "No overdue todos",
+    };
+
     return (
       <div className="bg-white border rounded-xl p-6 text-center text-gray-500">
-        No todos found. Create your first todo
+        {messages[activeFilter] || messages.all}
       </div>
     );
   }

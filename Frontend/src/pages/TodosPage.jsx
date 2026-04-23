@@ -15,6 +15,8 @@ const TodosPage = () => {
 
   const [showForm, setShowForm] = useState(false);
 
+  const [activeFilter, setActiveFilter] = useState("all");
+
   // Fetch todos from backend
   const fetchTodos = async () => {
     try {
@@ -37,6 +39,27 @@ const TodosPage = () => {
     fetchTodos();
   }, []);
 
+  // Filtering logic
+  const filteredTodos = todos.filter((todo) => {
+    switch (activeFilter) {
+      case "pending":
+        return !todo.completed;
+
+      case "completed":
+        return todo.completed;
+
+      case "overdue":
+        if (!todo.dueDate) return false;
+        const today = new Date();
+        const due = new Date(todo.dueDate);
+        return !todo.completed && due < today;
+
+      case "all":
+      default:
+        return true;
+    }
+  });
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -54,13 +77,18 @@ const TodosPage = () => {
       ) : (
         <>
           {/* Stats */}
-          <TodoStats todos={todos}/>
+          {/* Pass original todos for stats */}
+          <TodoStats todos={todos} />
 
           {/* Filters */}
-          <TodoFilters />
+          {/* Pass filter control */}
+          <TodoFilters
+            activeFilter={activeFilter}
+            onFilterChange={setActiveFilter}
+          />
 
           {/* List */}
-          <TodoList todos={todos} loading={loading} />
+          <TodoList todos={filteredTodos} loading={loading} activeFilter={activeFilter} />
 
           {/* Pagination */}
           <TodoPagination />
