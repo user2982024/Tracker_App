@@ -54,7 +54,7 @@ const TodosPage = () => {
       ) : (
         <>
           {/* Stats */}
-          <TodoStats />
+          <TodoStats todos={todos}/>
 
           {/* Filters */}
           <TodoFilters />
