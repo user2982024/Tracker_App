@@ -42,75 +42,96 @@ const getAllTodosService = async (userId, page = 1, limit = 6, filter = "all") =
     if (limit < 1) limit = 6;
 
     const skip = (page - 1) * limit;
-
-    // STEP 1: BUILD BASE QUERY
-    const query = { user: userId };
-
-    // STEP 2: APPLY FILTER
     const now = new Date();
 
+    const mongoose = require("mongoose");
+
+    // BUILD MATCH QUERY (FILTER)
+    const matchQuery = {
+        user: new mongoose.Types.ObjectId(userId),
+    };
+
     if (filter === "completed") {
-        query.completed = true;
+        matchQuery.completed = true;
     }
 
     if (filter === "pending") {
-        query.completed = false;
+        matchQuery.completed = false;
     }
 
     if (filter === "overdue") {
-        query.completed = false;
-        query.dueDate = { $lt: now };
+        matchQuery.completed = false;
+        matchQuery.dueDate = { $lt: now };
     }
 
-    // STEP 3: FETCH FILTERED + PAGINATED TODOS
-    const todos = await Todo.find(query)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit);
-
-    // STEP 4: COUNT FILTERED TODOS (IMPORTANT)
-    const totalTodos = await Todo.countDocuments(query);
-    const totalPages = Math.ceil(totalTodos / limit);
-
-    // STEP 5: GLOBAL STATS (NOT FILTERED)
-    const statsResult = await Todo.aggregate([
-        { $match: { user: new mongoose.Types.ObjectId(userId) } },
+    // SINGLE AGGREGATION PIPELINE
+    const result = await Todo.aggregate([
         {
-            $group: {
-                _id: null,
-                total: { $sum: 1 },
+            $match: matchQuery
+        },
 
-                completed: {
-                    $sum: {
-                        $cond: [{ $eq: ["$completed", true] }, 1, 0]
-                    }
-                },
+        {
+            $facet: {
+                // PAGINATED TODOS
+                todos: [
+                    { $sort: { createdAt: -1 } },
+                    { $skip: skip },
+                    { $limit: limit }
+                ],
 
-                pending: {
-                    $sum: {
-                        $cond: [{ $eq: ["$completed", false] }, 1, 0]
-                    }
-                },
+                // TOTAL COUNT (FILTERED)
+                totalCount: [
+                    { $count: "count" }
+                ],
 
-                overdue: {
-                    $sum: {
-                        $cond: [
-                            {
-                                $and: [
-                                    { $eq: ["$completed", false] },
-                                    { $lt: ["$dueDate", new Date()] }
-                                ]
+                // STATS (GLOBAL → NO FILTER)
+                stats: [
+                    {
+                        $group: {
+                            _id: null,
+                            total: { $sum: 1 },
+
+                            completed: {
+                                $sum: {
+                                    $cond: [{ $eq: ["$completed", true] }, 1, 0]
+                                }
                             },
-                            1,
-                            0
-                        ]
+
+                            pending: {
+                                $sum: {
+                                    $cond: [{ $eq: ["$completed", false] }, 1, 0]
+                                }
+                            },
+
+                            overdue: {
+                                $sum: {
+                                    $cond: [
+                                        {
+                                            $and: [
+                                                { $eq: ["$completed", false] },
+                                                { $lt: ["$dueDate", new Date()] }
+                                            ]
+                                        },
+                                        1,
+                                        0
+                                    ]
+                                }
+                            }
+                        }
                     }
-                }
+                ]
             }
         }
     ]);
 
-    const stats = statsResult[0] || {
+    const data = result[0];
+
+    const todos = data.todos;
+
+    const totalTodos = data.totalCount[0]?.count || 0;
+    const totalPages = Math.ceil(totalTodos / limit);
+
+    const stats = data.stats[0] || {
         total: 0,
         completed: 0,
         pending: 0,
