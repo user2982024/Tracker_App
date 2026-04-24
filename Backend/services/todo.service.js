@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const Todo = require("../models/Todo");
 
 // Create todo service
@@ -72,7 +74,7 @@ const getAllTodosService = async (userId, page = 1, limit = 6, filter = "all") =
 
     // STEP 5: GLOBAL STATS (NOT FILTERED)
     const statsResult = await Todo.aggregate([
-        { $match: { user: userId } },
+        { $match: { user: new mongoose.Types.ObjectId(userId) } },
         {
             $group: {
                 _id: null,
