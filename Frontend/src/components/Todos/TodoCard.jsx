@@ -1,7 +1,27 @@
-import { CalendarDays, Check, Flag, MoreVertical } from "lucide-react";
+import { CalendarDays, Check, Flag } from "lucide-react";
 
-const TodoCard = ({ todo }) => {
+import { toggleTodoCompletion } from "../../services/todoServices";
+
+import { toast } from "react-hot-toast";
+
+const TodoCard = ({ todo, onToggle }) => {
   const { title, description, dueDate, priority, completed } = todo;
+
+  // Toggle handler
+  const handleToggle = async () => {
+    try {
+      const res = await toggleTodoCompletion(todo._id);
+
+      toast.success(res.message || "Todo status updated successfully");
+
+      if (onToggle) {
+        onToggle();
+      }
+    }
+    catch (error) {
+      toast.error(error.message || "Failed to update todo");
+    }
+  }
 
   // Format date
   const formattedDate = dueDate
@@ -22,7 +42,8 @@ const TodoCard = ({ todo }) => {
       <div className="flex items-center gap-4">
         {/* Checkbox */}
         <div
-          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${completed ? "bg-green-500 border-green-500" : "border-blue-500"}`}
+        onClick={handleToggle}
+          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center hover:cursor-pointer ${completed ? "bg-green-500 border-green-500" : "border-blue-500"}`}
         >
           {completed && <Check size={14} className="text-white" />}
         </div>
@@ -56,11 +77,6 @@ const TodoCard = ({ todo }) => {
           <Flag size={16} />
           <span className="capitalize">{priority}</span>
         </div>
-
-        {/* Actions */}
-        <button className="text-gray-400 hover:text-gray-600">
-          <MoreVertical size={18} />
-        </button>
       </div>
     </div>
   );

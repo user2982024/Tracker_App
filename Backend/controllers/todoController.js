@@ -2,47 +2,75 @@ const todoService = require("../services/todo.service");
 
 // Create todo controller
 const createTodo = async (req, res, next) => {
-    try {
-        // Get user from auth middleware
-        const userId = req.user.userId;
+  try {
+    // Get user from auth middleware
+    const userId = req.user.userId;
 
-        // Extract data from request
-        const {  title, description, dueDate, priority } = req.body;
+    // Extract data from request
+    const { title, description, dueDate, priority } = req.body;
 
-        // Call service
-        const todo = await todoService.createTodoService(title, description, userId, dueDate, priority);
+    // Call service
+    const todo = await todoService.createTodoService(
+      title,
+      description,
+      userId,
+      dueDate,
+      priority,
+    );
 
-        res.status(201).json({
-            success: true,
-            message: "Todo created successfully",
-            todo,
-        })
-    }
-    catch (error) {
-        next(error);
-    }
+    res.status(201).json({
+      success: true,
+      message: "Todo created successfully",
+      todo,
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 // Get all todos of a user controller
 const getAllTodos = async (req, res, next) => {
-    try {
-        const userId = req.user.userId;
+  try {
+    const userId = req.user.userId;
 
-        const todos = await todoService.getAllTodosService(userId);
+    const todos = await todoService.getAllTodosService(userId);
 
-        return res.status(200).json({
-            success: true,
-            message: "Todos fetched successfully",
-            data: todos,
-        });
-    }
-    catch (error) {
-        next(error);
-    }
-}
+    return res.status(200).json({
+      success: true,
+      message: "Todos fetched successfully",
+      data: todos,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
-// Exports 
+// Toggle todo completed controller
+const toggleTodoCompleted = async (req, res, next) => {
+  try {
+    const todoId = req.params.id;
+    const userId = req.user.userId;
+
+    const updatedTodo = await todoService.toggleTodoCompletedService(
+      todoId,
+      userId,
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: updatedTodo.completed
+        ? "Todo marked as completed"
+        : "Todo marked as pending",
+      data: updatedTodo,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Exports
 module.exports = {
-    createTodo,
-    getAllTodos,
-}
+  createTodo,
+  getAllTodos,
+  toggleTodoCompleted,
+};

@@ -88,7 +88,12 @@ const TodosPage = () => {
           />
 
           {/* List */}
-          <TodoList todos={filteredTodos} loading={loading} activeFilter={activeFilter} />
+          <TodoList
+            todos={filteredTodos}
+            loading={loading}
+            activeFilter={activeFilter}
+            onToggle={fetchTodos}
+          />
 
           {/* Pagination */}
           <TodoPagination />

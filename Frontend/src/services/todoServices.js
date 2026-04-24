@@ -35,3 +35,19 @@ export const getAllTodos = async () => {
 
     return data;
 };
+
+// Toggle todo completion
+export const toggleTodoCompletion = async (todoId) => {
+    const response = await fetch(`${BASE_URL}/${todoId}/toggle`, {
+        method: "PATCH",
+        credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Failed to toggle todo completion");
+    }
+
+    return data;
+}

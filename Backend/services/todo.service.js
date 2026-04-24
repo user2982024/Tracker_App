@@ -39,8 +39,37 @@ const getAllTodosService = async (userId) => {
     return todos;
 }
 
+// Toggle todo completed
+const toggleTodoCompletedService = async (todoId, userId) => {
+    if (!userId) {
+        throw new Error("User not authenticated");
+    }
+
+    if (!todoId) {
+        throw new Error("Todo ID is required");
+    }
+
+    // Find todo with ownership check
+    const todo = await Todo.findOne({
+        _id: todoId,
+        user: userId,
+    });
+
+    if (!todo) {
+        throw new Error("Todo not found or access denied");
+    }
+
+    // Toggle completed status
+    todo.completed = !todo.completed;
+
+    await todo.save();
+
+    return todo;
+}
+
 // Exports
 module.exports = {
     createTodoService,
     getAllTodosService,
+    toggleTodoCompletedService,
 }

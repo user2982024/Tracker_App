@@ -1,6 +1,6 @@
 import TodoCard from "./TodoCard";
 
-const TodosList = ({ todos, loading, activeFilter }) => {
+const TodosList = ({ todos, loading, activeFilter, onToggle }) => {
   // Loading state
   if (loading) {
     return (
@@ -29,7 +29,7 @@ const TodosList = ({ todos, loading, activeFilter }) => {
   return (
     <div className="bg-white border rounded-xl divide-y">
       {todos.map((todo) => (
-        <TodoCard key={todo._id} todo={todo} />
+        <TodoCard key={todo._id} todo={todo} onToggle={onToggle} />
       ))}
     </div>
   );
