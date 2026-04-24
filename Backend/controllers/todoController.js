@@ -29,37 +29,7 @@ const createTodo = async (req, res, next) => {
 };
 
 // Get all todos of a user controller
-const getAllTodos = async (req, res, next) => {
-  try {
-    const userId = req.user.userId;
 
-    // Read query params
-    const {
-      page = 1,
-      limit = 6,
-      filter = "all", // default
-    } = req.query;
-
-    // Pass filter to service
-    const result = await todoService.getAllTodosService(
-      userId,
-      page,
-      limit,
-      filter
-    );
-
-    return res.status(200).json({
-      success: true,
-      message: "Todos fetched successfully",
-
-      data: result.todos,
-      pagination: result.pagination,
-      stats: result.stats,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
 
 // Toggle todo completed controller
 const toggleTodoCompleted = async (req, res, next) => {
