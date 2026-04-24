@@ -46,7 +46,7 @@ const getAllTodosService = async (userId, page = 1, limit = 6, filter = "all") =
 
     const mongoose = require("mongoose");
 
-    // BUILD MATCH QUERY (FILTER)
+    // Build match query
     const matchQuery = {
         user: new mongoose.Types.ObjectId(userId),
     };
@@ -64,7 +64,7 @@ const getAllTodosService = async (userId, page = 1, limit = 6, filter = "all") =
         matchQuery.dueDate = { $lt: now };
     }
 
-    // SINGLE AGGREGATION PIPELINE
+    // Single aggregation pipeline
     const result = await Todo.aggregate([
         {
             $match: matchQuery
@@ -72,19 +72,19 @@ const getAllTodosService = async (userId, page = 1, limit = 6, filter = "all") =
 
         {
             $facet: {
-                // PAGINATED TODOS
+                // Paginated todos
                 todos: [
                     { $sort: { createdAt: -1 } },
                     { $skip: skip },
                     { $limit: limit }
                 ],
 
-                // TOTAL COUNT (FILTERED)
+                // Total count
                 totalCount: [
                     { $count: "count" }
                 ],
 
-                // STATS (GLOBAL → NO FILTER)
+                // Stats
                 stats: [
                     {
                         $group: {

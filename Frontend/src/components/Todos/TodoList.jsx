@@ -20,14 +20,14 @@ const TodosList = ({ todos, loading, activeFilter, onToggle }) => {
     };
 
     return (
-      <div className="bg-white border rounded-xl p-6 text-center text-gray-500">
+      <div className="rounded-xl p-6 text-center text-gray-500">
         {messages[activeFilter] || messages.all}
       </div>
     );
   }
 
   return (
-    <div className="bg-white border rounded-xl divide-y">
+    <div className="rounded-xl ">
       {todos.map((todo) => (
         <TodoCard key={todo._id} todo={todo} onToggle={onToggle} />
       ))}

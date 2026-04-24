@@ -50,7 +50,7 @@ const TodosStats = ({ stats }) => {
 //  Reusable Stat Card
 const StatCard = ({ icon, bg, value, label, subLabel }) => {
   return (
-    <div className="bg-white rounded-xl border p-4 flex items-center gap-4">
+    <div className="bg-white rounded-xl border border-gray-300 p-4 flex items-center gap-4">
       {/* Icon */}
       <div className={`p-3 rounded-full ${bg}`}>{icon}</div>
 

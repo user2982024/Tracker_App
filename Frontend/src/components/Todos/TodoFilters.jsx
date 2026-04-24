@@ -9,7 +9,7 @@ import {
 
 const TodosFilters = ({ activeFilter, onFilterChange }) => {
   return (
-    <div className="bg-white border rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+    <div className="bg-white border border-gray-300 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       {/* Left: Filter Tabs */}
       <div className="flex items-center gap-2 flex-wrap">
         <FilterButton
