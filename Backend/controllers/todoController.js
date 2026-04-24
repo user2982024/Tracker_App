@@ -33,12 +33,20 @@ const getAllTodos = async (req, res, next) => {
   try {
     const userId = req.user.userId;
 
-    const todos = await todoService.getAllTodosService(userId);
+    // Get page and limit from query params
+    const { page = 1, limit = 6 } = req.query;
+
+    const result = await todoService.getAllTodosService(
+      userId,
+      page,
+      limit,
+    );
 
     return res.status(200).json({
       success: true,
       message: "Todos fetched successfully",
-      data: todos,
+      data: result.todos,
+      pagination: result.pagination,
     });
   } catch (error) {
     next(error);

@@ -1,36 +1,62 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const TodosPagination = () => {
+const TodosPagination = ({ currentPage, totalPages, onPageChange }) => {
+
+  // Generate page numbers
+  const getPageNumbers = () => {
+    const pages = [];
+
+    for (let i = 1; i <= totalPages; i++) {
+      pages.push(i);
+    }
+
+    return pages;
+  };
+
+  const pages = getPageNumbers();
+
   return (
-    <div className="flex items-center justify-between">
-      {/* Left: Clear completed */}
-      <button className="text-red-500 text-sm font-medium hover:underline">
-        Clear completed
+    <div className="flex items-center justify-center gap-2 mt-6">
+      {/* Previous Button */}
+      <button 
+        onClick={() => onPageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className={`px-3 py-1 rounded-md border text-sm hover:cursor-pointer ${
+          currentPage === 1
+            ? "opacity-50 cursor-not-allowed"
+            : "hover:bg-gray-100"
+        }`}
+      >
+        Prev
       </button>
 
-      {/* Right: Pagination Controls */}
-      <div className="flex items-center gap-2">
-        {/* Previous */}
-        <button className="p-2 border rounded-lg hover:bg-gray-100 transition">
-          <ChevronLeft size={16} />
+      {/* Page Numbers */}
+      {pages.map((page) => (
+        <button
+          key={page}
+          onClick={() => onPageChange(page)}
+          className={`px-3 py-1 rounded-md border text-sm hover:cursor-pointer ${
+            currentPage === page
+              ? "bg-blue-600 text-white"
+              : "hover:bg-blue-100"
+          }`}
+        >
+          {page}
         </button>
+      ))}
 
-        {/* Page Numbers */}
-        <button className="px-3 py-1 border rounded-lg bg-blue-600 text-white">
-          1
-        </button>
-        <button className="px-3 py-1 border rounded-lg hover:bg-gray-100">
-          2
-        </button>
-        <button className="px-3 py-1 border rounded-lg hover:bg-gray-100">
-          3
-        </button>
-
-        {/* Next */}
-        <button className="p-2 border rounded-lg hover:bg-gray-100 transition">
-          <ChevronRight size={16} />
-        </button>
-      </div>
+      {/* Next button */}
+      <button
+        onClick={() => onPageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className={`px-3 py-1 rounded-md border text-sm hover:cursor-pointer ${
+          currentPage === totalPages
+            ? "opacity-50 cursor-not-allowed"
+            : "hover:bg-blue-100"
+        }`}
+      >
+        Next
+      </button>
     </div>
   );
 };

@@ -28,16 +28,39 @@ const createTodoService = async (title, description, userId, dueDate, priority) 
 };
 
 // Get all todos of a user service
-const getAllTodosService = async (userId) => {
+const getAllTodosService = async (userId, page = 1, limit = 6) => {
     if (!userId) {
         throw new Error("User not authenticated");
     }
 
-    const todos = await Todo.find({ user: userId })
-    .sort({ createdAt: -1 });       // Latest first
+    // Ensure numbers
+    page = Number(page);
+    limit = Number(limit);
 
-    return todos;
-}
+    // Prevent invalid values
+    if (page < 1) page = 1;
+    if (limit < 1) limit = 6;
+
+    const skip = (page - 1) * limit;
+
+    const todos = await Todo.find({ user: userId })
+    .sort({ createdAt: -1 })        // Latest first
+    .skip(skip)
+    .limit(limit);
+
+    const totalTodos = await Todo.countDocuments({ user: userId });
+    const totalPages = Math.ceil(totalTodos / limit);
+
+    return {
+        todos,
+        pagination: {
+            currentPage: page,
+            totalPages,
+            totalTodos,
+            limit,
+        }
+    };
+};
 
 // Toggle todo completed
 const toggleTodoCompletedService = async (todoId, userId) => {
