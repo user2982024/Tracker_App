@@ -28,28 +28,92 @@ const createTodoService = async (title, description, userId, dueDate, priority) 
 };
 
 // Get all todos of a user service
-const getAllTodosService = async (userId, page = 1, limit = 6) => {
+const getAllTodosService = async (userId, page = 1, limit = 6, filter = "all") => {
     if (!userId) {
         throw new Error("User not authenticated");
     }
 
-    // Ensure numbers
     page = Number(page);
     limit = Number(limit);
 
-    // Prevent invalid values
     if (page < 1) page = 1;
     if (limit < 1) limit = 6;
 
     const skip = (page - 1) * limit;
 
-    const todos = await Todo.find({ user: userId })
-    .sort({ createdAt: -1 })        // Latest first
-    .skip(skip)
-    .limit(limit);
+    // STEP 1: BUILD BASE QUERY
+    const query = { user: userId };
 
-    const totalTodos = await Todo.countDocuments({ user: userId });
+    // STEP 2: APPLY FILTER
+    const now = new Date();
+
+    if (filter === "completed") {
+        query.completed = true;
+    }
+
+    if (filter === "pending") {
+        query.completed = false;
+    }
+
+    if (filter === "overdue") {
+        query.completed = false;
+        query.dueDate = { $lt: now };
+    }
+
+    // STEP 3: FETCH FILTERED + PAGINATED TODOS
+    const todos = await Todo.find(query)
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limit);
+
+    // STEP 4: COUNT FILTERED TODOS (IMPORTANT)
+    const totalTodos = await Todo.countDocuments(query);
     const totalPages = Math.ceil(totalTodos / limit);
+
+    // STEP 5: GLOBAL STATS (NOT FILTERED)
+    const statsResult = await Todo.aggregate([
+        { $match: { user: userId } },
+        {
+            $group: {
+                _id: null,
+                total: { $sum: 1 },
+
+                completed: {
+                    $sum: {
+                        $cond: [{ $eq: ["$completed", true] }, 1, 0]
+                    }
+                },
+
+                pending: {
+                    $sum: {
+                        $cond: [{ $eq: ["$completed", false] }, 1, 0]
+                    }
+                },
+
+                overdue: {
+                    $sum: {
+                        $cond: [
+                            {
+                                $and: [
+                                    { $eq: ["$completed", false] },
+                                    { $lt: ["$dueDate", new Date()] }
+                                ]
+                            },
+                            1,
+                            0
+                        ]
+                    }
+                }
+            }
+        }
+    ]);
+
+    const stats = statsResult[0] || {
+        total: 0,
+        completed: 0,
+        pending: 0,
+        overdue: 0
+    };
 
     return {
         todos,
@@ -58,7 +122,8 @@ const getAllTodosService = async (userId, page = 1, limit = 6) => {
             totalPages,
             totalTodos,
             limit,
-        }
+        },
+        stats,
     };
 };
 

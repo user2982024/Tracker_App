@@ -1,18 +1,10 @@
 import { ClipboardList, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 
-const TodosStats = ({ todos }) => {
+const TodosStats = ({ stats }) => {
 
-  const total = todos.length;
-  const completed = todos.filter((todo) => todo.completed).length;
-  const pending = todos.filter((todo) => !todo.completed).length;
-  const overdue = todos.filter((todo) => {
-    if (!todo.dueDate) return false;
+  if (!stats) return null;
 
-    const today = new Date();
-    const due = new Date(todo.dueDate);
-
-    return !todo.completed && due < today;
-  }).length;
+  const { total, completed, pending, overdue } = stats;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

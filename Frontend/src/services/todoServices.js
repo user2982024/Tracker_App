@@ -21,8 +21,8 @@ export const createTodo = async (todoData) => {
 };
 
 // Get all todos 
-export const getAllTodos = async (page = 1, limit = 6) => {
-    const response = await fetch(`${BASE_URL}?page=${page}&limit=${limit}`, {
+export const getAllTodos = async (page = 1, limit = 6, filter = "all") => {
+    const response = await fetch(`${BASE_URL}?page=${page}&limit=${limit}&filter=${filter}`, {
         method: "GET",
         credentials: "include",
     });

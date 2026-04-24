@@ -21,17 +21,21 @@ const TodosPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pagination, setPagination] = useState(null);
 
+  // Stats
+  const [stats, setStats] = useState(null);
+
   // Fetch todos from backend
-  const fetchTodos = async (page = currentPage) => {
+  const fetchTodos = async (page = currentPage, filter = activeFilter) => {
     try {
       setLoading(true);
 
-      const res = await getAllTodos(page, 6);
+      const res = await getAllTodos(page, 6, filter);
 
       console.log("Fetched todos:", res);
 
       setTodos(res.data);
       setPagination(res.pagination);
+      setStats(res.stats);
 
       // Keep page in sync
       setCurrentPage(page);
@@ -44,8 +48,8 @@ const TodosPage = () => {
 
   // Run on page reload
   useEffect(() => {
-    fetchTodos(1);
-  }, []);
+    fetchTodos(1, activeFilter);
+  }, [activeFilter]);
 
   // Filtering logic
   const filteredTodos = todos.filter((todo) => {
@@ -78,7 +82,8 @@ const TodosPage = () => {
       {showForm ? (
         <TodoForm
           onTodoCreated={() => {
-            (fetchTodos(1), setShowForm(false));
+            fetchTodos(1, activeFilter);
+            setShowForm(false);
           }}
           onCancel={() => setShowForm(false)}
         />
@@ -86,7 +91,7 @@ const TodosPage = () => {
         <>
           {/* Stats */}
           {/* Pass original todos for stats */}
-          <TodoStats todos={todos} />
+          <TodoStats stats={stats} />
 
           {/* Filters */}
           {/* Pass filter control */}
@@ -100,7 +105,7 @@ const TodosPage = () => {
             todos={filteredTodos}
             loading={loading}
             activeFilter={activeFilter}
-            onToggle={fetchTodos}
+            onToggle={() => fetchTodos(currentPage)}
           />
 
           {/* Pagination */}
