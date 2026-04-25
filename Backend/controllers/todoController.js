@@ -78,6 +78,9 @@ const toggleTodoCompleted = async (req, res, next) => {
   }
 };
 
+// Update todo controller
+
+
 // Exports
 module.exports = {
   createTodo,

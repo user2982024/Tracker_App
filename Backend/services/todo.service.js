@@ -119,7 +119,7 @@ const getAllTodos = async ({
     };
 };
 
-// Toggle todo completed
+// Toggle todo completed service
 const toggleTodoCompletedService = async (todoId, userId) => {
     if (!userId) {
         throw new Error("User not authenticated");
@@ -145,7 +145,10 @@ const toggleTodoCompletedService = async (todoId, userId) => {
     await todo.save();
 
     return todo;
-}
+};
+
+// Update todo service
+
 
 // Exports
 module.exports = {
