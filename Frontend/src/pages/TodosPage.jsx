@@ -81,8 +81,8 @@ const TodosPage = () => {
 
           {/* Pagination */}
           <TodoPagination
-            page={page}
-            totalPges={pagination.totalPages || 1}
+            currentPage={page}
+            totalPages={pagination.totalPages || 1}
             onPageChange={(newPage) => setPage(newPage)}
           />
         </>
