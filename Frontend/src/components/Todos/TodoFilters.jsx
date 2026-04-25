@@ -37,7 +37,7 @@ const FilterButton = ({ icon, label, active, onClick }) => {
   return (
     <button
       onClick={onClick}
-      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition
+      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition hover:cursor-pointer
         ${
           active
             ? "bg-blue-100 text-blue-600"
