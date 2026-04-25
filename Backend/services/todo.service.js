@@ -29,8 +29,95 @@ const createTodoService = async (title, description, userId, dueDate, priority) 
     return todo;
 };
 
-// Get all todos of a user service
+// Get all todos of a user service (with pagination, filters and stats)
+const getAllTodos = async ({
+    userId,
+    page = 1,
+    limit = 6,
+    filter = "all",
+}) => {
+    // Authentication check
+    if (!userId) {
+        throw new Error("User not authenticated");
+    }
 
+    page = Number(page);
+    limit = Number(limit);
+
+    if (page < 1) page = 1;
+    if (limit < 1) limit = 6;
+
+    const query = { user: userId };
+    const now = new Date();
+
+    // Filter logic
+    switch (filter) {
+        case "completed":
+            query.completed = true;
+            break;
+        
+        case "pending":
+            query.completed = false;
+            break;
+
+        case "overdue":
+            query.completed = false;
+            query.dueDate = { $lt: now };
+            break;
+
+        case "all":
+        default:
+            // No filter
+            break;
+    }  
+    
+    // Fetch todos
+    const todos = await Todo.find(query)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit);
+
+    // Total count for pagination
+    const totalTodos = await Todo.countDocuments(query);
+    const totalPages = Math.ceil(totalTodos / limit);
+
+    // Stats
+    const allTodos = await Todo.find({ user: userId });
+
+    let completed = 0;
+    let pending = 0;
+    let overdue = 0;
+
+    allTodos.forEach((todo) => {
+        if (todo.completed) {
+            completed++;
+        } else {
+            pending++;
+
+            if (todo.dueDate && todo.dueDate < now) {
+                overdue++;
+            }
+        }
+    });
+
+    const stats = {
+        total: allTodos.length,
+        completed,
+        pending,
+        overdue,
+    }
+
+    return {
+        todos,
+        pagination: {
+            totalTodos,
+            currentPage: page,
+            totalPages,
+            pageSize: limit,
+        },
+        stats,
+    };
+};
 
 // Toggle todo completed
 const toggleTodoCompletedService = async (todoId, userId) => {
@@ -63,6 +150,6 @@ const toggleTodoCompletedService = async (todoId, userId) => {
 // Exports
 module.exports = {
     createTodoService,
-    getAllTodosService,
+    getAllTodos,
     toggleTodoCompletedService,
 }

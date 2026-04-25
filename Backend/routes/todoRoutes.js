@@ -18,7 +18,7 @@ const router = express.Router();
 // Create todo route
 router.post("/", authMiddleware, validateCreateTodo, validateRequest, createTodo);
 
-// Get all todos route
+// Get all todos route (with pagination and filters)
 router.get("/", authMiddleware, getAllTodos);
 
 // Toggle todo completed route

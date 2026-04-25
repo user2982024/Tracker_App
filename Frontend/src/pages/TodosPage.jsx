@@ -1,56 +1,94 @@
-// import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 
-// import TodoHeader from "../components/Todos/TodoHeader";
-// import TodoStats from "../components/Todos/TodoStats";
-// import TodoFilters from "../components/Todos/TodoFilters";
-// import TodoList from "../components/Todos/TodoList";
-// import TodoPagination from "../components/Todos/TodoPagination";
-// import TodoForm from "../components/Todos/TodoForm";
+import TodoHeader from "../components/Todos/TodoHeader";
+import TodoStats from "../components/Todos/TodoStats";
+import TodoFilters from "../components/Todos/TodoFilters";
+import TodoList from "../components/Todos/TodoList";
+import TodoPagination from "../components/Todos/TodoPagination";
+import TodoForm from "../components/Todos/TodoForm";
 
-// import { getAllTodos } from "../services/todoServices";
+import { getAllTodos } from "../services/todoServices";
 
-// const TodosPage = () => {
+const TodosPage = () => {
+  const [showForm, setShowForm] = useState(false);
 
-//   const [showForm, setShowForm] = useState(false);
-//   return (
-//     <div className="p-6 space-y-6">
-//       {/* Header */}
-//       {/* Pass handler to header */}
-//       <TodoHeader onAddTodo={() => setShowForm(true)} />
+  const [todos, setTodos] = useState([]);
+  const [stats, setStats] = useState({});
+  const [pagination, setPagination] = useState({});
 
-//       {/* Conditional rendering */}
-//       {showForm ? (
-//         <TodoForm
-//           onTodoCreated={() => {
-//             fetchTodos(1, activeFilter);
-//             setShowForm(false);
-//           }}
-//           onCancel={() => setShowForm(false)}
-//         />
-//       ) : (
-//         <>
-//           {/* Stats */}
-//           {/* Pass original todos for stats */}
-//           <TodoStats />
+  const [page, setPage] = useState(1);
+  const [filter, setFilter] = useState("all");
+  const [loading, setLoading] = useState(false);
 
-//           {/* Filters */}
-//           {/* Pass filter control */}
-//           <TodoFilters
-//           />
+  // Fetch todos
+  const fetchTodos = async () => {
+    try {
+      setLoading(true);
 
-//           {/* List */}
-//           <TodoList
-//           />
+      const res = await getAllTodos({ page, filter });
 
-//           {/* Pagination */}
-//           {pagination && (
-//             <TodoPagination
-//             />
-//           )}
-//         </>
-//       )}
-//     </div>
-//   );
-// };
+      const { todos, stats, pagination } = res.data;
 
-// export default TodosPage;
+      setTodos(todos);
+      setStats(stats);
+      setPagination(pagination);
+    } catch (error) {
+      console.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Effect
+  useEffect(() => {
+    fetchTodos();
+  }, [page, filter]);
+
+  return (
+    <div className="p-6 space-y-6">
+      {/* Header */}
+      {/* Pass handler to header */}
+      <TodoHeader onAddTodo={() => setShowForm(true)} />
+
+      {/* Conditional rendering */}
+      {showForm ? (
+        <TodoForm
+          onTodoCreated={() => {
+            setPage(1);
+            setShowForm(false);
+            fetchTodos();
+          }}
+          onCancel={() => setShowForm(false)}
+        />
+      ) : (
+        <>
+          {/* Stats */}
+          {/* Pass original todos for stats */}
+          <TodoStats stats={stats} />
+
+          {/* Filters */}
+          {/* Pass filter control */}
+          <TodoFilters
+            currentFilter={filter}
+            onFilterChange={(newFilter) => {
+              setFilter(newFilter);
+              setPage(1);
+            }}
+          />
+
+          {/* List */}
+          <TodoList todos={todos} loading={loading} currentFilter={filter} onRefresh={fetchTodos} />
+
+          {/* Pagination */}
+          <TodoPagination
+            page={page}
+            totalPges={pagination.totalPages || 1}
+            onPageChange={(newPage) => setPage(newPage)}
+          />
+        </>
+      )}
+    </div>
+  );
+};
+
+export default TodosPage;

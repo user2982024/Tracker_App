@@ -7,31 +7,28 @@ import {
   SlidersHorizontal,
 } from "lucide-react";
 
-const TodosFilters = () => {
+const TodosFilters = ({ currentFilter, onFilterChange }) => {
+  const filters = [
+    { key: "all", label: "All", icon: <List size={16} /> },
+    { key: "completed", label: "Completed", icon: <CheckCircle2 size={16} /> },
+    { key: "pending", label: "Pending", icon: <Clock size={16} /> },
+    { key: "overdue", label: "Overdue", icon: <AlertCircle size={16} /> },
+  ];
+
   return (
-    <div className="bg-white border border-gray-300 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-      {/* Left: Filter Tabs */}
+     <div className="bg-white border border-gray-300 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div className="flex items-center gap-2 flex-wrap">
-        <FilterButton
-          icon={<List size={16} />}
-          label="All"
-        />
-
-        <FilterButton
-          icon={<CheckCircle2 size={16} />}
-          label="Completed"
-        />
-        <FilterButton
-          icon={<Clock size={16} />}
-          label="Pending"
-        />
-
-        <FilterButton
-          icon={<AlertCircle size={16} />}
-          label="Overdue"
-        />
+        {filters.map((filter) => (
+          <FilterButton 
+            key={filter.key}
+            icon={filter.icon}
+            label={filter.label}
+            active={currentFilter === filter.key}
+            onClick={() => onFilterChange(filter.key)}
+          />
+        ))}
       </div>
-    </div>
+     </div>
   );
 };
 

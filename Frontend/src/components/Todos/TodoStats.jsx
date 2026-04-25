@@ -1,6 +1,6 @@
 import { ClipboardList, CheckCircle2, Clock, AlertCircle } from "lucide-react";
 
-const TodosStats = () => {
+const TodosStats = ({ stats }) => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -8,6 +8,7 @@ const TodosStats = () => {
       <StatCard
         icon={<ClipboardList className="text-blue-500" size={20} />}
         bg="bg-blue-100"
+        value={stats?.total || 0}
         label="Total"
         subLabel="All todos"
       />
@@ -16,6 +17,7 @@ const TodosStats = () => {
       <StatCard
         icon={<CheckCircle2 className="text-green-600" size={20} />}
         bg="bg-green-100"
+        value={stats?.completed || 0}
         label="Completed"
         subLabel="Done"
       />
@@ -24,6 +26,7 @@ const TodosStats = () => {
       <StatCard
         icon={<Clock className="text-orange-500" size={20} />}
         bg="bg-orange-100"
+        value={stats?.pending || 0}
         label="Pending"
         subLabel="To be done"
       />
@@ -32,6 +35,7 @@ const TodosStats = () => {
       <StatCard
         icon={<AlertCircle className="text-red-500" size={20} />}
         bg="bg-red-100"
+        value={stats?.overdue || 0}
         label="Overdue"
         subLabel="Take action"
       />

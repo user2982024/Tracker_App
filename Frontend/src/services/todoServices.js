@@ -21,7 +21,26 @@ export const createTodo = async (todoData) => {
 };
 
 // Get all todos 
+export const getAllTodos = async ({ page = 1, limit = 6, filter = "all" }) => {
+    const query = new URLSearchParams({
+        page,
+        limit,
+        filter,
+    }).toString();
 
+    const res = await fetch(`${BASE_URL}?${query}`, {
+        method: "GET",
+        credentials: "include",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+        throw new Error(data.message || "Failed to fetch todos");
+    }
+
+    return data;
+};
 
 // Toggle todo completion
 export const toggleTodoCompletion = async (todoId) => {
