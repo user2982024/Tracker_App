@@ -29,33 +29,25 @@ const createTodoService = async (title, description, userId, dueDate, priority) 
     return todo;
 };
 
-// Get all todos of a user service (with pagination, filters and stats)
-const getAllTodos = async ({
-    userId,
-    page = 1,
-    limit = 6,
-    filter = "all",
-}) => {
-    // Authentication check
-    if (!userId) {
-        throw new Error("User not authenticated");
-    }
-
-    page = Number(page);
-    limit = Number(limit);
-
-    if (page < 1) page = 1;
-    if (limit < 1) limit = 6;
-
+// Build query
+const buildQuery = ({ userId, filter, search }) => {
     const query = { user: userId };
     const now = new Date();
 
-    // Filter logic
+    // Search
+    if (search && search.trim() !== "") {
+        query.$or = [
+            { title: { $regex: search.trim(), $options: "i" } },
+            { description: { $regex: search.trim(), $options: "i" } },
+        ];
+    }
+
+    // Filter
     switch (filter) {
         case "completed":
             query.completed = true;
             break;
-        
+
         case "pending":
             query.completed = false;
             break;
@@ -67,26 +59,54 @@ const getAllTodos = async ({
 
         case "all":
         default:
-            // No filter
             break;
-    }  
+    }
+
+    return query;
+}
+
+// Get all todos of a user service (with pagination, filters and stats)
+const getAllTodos = async ({
+    userId,
+    page = 1,
+    limit = 6,
+    filter = "all",
+    search = "",
+}) => {
+    // Authentication check
+    if (!userId) {
+        throw new Error("User not authenticated");
+    }
+
+    page = Number(page);
+    limit = Number(limit);
+
+    if (page < 1) page = 1;
+    if (limit < 1) limit = 6;
+    
+    const skip = (page - 1) * limit;
+
+    // Build query
+    const query = buildQuery({ userId, filter, search }); 
     
     // Fetch todos
     const todos = await Todo.find(query)
         .sort({ createdAt: -1 })
-        .skip((page - 1) * limit)
-        .limit(limit);
+        .skip(skip)
+        .limit(limit)
+        .lean();                // Performance optimization
 
     // Total count for pagination
     const totalTodos = await Todo.countDocuments(query);
     const totalPages = Math.ceil(totalTodos / limit);
 
     // Stats
-    const allTodos = await Todo.find({ user: userId });
+    const allTodos = await Todo.find({ user: userId }).lean();
 
     let completed = 0;
     let pending = 0;
     let overdue = 0;
+    const now = new Date();
 
     allTodos.forEach((todo) => {
         if (todo.completed) {
@@ -94,7 +114,7 @@ const getAllTodos = async ({
         } else {
             pending++;
 
-            if (todo.dueDate && todo.dueDate < now) {
+            if (todo.dueDate && new Date(todo.dueDate) < now) {
                 overdue++;
             }
         }
@@ -229,7 +249,7 @@ const deleteTodo = async (todoId, userId) => {
         throw new Error("Todo not found or access denied");
     }
 
-    return deleteTodo;
+    return deletedTodo;
 }
 
 // Exports

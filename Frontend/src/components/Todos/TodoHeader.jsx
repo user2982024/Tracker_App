@@ -1,6 +1,6 @@
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, X } from "lucide-react";
 
-const TodosHeader = ({ onAddTodo }) => {
+const TodosHeader = ({ onAddTodo, searchQuery, setSearchQuery }) => {
   return (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       {/* Left Side */}
@@ -18,12 +18,24 @@ const TodosHeader = ({ onAddTodo }) => {
           <input
             type="text"
             placeholder="Search todos..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="border border-gray-300 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <Search
             size={16}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
           />
+
+          {/* Clear Button */}
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              <X size={14} />
+            </button>
+          )}
         </div>
 
         {/* Add Todo Button */}

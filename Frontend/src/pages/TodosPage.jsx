@@ -27,12 +27,26 @@ const TodosPage = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [todoToDelete, setTodoToDelete] = useState(null);
 
+  // Search states
+  const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  // Debounce effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+      setPage(1);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
   // Fetch todos
   const fetchTodos = async () => {
     try {
       setLoading(true);
 
-      const res = await getAllTodos({ page, filter });
+      const res = await getAllTodos({ page, filter, search: debouncedSearch });
 
       const { todos, stats, pagination } = res.data;
 
@@ -40,7 +54,6 @@ const TodosPage = () => {
       setStats(stats);
       setPagination(pagination);
     } catch (error) {
-      console.error(error.message);
       toast.error(error.message);
     } finally {
       setLoading(false);
@@ -50,7 +63,7 @@ const TodosPage = () => {
   // Effect
   useEffect(() => {
     fetchTodos();
-  }, [page, filter]);
+  }, [page, filter, debouncedSearch]);
 
   // Handle edit todo
   const handleEditTodo = (todo) => {
@@ -93,7 +106,11 @@ const TodosPage = () => {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <TodoHeader onAddTodo={() => setShowForm(true)} />
+      <TodoHeader
+        onAddTodo={() => setShowForm(true)}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+      />
 
       {/* Conditional rendering */}
       {showForm ? (
@@ -179,4 +196,3 @@ const TodosPage = () => {
 };
 
 export default TodosPage;
-

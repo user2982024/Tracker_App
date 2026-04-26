@@ -21,14 +21,19 @@ export const createTodo = async (todoData) => {
 };
 
 // Get all todos 
-export const getAllTodos = async ({ page = 1, limit = 6, filter = "all" }) => {
-    const query = new URLSearchParams({
-        page,
-        limit,
-        filter,
-    }).toString();
+export const getAllTodos = async ({ page = 1, limit = 6, filter = "all", search = "" }) => {
+    const params = new URLSearchParams();
 
-    const res = await fetch(`${BASE_URL}?${query}`, {
+    params.append("page", page);
+    params.append("limit", limit);
+    params.append("filter", filter);
+
+    // Only add search if it exists
+    if (search && search.trim() !== "") {
+        params.append("search", search.trim());
+    }
+
+    const res = await fetch(`${BASE_URL}?${params.toString()}`, {
         method: "GET",
         credentials: "include",
     });

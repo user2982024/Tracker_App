@@ -1,11 +1,28 @@
 import TodoCard from "./TodoCard";
 
-const TodosList = ({ todos, loading, currentFilter, onRefresh, onEdit, onDelete }) => {
-//   Loading state
+const TodosList = ({
+  todos,
+  loading,
+  currentFilter,
+  onRefresh,
+  onEdit,
+  onDelete,
+}) => {
+  //   Loading state
   if (loading) {
     return (
       <div className="bg-white border rounded-xl p-6 text-center text-gray-500">
         Loading todos...
+      </div>
+    );
+  }
+
+  // No todos found after search
+  if (!loading && todos.length === 0) {
+    return (
+      <div className="text-center text-gray-500 py-10">
+        <p className="text-lg font-medium">No todos found</p>
+        <p className="text-sm">Try adjusting your search or filters</p>
       </div>
     );
   }
@@ -30,7 +47,13 @@ const TodosList = ({ todos, loading, currentFilter, onRefresh, onEdit, onDelete 
   return (
     <div className="rounded-xl ">
       {todos.map((todo) => (
-        <TodoCard key={todo._id} todo={todo} onRefresh={onRefresh} onEdit={onEdit} onDelete={onDelete} />
+        <TodoCard
+          key={todo._id}
+          todo={todo}
+          onRefresh={onRefresh}
+          onEdit={onEdit}
+          onDelete={onDelete}
+        />
       ))}
     </div>
   );

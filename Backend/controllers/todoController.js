@@ -32,7 +32,8 @@ const createTodo = async (req, res, next) => {
 const getAllTodos = async (req, res, next) => {
   try {
     // Extract query params
-    const { page = 1, limit = 6, filter = "all" } = req.query;
+    const { page = 1, limit = 6, filter = "all", search = "" } = req.query;
+
     const userId = req.user.userId;
 
     // Call service
@@ -41,19 +42,21 @@ const getAllTodos = async (req, res, next) => {
       page,
       limit,
       filter,
+      search,
     });
 
     // Send response
     return res.status(200).json({
       success: true,
-      message: "Todos fetched successfully",
+      message: search
+        ? "Search results fetched successfully"
+        : "Todos fetched successfully",
       data: result,
-    })
-  }
-  catch (error) {
+    });
+  } catch (error) {
     next(error);
   }
-}
+};
 
 // Toggle todo completed controller
 const toggleTodoCompleted = async (req, res, next) => {
@@ -85,19 +88,19 @@ const updateTodo = async (req, res, next) => {
     const userId = req.user.userId;
     const { title, description, dueDate, priority } = req.body;
 
-    const updatedTodo = await todoService.updateTodo(
-      todoId,
-      userId,
-      { title, description, dueDate, priority }
-    );
+    const updatedTodo = await todoService.updateTodo(todoId, userId, {
+      title,
+      description,
+      dueDate,
+      priority,
+    });
 
     return res.status(200).json({
       success: true,
       message: "Todo updated successfully",
       data: updatedTodo,
-    })
-  }
-  catch (error) {
+    });
+  } catch (error) {
     next(error);
   }
 };
@@ -115,11 +118,10 @@ const deleteTodo = async (req, res, next) => {
       message: "Todo deleted successfully",
       data: deletedTodo,
     });
-  }
-  catch (error) {
+  } catch (error) {
     next(error);
   }
-}
+};
 
 // Exports
 module.exports = {
