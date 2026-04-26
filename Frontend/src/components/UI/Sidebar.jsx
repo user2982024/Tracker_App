@@ -49,7 +49,7 @@ const Sidebar = ({ closeSidebar }) => {
       
       {/* Logo */}
       <h1 className="text-xl sm:text-2xl font-bold mb-6 sm:mb-8">
-        Tracker
+        TaskFlow
       </h1>
 
       {/* Navigation */}
