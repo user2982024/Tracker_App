@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+import { toast } from "react-hot-toast";
+
 import TodoHeader from "../components/Todos/TodoHeader";
 import TodoStats from "../components/Todos/TodoStats";
 import TodoFilters from "../components/Todos/TodoFilters";
@@ -7,7 +9,7 @@ import TodoList from "../components/Todos/TodoList";
 import TodoPagination from "../components/Todos/TodoPagination";
 import TodoForm from "../components/Todos/TodoForm";
 
-import { getAllTodos } from "../services/todoServices";
+import { getAllTodos, deleteTodo } from "../services/todoServices";
 
 const TodosPage = () => {
   const [showForm, setShowForm] = useState(false);
@@ -45,10 +47,34 @@ const TodosPage = () => {
     fetchTodos();
   }, [page, filter]);
 
-  // hndle edit
+  // Handle edit todo
   const handleEditTodo = (todo) => {
     setTodoToEdit(todo);
     setShowForm(true);
+  };
+
+  // Handle delete todo
+  const handleDeleteTodo = async (id) => {
+    try {
+      setLoading(true);
+
+      const res = await deleteTodo(id);
+
+      toast.success(res.message || "Todo deleted successfully");
+
+      // If last itme on page is deleted go back one page
+      if (todos.length === 1 && page > 1) {
+        setPage((prev) => prev - 1);      }
+    else {
+      await fetchTodos();
+    }
+  }
+    catch (error) {
+      toast.error(error.message);
+    }
+    finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -95,6 +121,7 @@ const TodosPage = () => {
             currentFilter={filter}
             onRefresh={fetchTodos}
             onEdit={handleEditTodo}
+            onDelete={handleDeleteTodo}
           />
 
           {/* Pagination */}

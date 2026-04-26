@@ -1,6 +1,6 @@
 import TodoCard from "./TodoCard";
 
-const TodosList = ({ todos, loading, currentFilter, onRefresh, onEdit }) => {
+const TodosList = ({ todos, loading, currentFilter, onRefresh, onEdit, onDelete }) => {
 //   Loading state
   if (loading) {
     return (
@@ -30,7 +30,7 @@ const TodosList = ({ todos, loading, currentFilter, onRefresh, onEdit }) => {
   return (
     <div className="rounded-xl ">
       {todos.map((todo) => (
-        <TodoCard key={todo._id} todo={todo} onRefresh={onRefresh} onEdit={onEdit} />
+        <TodoCard key={todo._id} todo={todo} onRefresh={onRefresh} onEdit={onEdit} onDelete={onDelete} />
       ))}
     </div>
   );

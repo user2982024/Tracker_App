@@ -209,10 +209,34 @@ const updateTodo = async (
     return todo;
 }
 
+// Delete a single todo service
+const deleteTodo = async (todoId, userId) => {
+    if (!userId) {
+        throw new Error("User not authenticated");
+    }
+
+    if (!todoId) {
+        throw new Error("Todo ID is required");
+    }
+
+    // Find and delete todo with ownership check
+    const deletedTodo = await Todo.findOneAndDelete({
+        _id: todoId,
+        user: userId,
+    });
+
+    if (!deletedTodo) {
+        throw new Error("Todo not found or access denied");
+    }
+
+    return deleteTodo;
+}
+
 // Exports
 module.exports = {
     createTodoService,
     getAllTodos,
     toggleTodoCompletedService,
     updateTodo,
+    deleteTodo,
 }

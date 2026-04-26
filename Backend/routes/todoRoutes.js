@@ -12,6 +12,7 @@ const {
     getAllTodos,
     toggleTodoCompleted,
     updateTodo,
+    deleteTodo,
 } = require("../controllers/todoController");
 
 const router = express.Router();
@@ -27,5 +28,8 @@ router.patch("/:id/toggle", authMiddleware, validateTodoId, validateRequest, tog
 
 // Update todo route
 router.put("/:id", authMiddleware, validateTodoId, validateUpdateTodo, validateRequest, updateTodo);
+
+// Delete a single todo
+router.delete("/:id", authMiddleware, validateTodoId, validateRequest, deleteTodo);
 
 module.exports = router;

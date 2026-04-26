@@ -102,10 +102,30 @@ const updateTodo = async (req, res, next) => {
   }
 };
 
+// Delete a single todo controller
+const deleteTodo = async (req, res, next) => {
+  try {
+    const todoId = req.params.id;
+    const userId = req.user.userId;
+
+    const deletedTodo = await todoService.deleteTodo(todoId, userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Todo deleted successfully",
+      data: deletedTodo,
+    });
+  }
+  catch (error) {
+    next(error);
+  }
+}
+
 // Exports
 module.exports = {
   createTodo,
   getAllTodos,
   toggleTodoCompleted,
   updateTodo,
+  deleteTodo,
 };

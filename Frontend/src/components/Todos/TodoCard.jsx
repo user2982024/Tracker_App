@@ -2,7 +2,7 @@ import { CalendarDays, Check, Flag, Pencil, Trash2 } from "lucide-react";
 import { toggleTodoCompletion } from "../../services/todoServices";
 import { toast } from "react-hot-toast";
 
-const TodoCard = ({ todo, onRefresh, onEdit }) => {
+const TodoCard = ({ todo, onRefresh, onEdit, onDelete }) => {
 
   // Destructure 
   const {
@@ -123,7 +123,7 @@ const TodoCard = ({ todo, onRefresh, onEdit }) => {
           <Pencil size={17} />
         </button>
 
-        <button className="hover:text-red-500 transition hover:scale-110 hover:cursor-pointer">
+        <button onClick={() => onDelete(todo._id)} className="hover:text-red-500 transition hover:scale-110 hover:cursor-pointer">
           <Trash2 size={17} />
         </button>
       </div>

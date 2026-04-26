@@ -77,3 +77,19 @@ export const updateTodo = async (id, formData) => {
 
     return data;
 };
+
+// Delete a single todo
+export const deleteTodo = async (id) => {
+    const response = await fetch(`${BASE_URL}/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Failed to delete todo");
+    }
+
+    return data;
+};
