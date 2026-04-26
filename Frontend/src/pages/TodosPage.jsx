@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
 
-import { toast } from "react-hot-toast";
-
 import TodoHeader from "../components/Todos/TodoHeader";
 import TodoStats from "../components/Todos/TodoStats";
 import TodoFilters from "../components/Todos/TodoFilters";
 import TodoList from "../components/Todos/TodoList";
 import TodoPagination from "../components/Todos/TodoPagination";
 import TodoForm from "../components/Todos/TodoForm";
+import Modal from "../components/UI/Modal";
 
 import { getAllTodos, deleteTodo } from "../services/todoServices";
+import { toast } from "react-hot-toast";
 
 const TodosPage = () => {
   const [showForm, setShowForm] = useState(false);
-  const [todoToEdit, setTodoToEdit] = useState(false);
+  const [todoToEdit, setTodoToEdit] = useState(null);
 
   const [todos, setTodos] = useState([]);
   const [stats, setStats] = useState({});
@@ -22,6 +22,10 @@ const TodosPage = () => {
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(false);
+
+  // Delete modal state
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [todoToDelete, setTodoToDelete] = useState(null);
 
   // Fetch todos
   const fetchTodos = async () => {
@@ -37,6 +41,7 @@ const TodosPage = () => {
       setPagination(pagination);
     } catch (error) {
       console.error(error.message);
+      toast.error(error.message);
     } finally {
       setLoading(false);
     }
@@ -53,26 +58,34 @@ const TodosPage = () => {
     setShowForm(true);
   };
 
-  // Handle delete todo
-  const handleDeleteTodo = async (id) => {
+  // Open delete modal
+  const handleOpenDeleteModal = (id) => {
+    setTodoToDelete(id);
+    setIsDeleteModalOpen(true);
+  };
+
+  // Handle delete
+  const handleDeleteTodo = async () => {
     try {
       setLoading(true);
 
-      const res = await deleteTodo(id);
+      const res = await deleteTodo(todoToDelete);
 
       toast.success(res.message || "Todo deleted successfully");
 
-      // If last itme on page is deleted go back one page
+      // Close modal
+      setIsDeleteModalOpen(false);
+      setTodoToDelete(null);
+
+      // Edge case: last item on page
       if (todos.length === 1 && page > 1) {
-        setPage((prev) => prev - 1);      }
-    else {
-      await fetchTodos();
-    }
-  }
-    catch (error) {
+        setPage((prev) => prev - 1);
+      } else {
+        await fetchTodos();
+      }
+    } catch (error) {
       toast.error(error.message);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -80,13 +93,12 @@ const TodosPage = () => {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      {/* Pass handler to header */}
       <TodoHeader onAddTodo={() => setShowForm(true)} />
 
       {/* Conditional rendering */}
       {showForm ? (
         <TodoForm
-        todoToEdit={todoToEdit}
+          todoToEdit={todoToEdit}
           onTodoCreated={() => {
             setPage(1);
             setShowForm(false);
@@ -101,11 +113,9 @@ const TodosPage = () => {
       ) : (
         <>
           {/* Stats */}
-          {/* Pass original todos for stats */}
           <TodoStats stats={stats} />
 
           {/* Filters */}
-          {/* Pass filter control */}
           <TodoFilters
             currentFilter={filter}
             onFilterChange={(newFilter) => {
@@ -121,7 +131,7 @@ const TodosPage = () => {
             currentFilter={filter}
             onRefresh={fetchTodos}
             onEdit={handleEditTodo}
-            onDelete={handleDeleteTodo}
+            onDelete={handleOpenDeleteModal}
           />
 
           {/* Pagination */}
@@ -132,8 +142,41 @@ const TodosPage = () => {
           />
         </>
       )}
+
+      {/* Delete Confirmation Modal */}
+      <Modal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setTodoToDelete(null);
+        }}
+        title="Delete Todo"
+        actions={
+          <>
+            <button
+              onClick={() => {
+                setIsDeleteModalOpen(false);
+                setTodoToDelete(null);
+              }}
+              className="px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-100 hover:cursor-pointer"
+            >
+              Cancel
+            </button>
+
+            <button
+              onClick={handleDeleteTodo}
+              className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 hover:cursor-pointer"
+            >
+              Delete
+            </button>
+          </>
+        }
+      >
+        Are you sure you want to delete this todo? This action cannot be undone.
+      </Modal>
     </div>
   );
 };
 
 export default TodosPage;
+
