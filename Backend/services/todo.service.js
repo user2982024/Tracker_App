@@ -94,7 +94,7 @@ const getAllTodos = async ({
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .lean();                // Performance optimization
+        .lean({ virtuals: true });                // Performance optimization
 
     // Total count for pagination
     const totalTodos = await Todo.countDocuments(query);

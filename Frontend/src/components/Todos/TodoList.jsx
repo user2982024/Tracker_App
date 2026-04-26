@@ -8,7 +8,8 @@ const TodosList = ({
   onEdit,
   onDelete,
 }) => {
-  //   Loading state
+  
+  // Loading state
   if (loading) {
     return (
       <div className="bg-white border rounded-xl p-6 text-center text-gray-500">
@@ -17,17 +18,7 @@ const TodosList = ({
     );
   }
 
-  // No todos found after search
-  if (!loading && todos.length === 0) {
-    return (
-      <div className="text-center text-gray-500 py-10">
-        <p className="text-lg font-medium">No todos found</p>
-        <p className="text-sm">Try adjusting your search or filters</p>
-      </div>
-    );
-  }
-
-  // Empty state
+  // Empty / No results state (MERGED LOGIC)
   if (!todos || todos.length === 0) {
     const messages = {
       all: "No todos found. Create your first todo",
@@ -37,15 +28,18 @@ const TodosList = ({
     };
 
     return (
-      <div className="rounded-xl p-6 text-center text-gray-500">
-        {messages[currentFilter] || messages.all}
+      <div className="text-center text-gray-500 py-10">
+        <p className="text-lg font-medium">
+          {messages[currentFilter] || messages.all}
+        </p>
+        <p className="text-sm">Try adjusting your search or filters</p>
       </div>
     );
   }
 
-  // Todos list
+  // Todos list (ONLY runs when todos exist)
   return (
-    <div className="rounded-xl ">
+    <div className="rounded-xl">
       {todos.map((todo) => (
         <TodoCard
           key={todo._id}

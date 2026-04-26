@@ -12,9 +12,12 @@ const TodoCard = ({ todo, onRefresh, onEdit, onDelete }) => {
     completed,
     dueDate,
     priority = "low",
-    isOverdue,
   } = todo;
 
+  const isOverdue =
+  !completed &&
+  dueDate &&
+  new Date(dueDate).getTime() < Date.now();
   const isPending = !completed && !isOverdue;
 
   const formattedDate = dueDate
