@@ -1,7 +1,6 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const TodosPagination = ({ currentPage, totalPages, onPageChange }) => {
-
   const getPages = () => {
     const pages = [];
     const delta = 1;
@@ -39,7 +38,6 @@ const TodosPagination = ({ currentPage, totalPages, onPageChange }) => {
 
   return (
     <div className="flex items-center justify-center gap-2 mt-6">
-
       {/* Prev */}
       <button
         onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
@@ -58,7 +56,7 @@ const TodosPagination = ({ currentPage, totalPages, onPageChange }) => {
       {pages.map((page, index) => {
         if (page === "...") {
           return (
-            <span key={index} className="px-2 text-gray-500">
+            <span key={`dots-${index}`} className="px-2 text-gray-500">
               ...
             </span>
           );
@@ -66,7 +64,7 @@ const TodosPagination = ({ currentPage, totalPages, onPageChange }) => {
 
         return (
           <button
-            key={page}
+            key={`page-${page}`}
             onClick={() => onPageChange(page)}
             className={`px-3 py-1 rounded-md border text-sm cursor-pointer ${
               currentPage === page
@@ -94,7 +92,6 @@ const TodosPagination = ({ currentPage, totalPages, onPageChange }) => {
         Next
         <ChevronRight size={16} />
       </button>
-
     </div>
   );
 };

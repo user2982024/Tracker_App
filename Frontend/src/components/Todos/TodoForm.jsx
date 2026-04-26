@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
-import { createTodo } from "../../services/todoServices";
+import { createTodo, updateTodo } from "../../services/todoServices";
 
-const TodoForm = ({ onTodoCreated, onCancel }) => {
+const TodoForm = ({ todoToEdit, onTodoCreated, onCancel }) => {
+  // Detect mode
+  const isEditMode = Boolean(todoToEdit);
+
   // Single source of truth
   const [formData, setFormData] = useState({
     title: "",
@@ -13,6 +16,20 @@ const TodoForm = ({ onTodoCreated, onCancel }) => {
   });
 
   const [loading, setLoading] = useState(false);
+
+  // Pre-fill form with existing todo data in edit mode
+  useEffect(() => {
+    if (isEditMode && todoToEdit) {
+      setFormData({
+        title: todoToEdit.title || "",
+        description: todoToEdit.description || "",
+        dueDate: todoToEdit.dueDate
+          ? todoToEdit.dueDate.split("T")[0]
+          : "",
+        priority: todoToEdit.priority || "medium",
+      });
+    }
+  }, [isEditMode, todoToEdit]);
 
   // hnadle input change
   const handleChange = (e) => {
@@ -30,29 +47,37 @@ const TodoForm = ({ onTodoCreated, onCancel }) => {
 
     try {
       setLoading(true);
+      
+      let res;
 
-      // API call to create todo
-      const res = await createTodo(formData);
+      if (isEditMode) {
+        // Update todo
+        res = await updateTodo(todoToEdit._id, formData);
+        toast.success(res.message || "Todo updated successfully");
+      }
+      else {
+        // Create todo
+        res = await createTodo(formData);
+        toast.success(res.message || "Todo created successfully");
+      }
 
-      // SUCCESS TOAST
-      toast.success(res.message || "Todo created successfully");
-
-      // Notify parent (refresh + close form)
+      // Notify parent
       if (onTodoCreated) {
         onTodoCreated();
       }
 
-      // Reset form after success
-      setFormData({
-        title: "",
-        description: "",
-        dueDate: "",
-        priority: "medium",
-      });
+      // Reset only for create mode
+      if (!isEditMode) {
+        setFormData({
+          title: "",
+          description: "",
+          dueDate: "",
+          priority: "medium",
+        });
+      }
 
-      
     } catch (error) {
-      toast.error(error.message || "Failed to create todo");
+      toast.error(error.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -60,7 +85,9 @@ const TodoForm = ({ onTodoCreated, onCancel }) => {
 
   return (
     <div className="bg-white border rounded-xl p-6 max-w-xl mx-auto">
-      <h2 className="text-lg font-semibold mb-4">Create Todo</h2>
+      <h2 className="text-lg font-semibold mb-4">
+        {isEditMode ? "Edit Todo" : "Create Todo"}
+      </h2>
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         {/* Title */}
@@ -132,7 +159,7 @@ const TodoForm = ({ onTodoCreated, onCancel }) => {
             disabled={loading}
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition hover:cursor-pointer"
           >
-            Create Todo
+            {loading ? "Saving..." : isEditMode ? "Update Todo" : "Create Todo"}
           </button>
         </div>
       </form>

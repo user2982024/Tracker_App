@@ -11,6 +11,7 @@ import { getAllTodos } from "../services/todoServices";
 
 const TodosPage = () => {
   const [showForm, setShowForm] = useState(false);
+  const [todoToEdit, setTodoToEdit] = useState(false);
 
   const [todos, setTodos] = useState([]);
   const [stats, setStats] = useState({});
@@ -44,6 +45,12 @@ const TodosPage = () => {
     fetchTodos();
   }, [page, filter]);
 
+  // hndle edit
+  const handleEditTodo = (todo) => {
+    setTodoToEdit(todo);
+    setShowForm(true);
+  };
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -53,12 +60,17 @@ const TodosPage = () => {
       {/* Conditional rendering */}
       {showForm ? (
         <TodoForm
+        todoToEdit={todoToEdit}
           onTodoCreated={() => {
             setPage(1);
             setShowForm(false);
+            setTodoToEdit(null);
             fetchTodos();
           }}
-          onCancel={() => setShowForm(false)}
+          onCancel={() => {
+            setShowForm(false);
+            setTodoToEdit(null);
+          }}
         />
       ) : (
         <>
@@ -77,7 +89,13 @@ const TodosPage = () => {
           />
 
           {/* List */}
-          <TodoList todos={todos} loading={loading} currentFilter={filter} onRefresh={fetchTodos} />
+          <TodoList
+            todos={todos}
+            loading={loading}
+            currentFilter={filter}
+            onRefresh={fetchTodos}
+            onEdit={handleEditTodo}
+          />
 
           {/* Pagination */}
           <TodoPagination

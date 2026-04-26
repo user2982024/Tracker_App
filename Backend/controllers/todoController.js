@@ -79,11 +79,33 @@ const toggleTodoCompleted = async (req, res, next) => {
 };
 
 // Update todo controller
+const updateTodo = async (req, res, next) => {
+  try {
+    const todoId = req.params.id;
+    const userId = req.user.userId;
+    const { title, description, dueDate, priority } = req.body;
 
+    const updatedTodo = await todoService.updateTodo(
+      todoId,
+      userId,
+      { title, description, dueDate, priority }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Todo updated successfully",
+      data: updatedTodo,
+    })
+  }
+  catch (error) {
+    next(error);
+  }
+};
 
 // Exports
 module.exports = {
   createTodo,
   getAllTodos,
   toggleTodoCompleted,
+  updateTodo,
 };

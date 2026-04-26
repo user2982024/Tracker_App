@@ -11,6 +11,7 @@ const {
     createTodo,
     getAllTodos,
     toggleTodoCompleted,
+    updateTodo,
 } = require("../controllers/todoController");
 
 const router = express.Router();
@@ -23,5 +24,8 @@ router.get("/", authMiddleware, getAllTodos);
 
 // Toggle todo completed route
 router.patch("/:id/toggle", authMiddleware, validateTodoId, validateRequest, toggleTodoCompleted);
+
+// Update todo route
+router.put("/:id", authMiddleware, validateTodoId, validateUpdateTodo, validateRequest, updateTodo);
 
 module.exports = router;

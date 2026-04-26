@@ -148,11 +148,71 @@ const toggleTodoCompletedService = async (todoId, userId) => {
 };
 
 // Update todo service
+const updateTodo = async (
+    todoId,
+    userId,
+    { title, description, dueDate, priority }
+) => {
+    // Authentication check
+    if (!userId) {
+        throw new Error("User not authenticated");
+    }
 
+    // Todo ID check
+    if (!todoId) {
+        throw new Error("Todo ID is required");
+    }
+
+    // Check if at least one field is provided
+    if (
+        title === undefined &&
+        description === undefined &&
+        dueDate === undefined &&
+        priority === undefined
+    ) {
+        throw new Error("At least one field (title, description, dueDate, priority) is required to update");
+    }
+
+    // Find todo with ownership check
+    const todo = await Todo.findOne({
+        _id: todoId,
+        user: userId,
+    });
+
+    if (!todo) {
+        throw new Error("Todo not found or access denied");
+    }
+
+    // Update fields if provided
+    if (title !== undefined) {
+        if (!title.trim()) {
+            throw new Error("Title cannot be empty");
+        }
+        todo.title = title;
+    }
+
+    if (description !== undefined) {
+        todo.description = description;
+    }
+
+    if (dueDate !== undefined) {
+        todo.dueDate = dueDate;
+    }
+
+    if (priority !== undefined) {
+        todo.priority = priority;
+    }
+
+    // Save updated todo
+    await todo.save();
+
+    return todo;
+}
 
 // Exports
 module.exports = {
     createTodoService,
     getAllTodos,
     toggleTodoCompletedService,
+    updateTodo,
 }
