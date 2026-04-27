@@ -74,12 +74,6 @@ const buildQuery = ({ userId, filter, search }) => {
 // Build sort
 const buildSort = (sortBy) => {
   switch (sortBy) {
-    case "priority":
-      return {
-        priority: -1,
-        createdAt: -1,
-      };
-
     case "dueDate":
       return {
         dueDate: 1,
@@ -118,12 +112,6 @@ const getAllTodos = async ({
 
   // Build query
   const query = buildQuery({ userId, filter, search });
-
-  const debugTodos = await Todo.find().limit(10);
-  console.log(
-    "DEBUG priorities:",
-    debugTodos.map((t) => t.priority),
-  );
 
   // Sorting logic
   const sortOption = buildSort(sortBy);

@@ -41,7 +41,6 @@ const TodosFilters = ({ currentFilter, onFilterChange, sortBy, onSortChange }) =
           className="px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 hover:cursor-pointer"
         >
           <option value="default">Default</option>
-          <option value="priority">Priority</option>
           <option value="dueDate">Due Date</option>
         </select>
       </div>
