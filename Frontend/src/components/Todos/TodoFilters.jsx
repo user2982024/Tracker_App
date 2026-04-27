@@ -4,7 +4,6 @@ import {
   CheckCircle2,
   AlertCircle,
   Search,
-  SlidersHorizontal,
 } from "lucide-react";
 
 const TodosFilters = ({ currentFilter, onFilterChange, sortBy, onSortChange }) => {
@@ -33,8 +32,6 @@ const TodosFilters = ({ currentFilter, onFilterChange, sortBy, onSortChange }) =
 
       {/* Sort dropdown */}
       <div className="flex items-center gap-2">
-        <SlidersHorizontal size={18} className="text-gray-600" />
-
         <select
         value={sortBy}
         onChange={(e) => onSortChange(e.target.value)}
