@@ -32,7 +32,13 @@ const createTodo = async (req, res, next) => {
 const getAllTodos = async (req, res, next) => {
   try {
     // Extract query params
-    const { page = 1, limit = 6, filter = "all", search = "" } = req.query;
+    const {
+      page = 1,
+      limit = 6,
+      filter = "all",
+      search = "",
+      sortBy = "default",
+    } = req.query;
 
     const userId = req.user.userId;
 
@@ -43,6 +49,7 @@ const getAllTodos = async (req, res, next) => {
       limit,
       filter,
       search,
+      sortBy,
     });
 
     // Send response

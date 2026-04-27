@@ -3,260 +3,301 @@ const mongoose = require("mongoose");
 const Todo = require("../models/Todo");
 
 // Create todo service
-const createTodoService = async (title, description, userId, dueDate, priority) => {
-    if (!title) {
-        throw new Error("Title is required");
-    }
-    
-    // Authentication check
-    if (!userId) {
-        throw new Error("User not authenticated");
-    }
+const createTodoService = async (
+  title,
+  description,
+  userId,
+  dueDate,
+  priority,
+) => {
+  if (!title) {
+    throw new Error("Title is required");
+  }
 
-    const todoData = {
-        title, 
-        user: userId,
-    };
+  // Authentication check
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
 
-    // Add optional fields
-    if (description) todoData.description = description;
-    if (dueDate) todoData.dueDate = dueDate;
-    if (priority) todoData.priority = priority;
+  const todoData = {
+    title,
+    user: userId,
+  };
 
-    // Create todo
-    const todo = await Todo.create(todoData);
+  // Add optional fields
+  if (description) todoData.description = description;
+  if (dueDate) todoData.dueDate = dueDate;
+  if (priority) todoData.priority = priority;
 
-    return todo;
+  // Create todo
+  const todo = await Todo.create(todoData);
+
+  return todo;
 };
 
 // Build query
 const buildQuery = ({ userId, filter, search }) => {
-    const query = { user: userId };
-    const now = new Date();
+  const query = { user: userId };
+  const now = new Date();
 
-    // Search
-    if (search && search.trim() !== "") {
-        query.$or = [
-            { title: { $regex: search.trim(), $options: "i" } },
-            { description: { $regex: search.trim(), $options: "i" } },
-        ];
-    }
+  // Search
+  if (search && search.trim() !== "") {
+    query.$or = [
+      { title: { $regex: search.trim(), $options: "i" } },
+      { description: { $regex: search.trim(), $options: "i" } },
+    ];
+  }
 
-    // Filter
-    switch (filter) {
-        case "completed":
-            query.completed = true;
-            break;
+  // Filter
+  switch (filter) {
+    case "completed":
+      query.completed = true;
+      break;
 
-        case "pending":
-            query.completed = false;
-            break;
+    case "pending":
+      query.completed = false;
+      break;
 
-        case "overdue":
-            query.completed = false;
-            query.dueDate = { $lt: now };
-            break;
+    case "overdue":
+      query.completed = false;
+      query.dueDate = { $lt: now };
+      break;
 
-        case "all":
-        default:
-            break;
-    }
+    case "all":
+    default:
+      break;
+  }
 
-    return query;
-}
+  return query;
+};
+
+// Build sort
+const buildSort = (sortBy) => {
+  switch (sortBy) {
+    case "priority":
+      return {
+        priority: -1,
+        createdAt: -1,
+      };
+
+    case "dueDate":
+      return {
+        dueDate: 1,
+        createdAt: -1,
+      };
+
+    default:
+      return {
+        completed: 1,
+        createdAt: -1,
+      };
+  }
+};
 
 // Get all todos of a user service (with pagination, filters and stats)
 const getAllTodos = async ({
-    userId,
-    page = 1,
-    limit = 6,
-    filter = "all",
-    search = "",
+  userId,
+  page = 1,
+  limit = 6,
+  filter = "all",
+  search = "",
+  sortBy = "default",
 }) => {
-    // Authentication check
-    if (!userId) {
-        throw new Error("User not authenticated");
+  // Authentication check
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  page = Number(page);
+  limit = Number(limit);
+
+  if (page < 1) page = 1;
+  if (limit < 1) limit = 6;
+
+  const skip = (page - 1) * limit;
+
+  // Build query
+  const query = buildQuery({ userId, filter, search });
+
+  const debugTodos = await Todo.find().limit(10);
+  console.log(
+    "DEBUG priorities:",
+    debugTodos.map((t) => t.priority),
+  );
+
+  // Sorting logic
+  const sortOption = buildSort(sortBy);
+
+  // Fetch todos
+  const todos = await Todo.find(query)
+    .sort(sortOption)
+    .skip(skip)
+    .limit(limit)
+    .lean({ virtuals: true }); // Performance optimization
+
+  // Total count for pagination
+  const totalTodos = await Todo.countDocuments(query);
+  const totalPages = Math.ceil(totalTodos / limit);
+
+  // Stats
+  const allTodos = await Todo.find({ user: userId }).lean();
+
+  let completed = 0;
+  let pending = 0;
+  let overdue = 0;
+  const now = new Date();
+
+  allTodos.forEach((todo) => {
+    if (todo.completed) {
+      completed++;
+    } else {
+      pending++;
+
+      if (todo.dueDate && new Date(todo.dueDate) < now) {
+        overdue++;
+      }
     }
+  });
 
-    page = Number(page);
-    limit = Number(limit);
+  const stats = {
+    total: allTodos.length,
+    completed,
+    pending,
+    overdue,
+  };
 
-    if (page < 1) page = 1;
-    if (limit < 1) limit = 6;
-    
-    const skip = (page - 1) * limit;
-
-    // Build query
-    const query = buildQuery({ userId, filter, search }); 
-    
-    // Fetch todos
-    const todos = await Todo.find(query)
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(limit)
-        .lean({ virtuals: true });                // Performance optimization
-
-    // Total count for pagination
-    const totalTodos = await Todo.countDocuments(query);
-    const totalPages = Math.ceil(totalTodos / limit);
-
-    // Stats
-    const allTodos = await Todo.find({ user: userId }).lean();
-
-    let completed = 0;
-    let pending = 0;
-    let overdue = 0;
-    const now = new Date();
-
-    allTodos.forEach((todo) => {
-        if (todo.completed) {
-            completed++;
-        } else {
-            pending++;
-
-            if (todo.dueDate && new Date(todo.dueDate) < now) {
-                overdue++;
-            }
-        }
-    });
-
-    const stats = {
-        total: allTodos.length,
-        completed,
-        pending,
-        overdue,
-    }
-
-    return {
-        todos,
-        pagination: {
-            totalTodos,
-            currentPage: page,
-            totalPages,
-            pageSize: limit,
-        },
-        stats,
-    };
+  return {
+    todos,
+    pagination: {
+      totalTodos,
+      currentPage: page,
+      totalPages,
+      pageSize: limit,
+    },
+    stats,
+  };
 };
 
 // Toggle todo completed service
 const toggleTodoCompletedService = async (todoId, userId) => {
-    if (!userId) {
-        throw new Error("User not authenticated");
-    }
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
 
-    if (!todoId) {
-        throw new Error("Todo ID is required");
-    }
+  if (!todoId) {
+    throw new Error("Todo ID is required");
+  }
 
-    // Find todo with ownership check
-    const todo = await Todo.findOne({
-        _id: todoId,
-        user: userId,
-    });
+  // Find todo with ownership check
+  const todo = await Todo.findOne({
+    _id: todoId,
+    user: userId,
+  });
 
-    if (!todo) {
-        throw new Error("Todo not found or access denied");
-    }
+  if (!todo) {
+    throw new Error("Todo not found or access denied");
+  }
 
-    // Toggle completed status
-    todo.completed = !todo.completed;
+  // Toggle completed status
+  todo.completed = !todo.completed;
 
-    await todo.save();
+  await todo.save();
 
-    return todo;
+  return todo;
 };
 
 // Update todo service
 const updateTodo = async (
-    todoId,
-    userId,
-    { title, description, dueDate, priority }
+  todoId,
+  userId,
+  { title, description, dueDate, priority },
 ) => {
-    // Authentication check
-    if (!userId) {
-        throw new Error("User not authenticated");
+  // Authentication check
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  // Todo ID check
+  if (!todoId) {
+    throw new Error("Todo ID is required");
+  }
+
+  // Check if at least one field is provided
+  if (
+    title === undefined &&
+    description === undefined &&
+    dueDate === undefined &&
+    priority === undefined
+  ) {
+    throw new Error(
+      "At least one field (title, description, dueDate, priority) is required to update",
+    );
+  }
+
+  // Find todo with ownership check
+  const todo = await Todo.findOne({
+    _id: todoId,
+    user: userId,
+  });
+
+  if (!todo) {
+    throw new Error("Todo not found or access denied");
+  }
+
+  // Update fields if provided
+  if (title !== undefined) {
+    if (!title.trim()) {
+      throw new Error("Title cannot be empty");
     }
+    todo.title = title;
+  }
 
-    // Todo ID check
-    if (!todoId) {
-        throw new Error("Todo ID is required");
-    }
+  if (description !== undefined) {
+    todo.description = description;
+  }
 
-    // Check if at least one field is provided
-    if (
-        title === undefined &&
-        description === undefined &&
-        dueDate === undefined &&
-        priority === undefined
-    ) {
-        throw new Error("At least one field (title, description, dueDate, priority) is required to update");
-    }
+  if (dueDate !== undefined) {
+    todo.dueDate = dueDate;
+  }
 
-    // Find todo with ownership check
-    const todo = await Todo.findOne({
-        _id: todoId,
-        user: userId,
-    });
+  if (priority !== undefined) {
+    todo.priority = priority;
+  }
 
-    if (!todo) {
-        throw new Error("Todo not found or access denied");
-    }
+  // Save updated todo
+  await todo.save();
 
-    // Update fields if provided
-    if (title !== undefined) {
-        if (!title.trim()) {
-            throw new Error("Title cannot be empty");
-        }
-        todo.title = title;
-    }
-
-    if (description !== undefined) {
-        todo.description = description;
-    }
-
-    if (dueDate !== undefined) {
-        todo.dueDate = dueDate;
-    }
-
-    if (priority !== undefined) {
-        todo.priority = priority;
-    }
-
-    // Save updated todo
-    await todo.save();
-
-    return todo;
-}
+  return todo;
+};
 
 // Delete a single todo service
 const deleteTodo = async (todoId, userId) => {
-    if (!userId) {
-        throw new Error("User not authenticated");
-    }
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
 
-    if (!todoId) {
-        throw new Error("Todo ID is required");
-    }
+  if (!todoId) {
+    throw new Error("Todo ID is required");
+  }
 
-    // Find and delete todo with ownership check
-    const deletedTodo = await Todo.findOneAndDelete({
-        _id: todoId,
-        user: userId,
-    });
+  // Find and delete todo with ownership check
+  const deletedTodo = await Todo.findOneAndDelete({
+    _id: todoId,
+    user: userId,
+  });
 
-    if (!deletedTodo) {
-        throw new Error("Todo not found or access denied");
-    }
+  if (!deletedTodo) {
+    throw new Error("Todo not found or access denied");
+  }
 
-    return deletedTodo;
-}
+  return deletedTodo;
+};
 
 // Exports
 module.exports = {
-    createTodoService,
-    getAllTodos,
-    toggleTodoCompletedService,
-    updateTodo,
-    deleteTodo,
-}
+  createTodoService,
+  getAllTodos,
+  toggleTodoCompletedService,
+  updateTodo,
+  deleteTodo,
+};

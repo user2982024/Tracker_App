@@ -31,6 +31,9 @@ const TodosPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
+  // Sort state
+  const [sortBy, setSortBy] = useState("default");
+
   // Debounce effect
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -46,7 +49,12 @@ const TodosPage = () => {
     try {
       setLoading(true);
 
-      const res = await getAllTodos({ page, filter, search: debouncedSearch });
+      const res = await getAllTodos({
+        page,
+        filter,
+        search: debouncedSearch,
+        sortBy,
+      });
 
       const { todos, stats, pagination } = res.data;
 
@@ -63,7 +71,7 @@ const TodosPage = () => {
   // Effect
   useEffect(() => {
     fetchTodos();
-  }, [page, filter, debouncedSearch]);
+  }, [page, filter, debouncedSearch, sortBy]);
 
   // Handle edit todo
   const handleEditTodo = (todo) => {
@@ -137,6 +145,11 @@ const TodosPage = () => {
             currentFilter={filter}
             onFilterChange={(newFilter) => {
               setFilter(newFilter);
+              setPage(1);
+            }}
+            sortBy={sortBy}
+            onSortChange={(newSort) => {
+              setSortBy(newSort);
               setPage(1);
             }}
           />
