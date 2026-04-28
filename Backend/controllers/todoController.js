@@ -130,6 +130,45 @@ const deleteTodo = async (req, res, next) => {
   }
 };
 
+// Pin todo controller
+const pinTodo = async (req, res, next) => {
+  try {
+    const todoId = req.params.id;
+    const userId = req.user.userId;
+
+    // Call service
+    const pinnedTodo = await todoService.pinTodo(todoId, userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Todo pinned successfully",
+      data: pinnedTodo,
+    });
+  }
+  catch (error) {
+    next(error);
+  }
+};
+
+// Unpin todo controller
+const unpinTodo = async (req, res, next) => {
+  try {
+    const todoId = req.params.id;
+    const userId = req.user.userId;
+
+    const unpinnedTodo = await todoService.unpinTodo(todoId, userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Todo unpinned successfully",
+      data: unpinnedTodo,
+    });
+  }
+  catch (error) {
+    next(error);
+  }
+};
+
 // Exports
 module.exports = {
   createTodo,
@@ -137,4 +176,6 @@ module.exports = {
   toggleTodoCompleted,
   updateTodo,
   deleteTodo,
+  pinTodo,
+  unpinTodo,
 };

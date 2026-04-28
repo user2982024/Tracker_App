@@ -73,6 +73,12 @@ const buildQuery = ({ userId, filter, search }) => {
 
 // Build sort
 const buildSort = (sortBy) => {
+  // Always enforce pinned first
+  const baseSort = {
+    pinned: -1,
+    pinnedAt: -1,
+  }
+  
   switch (sortBy) {
     case "dueDate":
       return {
@@ -281,6 +287,73 @@ const deleteTodo = async (todoId, userId) => {
   return deletedTodo;
 };
 
+// Pin a todo service
+const pinTodo = async (todoId, userId) => {
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  if (!todoId) {
+    throw new Error("Todo ID is required");
+  }
+
+  // Find todo with ownership check
+  const todo = await Todo.findOne({
+    _id: todoId,
+    user: userId,
+  });
+
+  if (!todo) {
+    throw new Error("Todo not found or access denied");
+  }
+
+  // Pin logic
+
+  if (todo.pinned) {
+    return todo;              // Already pinned no change
+  }
+
+  todo.pinned = true;
+  todo.pinnedAt = new Date();
+
+  await todo.save();
+
+  return todo;
+};
+
+// Unpin a todo service
+const unpinTodo = async (todoId, userId) => {
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  if (!todoId) {
+    throw new Error("Todo ID is required");
+  }
+
+  // Find todo with ownership check
+  const todo = await Todo.findOne({
+    _id: todoId,
+    user: userId,
+  });
+
+  if (!todo) {
+    throw new Error("Todo not found or access denied");
+  }
+
+  // Unpin logic 
+  if (!todo.pinned) {
+    return todo;                // Already unpinned no change
+  }
+
+  todo.pinned = false;
+  todo.pinnedAt = null;
+
+  await todo.save();
+
+  return todo;
+}
+
 // Exports
 module.exports = {
   createTodoService,
@@ -288,4 +361,6 @@ module.exports = {
   toggleTodoCompletedService,
   updateTodo,
   deleteTodo,
+  pinTodo,
+  unpinTodo,
 };

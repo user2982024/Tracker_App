@@ -13,6 +13,8 @@ const {
     toggleTodoCompleted,
     updateTodo,
     deleteTodo,
+    pinTodo,
+    unpinTodo,
 } = require("../controllers/todoController");
 
 const router = express.Router();
@@ -23,13 +25,19 @@ router.post("/", authMiddleware, validateCreateTodo, validateRequest, createTodo
 // Get all todos route (with pagination and filters)
 router.get("/", authMiddleware, getAllTodos);
 
+// Pin todo route
+router.patch("/:id/pin", authMiddleware, validateTodoId, validateRequest, pinTodo);
+
+// Unpin todo route
+router.patch("/:id/unpin", authMiddleware, validateTodoId, validateRequest, unpinTodo);
+
 // Toggle todo completed route
 router.patch("/:id/toggle", authMiddleware, validateTodoId, validateRequest, toggleTodoCompleted);
 
 // Update todo route
 router.put("/:id", authMiddleware, validateTodoId, validateUpdateTodo, validateRequest, updateTodo);
 
-// Delete a single todo
+// Delete a single todo route
 router.delete("/:id", authMiddleware, validateTodoId, validateRequest, deleteTodo);
 
 module.exports = router;
