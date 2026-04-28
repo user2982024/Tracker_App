@@ -105,3 +105,35 @@ export const deleteTodo = async (id) => {
 
   return data;
 };
+
+// Pin a todo
+export const pinTodo = async (id) => {
+  const response = await fetch(`${BASE_URL}/${id}/pin`, {
+    method: "PATCH",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to pin todo");
+  }
+
+  return data;
+}
+
+// Unpin a todo
+export const unpinTodo = async (id) => {
+  const response = await fetch(`${BASE_URL}/${id}/unpin`, {
+    method: "PATCH",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to unpin todo");
+  }
+
+  return data;
+};

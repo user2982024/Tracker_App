@@ -1,14 +1,16 @@
 import TodoCard from "./TodoCard";
 
-const TodosList = ({
+const TodoList = ({
   todos,
   loading,
   currentFilter,
   onRefresh,
   onEdit,
   onDelete,
+  onPin,
+  onUnpin,
 }) => {
-  
+
   // Loading state
   if (loading) {
     return (
@@ -18,7 +20,7 @@ const TodosList = ({
     );
   }
 
-  // Empty / No results state (MERGED LOGIC)
+  // Empty state
   if (!todos || todos.length === 0) {
     const messages = {
       all: "No todos found. Create your first todo",
@@ -37,20 +39,60 @@ const TodosList = ({
     );
   }
 
-  // Todos list (ONLY runs when todos exist)
+  // Split todos
+  const pinnedTodos = todos.filter((todo) => todo.pinned);
+  const unpinnedTodos = todos.filter((todo) => !todo.pinned);
+
   return (
-    <div className="rounded-xl">
-      {todos.map((todo) => (
-        <TodoCard
-          key={todo._id}
-          todo={todo}
-          onRefresh={onRefresh}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
-      ))}
-    </div>
-  );
+  <div className="space-y-4">
+
+    {/* Pinned Section */}
+    {pinnedTodos.length > 0 && (
+      <div>
+        <h2 className="text-lg font-semibold mb-3 text-yellow-600">
+          Pinned Todos ({pinnedTodos.length})
+        </h2>
+
+        <div className="space-y-3">
+          {pinnedTodos.map((todo) => (
+            <TodoCard
+              key={todo._id}
+              todo={todo}
+              onRefresh={onRefresh}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onPin={onPin}
+              onUnpin={onUnpin}
+            />
+          ))}
+        </div>
+      </div>
+    )}
+
+    {/* Normal Todos */}
+    {unpinnedTodos.length > 0 && (
+      <div className="border-t pt-6">
+        <h2 className="text-lg font-semibold mb-3 text-gray-700">
+          Todos ({unpinnedTodos.length})
+        </h2>
+
+        <div className="space-y-3">
+          {unpinnedTodos.map((todo) => (
+            <TodoCard
+              key={todo._id}
+              todo={todo}
+              onRefresh={onRefresh}
+              onEdit={onEdit}
+              onDelete={onDelete}
+              onPin={onPin}
+              onUnpin={onUnpin}
+            />
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+);
 };
 
-export default TodosList;
+export default TodoList;

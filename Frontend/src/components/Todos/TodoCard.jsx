@@ -1,10 +1,16 @@
-import { CalendarDays, Check, Flag, Pencil, Trash2 } from "lucide-react";
+import {
+  CalendarDays,
+  Check,
+  Flag,
+  Pencil,
+  Trash2,
+  Pin,
+} from "lucide-react";
+
 import { toggleTodoCompletion } from "../../services/todoServices";
 import { toast } from "react-hot-toast";
 
-const TodoCard = ({ todo, onRefresh, onEdit, onDelete }) => {
-
-  // Destructure 
+const TodoCard = ({ todo, onRefresh, onEdit, onDelete, onPin, onUnpin }) => {
   const {
     _id,
     title,
@@ -12,121 +18,134 @@ const TodoCard = ({ todo, onRefresh, onEdit, onDelete }) => {
     completed,
     dueDate,
     priority = "low",
+    pinned = false,
   } = todo;
 
   const isOverdue =
-  !completed &&
-  dueDate &&
-  new Date(dueDate).getTime() < Date.now();
+    !completed && dueDate && new Date(dueDate).getTime() < Date.now();
+
   const isPending = !completed && !isOverdue;
 
   const formattedDate = dueDate
     ? new Date(dueDate).toLocaleDateString()
     : "No date";
 
-  // Priority color
   const priorityColor =
     priority === "high"
       ? "text-red-500"
       : priority === "medium"
-        ? "text-yellow-500"
-        : "text-green-500";
+      ? "text-yellow-500"
+      : "text-green-500";
 
-  // Background colors
   const statusBg = completed
     ? "bg-green-50 hover:bg-green-100"
     : isOverdue
-      ? "bg-red-50 hover:bg-red-100"
-      : isPending
-        ? "bg-yellow-50 hover:bg-yellow-100"
-        : "bg-white hover:bg-gray-50";
+    ? "bg-red-50 hover:bg-red-100"
+    : isPending
+    ? "bg-yellow-50 hover:bg-yellow-100"
+    : "bg-white hover:bg-gray-50";
 
-  // Borders
-  const statusBorder = completed
+  const statusBorder = pinned
+    ? "border-l-4 border-yellow-400"
+    : completed
     ? "border-l-4 border-green-500"
     : isOverdue
-      ? "border-l-4 border-red-500"
-      : isPending
-        ? "border-l-4 border-yellow-500"
-        : "border-l-4 border-transparent";
-
-  // text colors
-  const textColor = completed
-    ? "text-green-500"
+    ? "border-l-4 border-red-500"
     : isPending
-      ? "text-yellow-500"
-      : isOverdue
-        ? "text-red-500"
-        : "text-gray-500";
+    ? "border-l-4 border-yellow-500"
+    : "border-l-4 border-transparent";
 
-    // Toggle 
-    const handleToggle = async () => {
+  const handleToggle = async () => {
     try {
       const res = await toggleTodoCompletion(_id);
       toast.success(res.message);
-      onRefresh(); // re-fetch from parent
+      onRefresh();
     } catch (error) {
       toast.error(error.message);
     }
   };
 
+  const handlePinToggle = () => {
+    if (pinned) onUnpin(_id);
+    else onPin(_id);
+  };
+
   return (
     <div
-      className={`grid grid-cols-[auto_1fr_150px_120px_90px] items-center gap-4 rounded-lg shadow-sm mb-3 p-4 transition ${statusBg} ${statusBorder} hover:cursor-pointer`}
+      className={`flex items-center justify-between gap-4 rounded-lg shadow-sm p-4 transition ${statusBg} ${statusBorder}`}
     >
-      {/* Checkbox */}
-      <div
-      onClick={handleToggle}
-        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer ${
-          completed ? "bg-green-500 border-green-500" : "border-gray-400"
-        }`}
-      >
-        {completed && <Check size={14} className="text-white" />}
-      </div>
+      {/* Left Section */}
+      <div className="flex items-center gap-4 flex-1 min-w-0">
 
-      {/* Content (Title + Description) */}
-      <div className="flex flex-col min-w-0">
-        {/* Title */}
-        <h3
-          className={`text-sm font-medium truncate ${
-            completed ? "line-through text-gray-400" : "text-gray-800"
+        {/* Checkbox */}
+        <div
+          onClick={handleToggle}
+          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer ${
+            completed ? "bg-green-500 border-green-500" : "border-gray-400"
           }`}
         >
-          {title}
-        </h3>
+          {completed && <Check size={14} className="text-white" />}
+        </div>
 
-        {/* Description */}
-        {description && (
-          <span
-            className={`text-xs ${textColor} px-2 py-0.5 rounded mt-1 truncate block max-w-full`}
-            title={description}
+        {/* Content */}
+        <div className="flex flex-col min-w-0">
+          <h3
+            className={`text-sm font-medium truncate ${
+              completed ? "line-through text-gray-400" : "text-gray-800"
+            }`}
           >
-            {description}
-          </span>
-        )}
+            {title}
+          </h3>
+
+          {description && (
+            <span className="text-xs text-gray-500 truncate">
+              {description}
+            </span>
+          )}
+        </div>
       </div>
 
-      {/* Date (Fixed Column) */}
-      <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
-        <CalendarDays size={14} />
-        <span>{formattedDate}</span>
+      {/* Middle Section */}
+      <div className="flex items-center gap-6 text-sm text-gray-500">
+        <div className="flex items-center gap-2">
+          <CalendarDays size={14} />
+          {formattedDate}
+        </div>
+
+        <div className={`flex items-center gap-2 ${priorityColor}`}>
+          <Flag size={14} />
+          <span className="capitalize">{priority}</span>
+        </div>
       </div>
 
-      {/* Priority (Fixed Column) */}
-      <div
-        className={`flex items-center justify-center gap-2 text-sm ${priorityColor}`}
-      >
-        <Flag size={14} />
-        <span className={`capitalize ${priorityColor}`}>{priority}</span>
-      </div>
+      {/* Right Section (Actions) */}
+      <div className="flex items-center gap-4 text-gray-500">
 
-      {/* Actions (Fixed Right) */}
-      <div className="flex items-center justify-end gap-4 text-gray-500">
-        <button onClick={() => onEdit(todo)} className="hover:text-blue-500 transition hover:scale-110 hover:cursor-pointer">
+        {/* Pin */}
+        <button
+          onClick={handlePinToggle}
+          className={`transition hover:scale-110 ${
+            pinned
+              ? "text-yellow-500"
+              : "hover:text-yellow-500 text-gray-400"
+          }`}
+        >
+          <Pin size={17} className={pinned ? "rotate-45" : ""} />
+        </button>
+
+        {/* Edit */}
+        <button
+          onClick={() => onEdit(todo)}
+          className="hover:text-blue-500 transition hover:scale-110"
+        >
           <Pencil size={17} />
         </button>
 
-        <button onClick={() => onDelete(todo._id)} className="hover:text-red-500 transition hover:scale-110 hover:cursor-pointer">
+        {/* Delete */}
+        <button
+          onClick={() => onDelete(_id)}
+          className="hover:text-red-500 transition hover:scale-110"
+        >
           <Trash2 size={17} />
         </button>
       </div>

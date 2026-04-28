@@ -8,7 +8,7 @@ import TodoPagination from "../components/Todos/TodoPagination";
 import TodoForm from "../components/Todos/TodoForm";
 import Modal from "../components/UI/Modal";
 
-import { getAllTodos, deleteTodo } from "../services/todoServices";
+import { getAllTodos, deleteTodo, pinTodo, unpinTodo } from "../services/todoServices";
 import { toast } from "react-hot-toast";
 
 const TodosPage = () => {
@@ -111,6 +111,31 @@ const TodosPage = () => {
     }
   };
 
+  // Hnalde pin todo
+  const handlePin = async (todoId) => {
+    try {
+      await pinTodo(todoId);
+      toast.success("Todo pinned successfully");
+
+      await fetchTodos();
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  // Handle unpin todo
+  const handleUnpin = async (todoId) => {
+    try {
+      await unpinTodo(todoId);
+      toast.success("Todo unpinned successfully");
+
+      await fetchTodos();
+    }
+    catch (error) {
+      toast.error(error.message);
+    }
+  }
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
@@ -162,6 +187,8 @@ const TodosPage = () => {
             onRefresh={fetchTodos}
             onEdit={handleEditTodo}
             onDelete={handleOpenDeleteModal}
+            onPin={handlePin}
+            onUnpin={handleUnpin}
           />
 
           {/* Pagination */}
