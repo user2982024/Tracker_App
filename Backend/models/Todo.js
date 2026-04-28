@@ -30,6 +30,15 @@ const todoSchema = new mongoose.Schema(
       enum: ["low", "medium", "high"],
       default: "medium",
     },
+    pinned: {
+      type: Boolean,
+      default: false,
+    },
+
+    pinnedAt: {
+      type: Date,
+      default: null,
+    },
   },
   {
     timestamps: true,
