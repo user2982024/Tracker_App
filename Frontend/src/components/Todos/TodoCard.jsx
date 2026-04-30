@@ -153,4 +153,4 @@ const TodoCard = ({ todo, onRefresh, onEdit, onDelete, onPin, onUnpin }) => {
   );
 };
 
-export default TodoCard
+export default TodoCard;
