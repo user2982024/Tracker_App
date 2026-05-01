@@ -56,6 +56,7 @@ const buildQuery = ({ userId, filter, search }) => {
 
     case "pending":
       query.completed = false;
+      query.$or = [{ dueDate: { $gte: now } }, { dueDate: null }];
       break;
 
     case "overdue":
@@ -77,8 +78,8 @@ const buildSort = (sortBy) => {
   const baseSort = {
     pinned: -1,
     pinnedAt: -1,
-  }
-  
+  };
+
   switch (sortBy) {
     case "dueDate":
       return {
@@ -310,7 +311,7 @@ const pinTodo = async (todoId, userId) => {
   // Pin logic
 
   if (todo.pinned) {
-    return todo;              // Already pinned no change
+    return todo; // Already pinned no change
   }
 
   todo.pinned = true;
@@ -341,9 +342,9 @@ const unpinTodo = async (todoId, userId) => {
     throw new Error("Todo not found or access denied");
   }
 
-  // Unpin logic 
+  // Unpin logic
   if (!todo.pinned) {
-    return todo;                // Already unpinned no change
+    return todo; // Already unpinned no change
   }
 
   todo.pinned = false;
@@ -352,7 +353,7 @@ const unpinTodo = async (todoId, userId) => {
   await todo.save();
 
   return todo;
-}
+};
 
 // Exports
 module.exports = {

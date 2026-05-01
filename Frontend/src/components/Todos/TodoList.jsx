@@ -49,7 +49,7 @@ const TodoList = ({
     {/* Pinned Section */}
     {pinnedTodos.length > 0 && (
       <div>
-        <h2 className="text-lg font-semibold mb-3 text-yellow-600">
+        <h2 className="text-lg font-semibold mb-3 text-blue-600">
           Pinned Todos ({pinnedTodos.length})
         </h2>
 
