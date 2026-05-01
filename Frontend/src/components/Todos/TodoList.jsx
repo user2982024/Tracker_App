@@ -49,11 +49,11 @@ const TodoList = ({
     {/* Pinned Section */}
     {pinnedTodos.length > 0 && (
       <div>
-        <h2 className="text-lg font-semibold mb-3 text-blue-600">
+        <h2 className="text-lg font-semibold mb-4 text-blue-600">
           Pinned Todos ({pinnedTodos.length})
         </h2>
 
-        <div className="space-y-3">
+        <div className="space-y-6">
           {pinnedTodos.map((todo) => (
             <TodoCard
               key={todo._id}

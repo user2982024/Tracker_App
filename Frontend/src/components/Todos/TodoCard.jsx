@@ -21,8 +21,10 @@ const TodoCard = ({ todo, onRefresh, onEdit, onDelete, onPin, onUnpin }) => {
     pinned = false,
   } = todo;
 
+  const now = new Date();
+
   const isOverdue =
-    !completed && dueDate && new Date(dueDate).getTime() < Date.now();
+    !completed && dueDate && new Date(dueDate).getTime() < now.getTime();
 
   const isPending = !completed && !isOverdue;
 
@@ -30,12 +32,37 @@ const TodoCard = ({ todo, onRefresh, onEdit, onDelete, onPin, onUnpin }) => {
     ? new Date(dueDate).toLocaleDateString()
     : "No date";
 
-  const priorityColor =
-    priority === "high"
-      ? "text-red-500"
-      : priority === "medium"
-      ? "text-yellow-500"
-      : "text-green-500";
+  // Status color
+  const statusColor = completed
+    ? "green"
+    : isOverdue
+    ? "red"
+    : isPending
+    ? "yellow"
+    : "gray";
+
+  const colorMap = {
+    green: {
+      border: "border-green-500",
+      badge: "bg-green-500",
+      text: "text-green-600",
+    },
+    red: {
+      border: "border-red-500",
+      badge: "bg-red-500",
+      text: "text-red-600",
+    },
+    yellow: {
+      border: "border-yellow-500",
+      badge: "bg-yellow-500",
+      text: "text-yellow-600",
+    },
+    gray: {
+      border: "border-transparent",
+      badge: "bg-gray-400",
+      text: "text-gray-500",
+    },
+  };
 
   const statusBg = completed
     ? "bg-green-50 hover:bg-green-100"
@@ -44,16 +71,6 @@ const TodoCard = ({ todo, onRefresh, onEdit, onDelete, onPin, onUnpin }) => {
     : isPending
     ? "bg-yellow-50 hover:bg-yellow-100"
     : "bg-white hover:bg-gray-50";
-
-  const statusBorder = pinned
-    ? "border-l-4 border-yellow-400"
-    : completed
-    ? "border-l-4 border-green-500"
-    : isOverdue
-    ? "border-l-4 border-red-500"
-    : isPending
-    ? "border-l-4 border-yellow-500"
-    : "border-l-4 border-transparent";
 
   const handleToggle = async () => {
     try {
@@ -72,79 +89,90 @@ const TodoCard = ({ todo, onRefresh, onEdit, onDelete, onPin, onUnpin }) => {
 
   return (
     <div
-      className={`flex items-center justify-between gap-4 rounded-lg shadow-sm p-4 transition ${statusBg} ${statusBorder}`}
+      className={`relative grid grid-cols-[auto_1fr_150px_120px_120px] items-center gap-4 rounded-lg shadow-sm p-4 transition-all duration-200
+      ${statusBg}
+      border-l-4 ${colorMap[statusColor].border}
+      ${pinned ? "ring-1 ring-gray-200 shadow-md" : ""}
+    `}
     >
-      {/* Left Section */}
-      <div className="flex items-center gap-4 flex-1 min-w-0">
+      {/* Pin badge */}
+      {pinned && (
+        <span
+          className={`absolute -top-2 left-3 text-xs font-medium text-white px-2 py-0.5 rounded-md shadow-sm
+          ${colorMap[statusColor].badge}`}
+        >
+          Pinned
+        </span>
+      )}
 
-        {/* Checkbox */}
-        <div
-          onClick={handleToggle}
-          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer ${
-            completed ? "bg-green-500 border-green-500" : "border-gray-400"
+      {/* Checkbox */}
+      <div
+        onClick={handleToggle}
+        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer ${
+          completed ? "bg-green-500 border-green-500" : "border-gray-400"
+        }`}
+      >
+        {completed && <Check size={14} className="text-white" />}
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-col min-w-0">
+        <h3
+          className={`text-sm font-medium truncate ${
+            completed ? "line-through text-gray-400" : "text-gray-800"
           }`}
         >
-          {completed && <Check size={14} className="text-white" />}
-        </div>
+          {title}
+        </h3>
 
-        {/* Content */}
-        <div className="flex flex-col min-w-0">
-          <h3
-            className={`text-sm font-medium truncate ${
-              completed ? "line-through text-gray-400" : "text-gray-800"
-            }`}
-          >
-            {title}
-          </h3>
-
-          {description && (
-            <span className="text-xs text-gray-500 truncate">
-              {description}
-            </span>
-          )}
-        </div>
+        {description && (
+          <span className="text-xs text-gray-500 truncate">
+            {description}
+          </span>
+        )}
       </div>
 
-      {/* Middle Section */}
-      <div className="flex items-center gap-6 text-sm text-gray-500">
-        <div className="flex items-center gap-2">
-          <CalendarDays size={14} />
-          {formattedDate}
-        </div>
-
-        <div className={`flex items-center gap-2 ${priorityColor}`}>
-          <Flag size={14} />
-          <span className="capitalize">{priority}</span>
-        </div>
+      {/* Date */}
+      <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+        <CalendarDays size={14} />
+        {formattedDate}
       </div>
 
-      {/* Right Section (Actions) */}
-      <div className="flex items-center gap-4 text-gray-500">
+      {/* Priority */}
+      <div
+        className={`flex items-center justify-center gap-2 text-sm ${colorMap[statusColor].text}`}
+      >
+        <Flag size={14} />
+        <span className="capitalize">{priority}</span>
+      </div>
 
-        {/* Pin */}
+      {/* Actions */}
+      <div className="flex items-center justify-end gap-4">
+        
+        {/* Pin → Yellow */}
         <button
           onClick={handlePinToggle}
-          className={`transition hover:scale-110 ${
+          className={`transition-all duration-200 hover:scale-110 hover:cursor-pointer ${
             pinned
               ? "text-yellow-500"
-              : "hover:text-yellow-500 text-gray-400"
+              : "text-gray-400 hover:text-yellow-500"
           }`}
         >
           <Pin size={17} className={pinned ? "rotate-45" : ""} />
         </button>
 
-        {/* Edit */}
+        {/* Edit → Blue (industry standard) */}
         <button
           onClick={() => onEdit(todo)}
-          className="hover:text-blue-500 transition hover:scale-110"
+          className="text-gray-400 hover:text-blue-500 transition hover:scale-110 hover:cursor-pointer"
         >
           <Pencil size={17} />
         </button>
 
-        {/* Delete */}
+        {/* Delete → Red */}
         <button
           onClick={() => onDelete(_id)}
-          className="hover:text-red-500 transition hover:scale-110"
+          className="text-gray-400 hover:text-red-500 transition hover:scale-110 hover:cursor-pointer"
         >
           <Trash2 size={17} />
         </button>
