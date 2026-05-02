@@ -111,7 +111,7 @@ const TodosPage = () => {
     }
   };
 
-  // Hnalde pin todo
+  // Hanlde pin todo
   const handlePin = async (todoId) => {
     try {
       await pinTodo(todoId);

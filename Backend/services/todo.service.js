@@ -355,6 +355,26 @@ const unpinTodo = async (todoId, userId) => {
   return todo;
 };
 
+// Get a single todo service
+const getTodo = async (todoId, userId) => {
+  // Authentication check
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  if (!todoId) {
+    throw new Error("Todo ID is required");
+  }
+
+  const focusTodo = await Todo.findOne({
+    _id: todoId,
+    user: userId,
+  })
+  .lean();
+
+  return focusTodo;
+};
+
 // Exports
 module.exports = {
   createTodoService,
@@ -364,4 +384,5 @@ module.exports = {
   deleteTodo,
   pinTodo,
   unpinTodo,
+  getTodo,
 };

@@ -137,3 +137,19 @@ export const unpinTodo = async (id) => {
 
   return data;
 };
+
+// Get a single todo by ID
+export const getTodo = async (id) => {
+  const response = await fetch(`${BASE_URL}/${id}`, {
+    method: "GET",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to fetch todo");
+  }
+
+  return data.data;
+}

@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 import {
   CalendarDays,
   Check,
@@ -5,6 +7,7 @@ import {
   Pencil,
   Trash2,
   Pin,
+  Eye,
 } from "lucide-react";
 
 import { toggleTodoCompletion } from "../../services/todoServices";
@@ -20,6 +23,8 @@ const TodoCard = ({ todo, onRefresh, onEdit, onDelete, onPin, onUnpin }) => {
     priority = "low",
     pinned = false,
   } = todo;
+
+const navigate = useNavigate();
 
   const now = new Date();
 
@@ -148,8 +153,14 @@ const TodoCard = ({ todo, onRefresh, onEdit, onDelete, onPin, onUnpin }) => {
 
       {/* Actions */}
       <div className="flex items-center justify-end gap-4">
+        {/* Focus mode */}
+        <button
+          className="text-gray-400 hover:text-purple-500 transition hover:scale-110 hover:cursor-pointer"
+        >
+          <Eye size={17} />
+        </button>
         
-        {/* Pin → Yellow */}
+        {/* Pin */}
         <button
           onClick={handlePinToggle}
           className={`transition-all duration-200 hover:scale-110 hover:cursor-pointer ${
@@ -161,7 +172,7 @@ const TodoCard = ({ todo, onRefresh, onEdit, onDelete, onPin, onUnpin }) => {
           <Pin size={17} className={pinned ? "rotate-45" : ""} />
         </button>
 
-        {/* Edit → Blue (industry standard) */}
+        {/* Edit */}
         <button
           onClick={() => onEdit(todo)}
           className="text-gray-400 hover:text-blue-500 transition hover:scale-110 hover:cursor-pointer"
@@ -169,7 +180,7 @@ const TodoCard = ({ todo, onRefresh, onEdit, onDelete, onPin, onUnpin }) => {
           <Pencil size={17} />
         </button>
 
-        {/* Delete → Red */}
+        {/* Delete */}
         <button
           onClick={() => onDelete(_id)}
           className="text-gray-400 hover:text-red-500 transition hover:scale-110 hover:cursor-pointer"

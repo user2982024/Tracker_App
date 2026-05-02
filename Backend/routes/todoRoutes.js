@@ -15,6 +15,7 @@ const {
     deleteTodo,
     pinTodo,
     unpinTodo,
+    getTodo,
 } = require("../controllers/todoController");
 
 const router = express.Router();
@@ -39,5 +40,8 @@ router.put("/:id", authMiddleware, validateTodoId, validateUpdateTodo, validateR
 
 // Delete a single todo route
 router.delete("/:id", authMiddleware, validateTodoId, validateRequest, deleteTodo);
+
+// Get a single todo route
+router.get("/:id", authMiddleware, validateTodoId, validateRequest, getTodo);
 
 module.exports = router;

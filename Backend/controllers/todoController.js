@@ -169,6 +169,25 @@ const unpinTodo = async (req, res, next) => {
   }
 };
 
+// Get a single todo controller
+const getTodo = async (req, res, next) => {
+  try {
+    const todoId = req.params.id;
+    const userId = req.user.userId;
+
+    const todo = await todoService.getTodo(todoId, userId);
+
+    return res.status(200).json({
+      success: true,
+      message: "Todo fetched successfully",
+      data: todo,
+    });
+  }
+  catch (error) {
+    next(error);
+  }
+};
+
 // Exports
 module.exports = {
   createTodo,
@@ -178,4 +197,5 @@ module.exports = {
   deleteTodo,
   pinTodo,
   unpinTodo,
+  getTodo,
 };
