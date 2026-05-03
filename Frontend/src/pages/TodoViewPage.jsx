@@ -17,7 +17,7 @@ import {
   deleteTodo,
   pinTodo,
   unpinTodo,
-} from "../../services/todoServices";
+} from "../services/todoServices";
 
 import { toast } from "react-hot-toast";
 
@@ -147,7 +147,7 @@ const TodoViewPage = () => {
       {/* Back Button */}
       <button
         onClick={() => navigate("/app/todos")}
-        className="flex items-center gap-2 text-gray-500 hover:text-black mb-6"
+        className="flex items-center gap-2 bg-blue-100 hover:bg-blue-100 px-3 py-2 rounded-3xl hover:cursor-pointer text-blue-600 hover: mb-10"
       >
         <ArrowLeft size={18} />
         Back to Todos

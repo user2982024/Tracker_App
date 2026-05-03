@@ -92,6 +92,10 @@ const navigate = useNavigate();
     else onPin(_id);
   };
 
+  const handleView = () => {
+    navigate(`/app/todos/${_id}`);
+  }
+
   return (
     <div
       className={`relative grid grid-cols-[auto_1fr_150px_120px_120px] items-center gap-4 rounded-lg shadow-sm p-4 transition-all duration-200
@@ -155,6 +159,7 @@ const navigate = useNavigate();
       <div className="flex items-center justify-end gap-4">
         {/* Focus mode */}
         <button
+        onClick={handleView}
           className="text-gray-400 hover:text-purple-500 transition hover:scale-110 hover:cursor-pointer"
         >
           <Eye size={17} />
