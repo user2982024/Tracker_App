@@ -16,6 +16,7 @@ const {
     pinTodo,
     unpinTodo,
     getTodo,
+    deleteAllCompletedTodos,
 } = require("../controllers/todoController");
 
 const router = express.Router();
@@ -25,6 +26,9 @@ router.post("/", authMiddleware, validateCreateTodo, validateRequest, createTodo
 
 // Get all todos route (with pagination and filters)
 router.get("/", authMiddleware, getAllTodos);
+
+// Delete all completed todos route
+router.delete("/completed", authMiddleware, deleteAllCompletedTodos);
 
 // Pin todo route
 router.patch("/:id/pin", authMiddleware, validateTodoId, validateRequest, pinTodo);

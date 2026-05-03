@@ -1,6 +1,12 @@
-import { Plus, Search, X } from "lucide-react";
+import { Plus, Search, X, Trash2 } from "lucide-react";
 
-const TodosHeader = ({ onAddTodo, searchQuery, setSearchQuery }) => {
+const TodosHeader = ({
+  onAddTodo,
+  searchQuery,
+  setSearchQuery,
+  onDeleteCompleted,
+  hasCompleted,
+}) => {
   return (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       {/* Left Side */}
@@ -27,7 +33,6 @@ const TodosHeader = ({ onAddTodo, searchQuery, setSearchQuery }) => {
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
           />
 
-          {/* Clear Button */}
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
@@ -38,10 +43,25 @@ const TodosHeader = ({ onAddTodo, searchQuery, setSearchQuery }) => {
           )}
         </div>
 
-        {/* Add Todo Button */}
+        {/* Delete Completed */}
+        <button
+          onClick={onDeleteCompleted}
+          disabled={!hasCompleted}
+          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm border transition hover:cursor-pointer
+            ${
+              hasCompleted
+                ? "text-red-600 border-red-200 hover:bg-red-50"
+                : "text-gray-400 border-gray-200 cursor-not-allowed"
+            }`}
+        >
+          <Trash2 size={16} />
+          Clear Done
+        </button>
+
+        {/* Add Todo Button (PRIMARY) */}
         <button
           onClick={onAddTodo}
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition hover:cursor-pointer"
+          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
         >
           <Plus size={16} />
           Add Todo

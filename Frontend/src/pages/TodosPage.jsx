@@ -8,7 +8,13 @@ import TodoPagination from "../components/Todos/TodoPagination";
 import TodoForm from "../components/Todos/TodoForm";
 import Modal from "../components/UI/Modal";
 
-import { getAllTodos, deleteTodo, pinTodo, unpinTodo } from "../services/todoServices";
+import {
+  getAllTodos,
+  deleteTodo,
+  pinTodo,
+  unpinTodo,
+  deleteAllCompletedTodos,
+} from "../services/todoServices";
 import { toast } from "react-hot-toast";
 
 const TodosPage = () => {
@@ -33,6 +39,9 @@ const TodosPage = () => {
 
   // Sort state
   const [sortBy, setSortBy] = useState("default");
+
+  // Bulk delete state
+  const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
 
   // Debounce effect
   useEffect(() => {
@@ -130,11 +139,34 @@ const TodosPage = () => {
       toast.success("Todo unpinned successfully");
 
       await fetchTodos();
-    }
-    catch (error) {
+    } catch (error) {
       toast.error(error.message);
     }
-  }
+  };
+
+  // Handle bulk delete (completed todos)
+  const handleDeleteCompleted = async () => {
+    try {
+      setLoading(true);
+
+      const res = await deleteAllCompletedTodos();
+
+      toast.success(res.message || "Completed todos deleted successfully");
+
+      setIsBulkDeleteModalOpen(false);
+
+      // Reset page if needed
+      if (page > 1) {
+        setPage(1);
+      } else {
+        await fetchTodos();
+      }
+    } catch (error) {
+      toast.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -143,6 +175,8 @@ const TodosPage = () => {
         onAddTodo={() => setShowForm(true)}
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
+        onDeleteCompleted={() => setIsBulkDeleteModalOpen(true)}
+        hasCompleted={stats?.completed > 0}
       />
 
       {/* Conditional rendering */}
@@ -230,6 +264,33 @@ const TodosPage = () => {
         }
       >
         Are you sure you want to delete this todo? This action cannot be undone.
+      </Modal>
+
+      {/* Bulk Delete Completed Modal */}
+      <Modal
+        isOpen={isBulkDeleteModalOpen}
+        onClose={() => setIsBulkDeleteModalOpen(false)}
+        title="Delete Completed Todos"
+        actions={
+          <>
+            <button
+              onClick={() => setIsBulkDeleteModalOpen(false)}
+              className="px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-100 hover:cursor-pointer"
+            >
+              Cancel
+            </button>
+
+            <button
+              onClick={handleDeleteCompleted}
+              className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 hover:cursor-pointer"
+            >
+              Delete {stats?.completed || 0} completed todo(s)
+            </button>
+          </>
+        }
+      >
+        Are you sure you want to delete all completed todos? This action cannot
+        be undone.
       </Modal>
     </div>
   );

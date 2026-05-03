@@ -30,7 +30,7 @@ const NotesHeader = ({ onAddClick, onDeleteAllClick, onSearch }) => {
         {/* Delete All Button */}
         <button
           onClick={onDeleteAllClick}
-          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition cursor-pointer"
+          className="text-red-600 px-3 py-2 rounded-lg text-sm border border-red-200 hover:bg-red-50 transition cursor-pointer"
         >
           Delete All
         </button>

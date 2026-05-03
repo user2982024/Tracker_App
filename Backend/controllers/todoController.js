@@ -188,6 +188,27 @@ const getTodo = async (req, res, next) => {
   }
 };
 
+// Delete all completed todos controller
+const deleteAllCompletedTodos = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+
+    const result = await todoService.deleteAllCompletedTodos(userId);
+
+    return res.status(200).json({
+      success: true,
+      message: 
+        result.deletedCount > 0
+          ? `${result.deletedCount} completed todo(s) deleted successfully`
+            : "No completed todos to delete",
+      data: result,
+    });
+  }
+  catch (error) {
+    next(error);
+  }
+};
+
 // Exports
 module.exports = {
   createTodo,
@@ -198,4 +219,5 @@ module.exports = {
   pinTodo,
   unpinTodo,
   getTodo,
+  deleteAllCompletedTodos,
 };

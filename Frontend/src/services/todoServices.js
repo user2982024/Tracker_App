@@ -152,4 +152,20 @@ export const getTodo = async (id) => {
   }
 
   return data.data;
-}
+};
+
+// Delete all completed todos
+export const deleteAllCompletedTodos = async () => {
+  const response = await fetch(`${BASE_URL}/completed`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || " No completed todos to delete");
+  }
+
+  return data;
+};

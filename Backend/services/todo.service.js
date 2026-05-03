@@ -375,6 +375,22 @@ const getTodo = async (todoId, userId) => {
   return focusTodo;
 };
 
+// Delete all completed todos service
+const deleteAllCompletedTodos = async (userId) => {
+  if (!userId) {
+    throw new Error("User not authenticated!");
+  }
+
+  const deletedTodos = await Todo.deleteMany({
+    user: userId,
+    completed: true,
+  });
+
+  return {
+    deletedCount: deletedTodos.deletedCount,
+  };
+};
+
 // Exports
 module.exports = {
   createTodoService,
@@ -385,4 +401,5 @@ module.exports = {
   pinTodo,
   unpinTodo,
   getTodo,
+  deleteAllCompletedTodos,
 };
