@@ -181,7 +181,7 @@ const TodoViewPage = () => {
             {/* Toggle */}
             <button
               onClick={handleToggle}
-              className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+              className={`w-5 h-5 rounded-full border-2 flex items-center justify-center hover:cursor-pointer ${
                 completed
                   ? "bg-green-500 border-green-500"
                   : "border-gray-400"
@@ -193,7 +193,7 @@ const TodoViewPage = () => {
             {/* Pin */}
             <button
               onClick={handlePinToggle}
-              className={`${
+              className={`hover:cursor-pointer ${
                 pinned
                   ? "text-yellow-500"
                   : "text-gray-400 hover:text-yellow-500"
@@ -205,7 +205,7 @@ const TodoViewPage = () => {
             {/* Edit */}
             <button
               onClick={handleEdit}
-              className="text-gray-400 hover:text-blue-500"
+              className="text-gray-400 hover:text-blue-500 hover:cursor-pointer"
             >
               <Pencil size={18} />
             </button>
@@ -213,7 +213,7 @@ const TodoViewPage = () => {
             {/* Delete */}
             <button
               onClick={handleDelete}
-              className="text-gray-400 hover:text-red-500"
+              className="text-gray-400 hover:text-red-500 hover:cursor-pointer"
             >
               <Trash2 size={18} />
             </button>
