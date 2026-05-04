@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/authRoutes");
 const notesRoutes = require("./routes/notesRoutes");
 const todoRoutes = require("./routes/todoRoutes");
+const goalRoutes = require("./routes/goalRoutes");
 const errorHandler = require("./middlewares/errorMiddleware");
 
 // Load environment variables
@@ -31,6 +32,9 @@ app.use("/api/notes", notesRoutes);
 
 // Todo routes
 app.use("/api/todos", todoRoutes);
+
+// Goal routes
+app.use("/api/goals", goalRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

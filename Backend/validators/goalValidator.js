@@ -15,11 +15,37 @@ const validateCreateGoal = [
     .withMessage("Description cannot exceed 1000 characters")
     .trim(),
 
+  // Core goal logic
+  body("targetValue")
+    .notEmpty()
+    .withMessage("Target value is required")
+    .isInt({ min: 1 })
+    .withMessage("Target value must be at least 1"),
+
+  body("currentValue")
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage("Current value cannot be negative"),
+
+  body("unit")
+    .notEmpty()
+    .withMessage("Unit is required")
+    .isLength({ max: 50 })
+    .withMessage("Unit cannot exceed 50 characters")
+    .trim(),
+
+  // Dates
+  body("startDate")
+    .optional()
+    .isISO8601()
+    .withMessage("Start date must be a valid date"),
+
   body("targetDate")
     .optional()
     .isISO8601()
     .withMessage("Target date must be a valid date"),
 
+  // Enum fields
   body("category")
     .optional()
     .isIn(["health", "career", "learning", "finance", "personal"])
@@ -30,18 +56,14 @@ const validateCreateGoal = [
     .isIn(["active", "completed", "paused"])
     .withMessage("Status must be active, completed, or paused"),
 
-  body("progress")
-    .optional()
-    .isInt({ min: 0, max: 100 })
-    .withMessage("Progress must be between 0 and 100"),
-
   body("priority")
     .optional()
     .isIn(["low", "medium", "high"])
     .withMessage("Priority must be low, medium, or high"),
 ];
 
-// Validate update goal
+
+// Validate Update Goal
 const validateUpdateGoal = [
   body("title")
     .optional()
@@ -55,6 +77,27 @@ const validateUpdateGoal = [
     .withMessage("Description cannot exceed 1000 characters")
     .trim(),
 
+  body("targetValue")
+    .optional()
+    .isInt({ min: 1 })
+    .withMessage("Target value must be at least 1"),
+
+  body("currentValue")
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage("Current value cannot be negative"),
+
+  body("unit")
+    .optional()
+    .isLength({ max: 50 })
+    .withMessage("Unit cannot exceed 50 characters")
+    .trim(),
+
+  body("startDate")
+    .optional()
+    .isISO8601()
+    .withMessage("Start date must be a valid date"),
+
   body("targetDate")
     .optional()
     .isISO8601()
@@ -70,23 +113,20 @@ const validateUpdateGoal = [
     .isIn(["active", "completed", "paused"])
     .withMessage("Status must be active, completed, or paused"),
 
-  body("progress")
-    .optional()
-    .isInt({ min: 0, max: 100 })
-    .withMessage("Progress must be between 0 and 100"),
-
   body("priority")
     .optional()
     .isIn(["low", "medium", "high"])
     .withMessage("Priority must be low, medium, or high"),
 ];
 
-// Validate goal id
+
+// Validate Goal ID
 const validateGoalId = [
   param("id")
     .isMongoId()
     .withMessage("Invalid goal ID"),
 ];
+
 
 // Exports
 module.exports = {
