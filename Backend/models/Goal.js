@@ -14,15 +14,16 @@ const goalSchema = new mongoose.Schema(
       required: [true, "Goal title is required"],
       trim: true,
       minlength: [3, "Title must be at least 3 characters"],
-      maxlength: [100, "Title cannot exceed 100 characters"],
+      maxlength: [200, "Title cannot exceed 200 characters"],
     },
 
     description: {
       type: String,
       trim: true,
-      maxlength: [500, "Description cannot exceed 500 characters"],
+      maxlength: [1000, "Description cannot exceed 1000 characters"],
     },
 
+    // Quantifiable goal system
     targetValue: {
       type: Number,
       required: [true, "Target value is required"],
@@ -41,23 +42,22 @@ const goalSchema = new mongoose.Schema(
       },
     },
 
+    // Flexible unit system 
     unit: {
       type: String,
       required: [true, "Unit is required"],
-      enum: ["tasks", "days", "hours", "sessions", "custom"],
-      default: "tasks",
+      trim: true,
+      maxlength: 50,
     },
 
-    status: {
-      type: String,
-      enum: ["active", "completed"],
-      default: "active",
-      index: true,
-    },
-
+    // Timeline (important for analytics & UX)
     startDate: {
       type: Date,
       default: Date.now,
+    },
+
+    targetDate: {
+      type: Date,
     },
 
     completedAt: {
@@ -65,10 +65,33 @@ const goalSchema = new mongoose.Schema(
       default: null,
     },
 
+    // Status system
+    status: {
+      type: String,
+      enum: ["active", "completed", "paused"],
+      default: "active",
+      index: true,
+    },
+
+    // Priority (reuse from todos)
+    priority: {
+      type: String,
+      enum: ["low", "medium", "high"],
+      default: "medium",
+    },
+
+    // UI/UX features
     isPinned: {
       type: Boolean,
       default: false,
       index: true,
+    },
+
+    // Categorization (dashboard filters later)
+    category: {
+      type: String,
+      enum: ["health", "career", "learning", "finance", "personal"],
+      default: "personal",
     },
   },
   {
@@ -77,35 +100,53 @@ const goalSchema = new mongoose.Schema(
 );
 
 
-// Pre-save hook → auto mark as completed
+// Pre-save hook → auto-manage completion logic
 goalSchema.pre("save", function (next) {
-  if (this.currentValue >= this.targetValue) {
-    this.status = "completed";
-    if (!this.completedAt) {
-      this.completedAt = new Date();
+  if (this.isModified("currentValue") || this.isModified("targetValue")) {
+    if (this.currentValue >= this.targetValue) {
+      this.status = "completed";
+
+      if (!this.completedAt) {
+        this.completedAt = new Date();
+      }
+    } else {
+      this.status = "active";
+      this.completedAt = null;
     }
-  } else {
-    this.status = "active";
-    this.completedAt = null;
   }
+
   next();
 });
 
 
-// Virtual → progress percentage (NOT stored in DB)
+// Virtual progress percentage 
 goalSchema.virtual("progressPercentage").get(function () {
+  if (!this.targetValue) return 0;
+
   return Math.round((this.currentValue / this.targetValue) * 100);
 });
 
 
-// Ensure virtuals are included in JSON response
+// Virtual → overdue detection
+goalSchema.virtual("isOverdue").get(function () {
+  return (
+    this.targetDate &&
+    this.status !== "completed" &&
+    this.targetDate < new Date()
+  );
+});
+
+
+// Include virtuals in responses
 goalSchema.set("toJSON", { virtuals: true });
 goalSchema.set("toObject", { virtuals: true });
 
 
-// Index for better query performance
+// Indexes for performance 
 goalSchema.index({ user: 1, status: 1 });
 goalSchema.index({ user: 1, isPinned: -1, updatedAt: -1 });
+goalSchema.index({ user: 1, category: 1 });
+goalSchema.index({ user: 1, targetDate: 1 });
 
 
 const Goal = mongoose.model("Goal", goalSchema);
