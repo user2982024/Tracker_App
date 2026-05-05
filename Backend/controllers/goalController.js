@@ -1,7 +1,7 @@
 const goalService = require("../services/goals.service");
 
 // Create goal controller
-const createGoal = async (req, res) => {
+const createGoal = async (req, res, next) => {
   try {
     const {
       title,
@@ -41,7 +41,7 @@ const createGoal = async (req, res) => {
 };
 
 // Get all goals controller
-const getAllGoals = async (req, res) => {
+const getAllGoals = async (req, res, next) => {
   try {
     const userId = req.user.userId;
 

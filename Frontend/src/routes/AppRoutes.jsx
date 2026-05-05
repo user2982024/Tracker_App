@@ -25,6 +25,7 @@ import TodoEditPage from "../pages/TodoEditPage";
 // Forms
 import AuthForm from "../components/Auth/AuthForm";
 import NoteEditPage from "../pages/NoteEditPage";
+import GoalForm from "../components/Goals/GoalForm";
 
 const AppRoutes = () => {
   return (
@@ -68,7 +69,10 @@ const AppRoutes = () => {
           <Route path="todos/edit/:id" element={<TodoEditPage />} />
           <Route path="todos/:id" element={<TodoViewPage />} /> 
           
+          {/* Goals routes */}
           <Route path="goals" element={<GoalsPage />} />
+          <Route path="goals/create" element={<GoalForm />} />
+          
           <Route path="habits" element={<HabbitsPage />} />
         </Route>
       </Route>

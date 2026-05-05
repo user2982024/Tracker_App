@@ -1,6 +1,11 @@
+import { useNavigate } from "react-router-dom";
+
 import { Search, Plus, Trash2 } from "lucide-react";
 
 const GoalsHeader = () => {
+
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
@@ -35,7 +40,7 @@ const GoalsHeader = () => {
         </button>
 
         {/* Add Goal Button */}
-        <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition text-sm">
+        <button onClick={() => navigate("/app/goals/create")} className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition text-sm">
           <Plus size={16} />
           Add Goal
         </button>

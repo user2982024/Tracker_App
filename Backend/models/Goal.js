@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
 const goalSchema = new mongoose.Schema(
   {
@@ -101,7 +101,7 @@ const goalSchema = new mongoose.Schema(
 
 
 // Pre-save hook → auto-manage completion logic
-goalSchema.pre("save", function (next) {
+goalSchema.pre("save", async function () {
   if (this.isModified("currentValue") || this.isModified("targetValue")) {
     if (this.currentValue >= this.targetValue) {
       this.status = "completed";
@@ -114,8 +114,6 @@ goalSchema.pre("save", function (next) {
       this.completedAt = null;
     }
   }
-
-  next();
 });
 
 
@@ -149,6 +147,4 @@ goalSchema.index({ user: 1, category: 1 });
 goalSchema.index({ user: 1, targetDate: 1 });
 
 
-const Goal = mongoose.model("Goal", goalSchema);
-
-export default Goal;
+module.exports = mongoose.model("Goal", goalSchema);
