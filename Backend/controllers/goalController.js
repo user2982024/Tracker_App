@@ -71,4 +71,4 @@ const getAllGoals = async (req, res, next) => {
 module.exports = {
   createGoal,
   getAllGoals,
-};
+}
