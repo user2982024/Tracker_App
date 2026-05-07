@@ -1,6 +1,6 @@
 import GoalCard from "./GoalCard";
 
-const GoalsList = () => {
+const GoalsList = ({ goals, loading }) => {
   // Static dummy data (for now)
   const goals = [1, 2, 3, 4, 5, 6];
 
