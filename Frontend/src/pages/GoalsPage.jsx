@@ -10,6 +10,7 @@ import { getGoals } from "../services/goalsServices";
 
 const GoalsPage = () => {
   const [goals, setGoals] = useState([]);
+  const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -19,7 +20,8 @@ const GoalsPage = () => {
 
       const data = await getGoals();
 
-      setGoals(data.goals || []);
+      setGoals(data.data.goals || []);
+      setStats(data.data.stats || null);
     } catch (err) {
       setError(err.message || "Failed to fetch goals");
     } finally {
@@ -37,13 +39,19 @@ const GoalsPage = () => {
       <GoalsHeader />
 
       {/* Stats */}
-      <GoalsStats />
+      <GoalsStats stats={stats} goals={goals} />
 
       {/* Overall Progress */}
-      <GoalsProgress />
+      <GoalsProgress stats={stats} />
 
       {/* Filters + Sorting */}
       <GoalsFilters />
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+          {error}
+        </div>
+      )}
 
       {/* Goals List */}
       <GoalsList goals={goals} loading={loading} />

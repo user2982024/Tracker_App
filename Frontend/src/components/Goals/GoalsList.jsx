@@ -1,8 +1,34 @@
 import GoalCard from "./GoalCard";
 
 const GoalsList = ({ goals, loading }) => {
-  // Static dummy data (for now)
-  const goals = [1, 2, 3, 4, 5, 6];
+  
+  // Loading State
+  if (loading) {
+    return (
+      <div className="flex justify-center py-10">
+        <p className="text-sm text-gray-500">
+          Loading goals...
+        </p>
+      </div>
+    );
+  }
+
+  // Empty State
+  if (!goals || goals.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-center">
+
+        <h2 className="text-lg font-semibold text-gray-700">
+          No goals found
+        </h2>
+
+        <p className="text-sm text-gray-500 mt-1">
+          Start by creating your first goal 
+        </p>
+
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -11,7 +37,7 @@ const GoalsList = ({ goals, loading }) => {
       {goals.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {goals.map((goal) => (
-            <GoalCard key={goal} />
+            <GoalCard goal={goal} key={goal._id} />
           ))}
         </div>
       ) : (
