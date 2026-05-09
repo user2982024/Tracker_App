@@ -57,6 +57,7 @@ const GoalsPage = () => {
       <GoalsList goals={goals} loading={loading} />
     </div>
   );
-};
+}
 
 export default GoalsPage;
+
