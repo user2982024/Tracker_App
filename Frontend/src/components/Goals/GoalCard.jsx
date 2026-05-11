@@ -15,22 +15,34 @@ const GoalCard = ({ goal }) => {
   };
 
   return (
-    <div className="bg-white p-4 rounded-xl shadow-sm border space-y-4">
+    <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4 hover:shadow-md transition-all duration-200">
 
       {/* Top Section */}
-      <div className="flex items-start justify-between gap-3">
+      <div className="space-y-2">
 
-        {/* Title */}
-        <h3 className="text-sm font-semibold text-gray-800 wrap-break-word">
-          {goal.title}
-        </h3>
+        {/* Title + Status */}
+        <div className="flex items-start justify-between gap-3">
 
-        {/* Status Badge */}
-        <span
-          className={`text-xs px-2 py-1 rounded-full capitalize whitespace-nowrap ${statusStyles[goal.status]}`}
-        >
-          {goal.status}
-        </span>
+          {/* Title */}
+          <h3 className="text-base font-semibold text-gray-800 wrap-break-word">
+            {goal.title}
+          </h3>
+
+          {/* Status Badge */}
+          <span
+            className={`text-xs px-2.5 py-1 rounded-full capitalize whitespace-nowrap font-medium ${statusStyles[goal.status]}`}
+          >
+            {goal.status}
+          </span>
+
+        </div>
+
+        {/* Description */}
+        {goal.description && (
+          <p className="text-sm text-gray-500 leading-relaxed wrap-break-word line-clamp-2">
+            {goal.description}
+          </p>
+        )}
 
       </div>
 
@@ -38,23 +50,23 @@ const GoalCard = ({ goal }) => {
       <div>
 
         {/* Progress Info */}
-        <div className="flex items-center justify-between text-sm mb-1">
+        <div className="flex items-center justify-between text-sm mb-2">
 
           <p className="text-gray-500">
             {goal.currentValue} / {goal.targetValue} {goal.unit}
           </p>
 
-          <p className="font-medium text-gray-700">
+          <p className="font-semibold text-gray-700">
             {goal.progressPercentage}%
           </p>
 
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+        <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
 
           <div
-            className="bg-blue-600 h-full transition-all duration-300"
+            className="bg-blue-600 h-full rounded-full transition-all duration-300"
             style={{
               width: `${goal.progressPercentage}%`,
             }}
@@ -68,13 +80,13 @@ const GoalCard = ({ goal }) => {
       <div className="flex items-center justify-between text-xs">
 
         {/* Category */}
-        <span className="px-2 py-1 rounded-md bg-purple-100 text-purple-600 capitalize">
+        <span className="px-2.5 py-1 rounded-md bg-purple-100 text-purple-600 capitalize font-medium">
           {goal.category}
         </span>
 
         {/* Priority */}
         <span
-          className={`px-2 py-1 rounded-md capitalize ${priorityStyles[goal.priority]}`}
+          className={`px-2.5 py-1 rounded-md capitalize font-medium ${priorityStyles[goal.priority]}`}
         >
           {goal.priority}
         </span>
