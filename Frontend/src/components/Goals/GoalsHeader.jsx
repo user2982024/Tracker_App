@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 import { Search, Plus, Trash2 } from "lucide-react";
 
-const GoalsHeader = () => {
+const GoalsHeader = ({ search, setSearch }) => {
 
   const navigate = useNavigate();
 
@@ -28,6 +28,8 @@ const GoalsHeader = () => {
           />
           <input
             type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
             placeholder="Search goals..."
             className="pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm w-[220px]"
           />

@@ -14,11 +14,19 @@ const GoalsPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [search, setSearch] = useState("");
+
   const fetchGoals = async () => {
     try {
       setLoading(true);
 
-      const data = await getGoals();
+      const queryParams = new URLSearchParams();
+
+      if (search.trim()) {
+        queryParams.append("search", search.trim());
+      }
+
+      const data = await getGoals(`?${queryParams.toString()}`);
 
       setGoals(data.data.goals || []);
       setStats(data.data.stats || null);
@@ -31,12 +39,12 @@ const GoalsPage = () => {
 
   useEffect(() => {
     fetchGoals();
-  }, []);
+  }, [search]);
 
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <GoalsHeader />
+      <GoalsHeader search={search} setSearch={setSearch} />
 
       {/* Stats */}
       <GoalsStats stats={stats} goals={goals} />
