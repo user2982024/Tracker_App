@@ -5,6 +5,7 @@ import GoalsStats from "../components/Goals/GoalsStats";
 import GoalsProgress from "../components/Goals/GoalsProgress";
 import GoalsFilters from "../components/Goals/GoalsFilters";
 import GoalsList from "../components/Goals/GoalsList";
+import GoalsPagination from "../components/Goals/GoalsPagination";
 
 import { getGoals } from "../services/goalsServices";
 
@@ -17,29 +18,45 @@ const GoalsPage = () => {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState(null);
+
   // Debounce search
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setDebouncedSearch(search);
     }, 500);
 
-    return () => clearTimeout();
+    return () => clearTimeout(timer);
   }, [search]);
+
+  // Reset page when search changes
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch]);
 
   const fetchGoals = async () => {
     try {
       setLoading(true);
+      setError(null);
 
       const queryParams = new URLSearchParams();
 
-      if (search.trim()) {
+      // Search
+      if (debouncedSearch.trim()) {
         queryParams.append("search", debouncedSearch.trim());
       }
+
+      // Pagination
+      queryParams.append("page", page);
+      queryParams.append("limit", 9);
 
       const data = await getGoals(`?${queryParams.toString()}`);
 
       setGoals(data.data.goals || []);
       setStats(data.data.stats || null);
+
+      setPagination(data.data.pagination || null);
     } catch (err) {
       setError(err.message || "Failed to fetch goals");
     } finally {
@@ -49,7 +66,7 @@ const GoalsPage = () => {
 
   useEffect(() => {
     fetchGoals();
-  }, [debouncedSearch]);
+  }, [debouncedSearch, page]);
 
   return (
     <div className="p-6 space-y-6">
@@ -73,9 +90,11 @@ const GoalsPage = () => {
 
       {/* Goals List */}
       <GoalsList goals={goals} loading={loading} />
+
+      {/* Goals Pagination */}
+      <GoalsPagination pagination={pagination} page={page} setPage={setPage} />
     </div>
   );
 };
 
 export default GoalsPage;
-
