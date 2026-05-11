@@ -15,6 +15,16 @@ const GoalsPage = () => {
   const [error, setError] = useState(null);
 
   const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  // Debounce search
+  useEffect(() => {
+    setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 500);
+
+    return () => clearTimeout();
+  }, [search]);
 
   const fetchGoals = async () => {
     try {
@@ -23,7 +33,7 @@ const GoalsPage = () => {
       const queryParams = new URLSearchParams();
 
       if (search.trim()) {
-        queryParams.append("search", search.trim());
+        queryParams.append("search", debouncedSearch.trim());
       }
 
       const data = await getGoals(`?${queryParams.toString()}`);
@@ -39,7 +49,7 @@ const GoalsPage = () => {
 
   useEffect(() => {
     fetchGoals();
-  }, [search]);
+  }, [debouncedSearch]);
 
   return (
     <div className="p-6 space-y-6">

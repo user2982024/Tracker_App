@@ -90,13 +90,11 @@ const getAllGoalsService = async ({
     ];
   }
 
-  // Status filter
-  if (status !== "all") {
+  if (status && status !== "all") {
     query.status = status;
   }
 
-  // Category filter
-  if (category !== "all") {
+  if (category && category !== "all") {
     query.category = category;
   }
 
@@ -163,6 +161,6 @@ const getAllGoalsService = async ({
 
 // Exports
 module.exports = {
-    createGoalService,
-    getAllGoalsService,
+  createGoalService,
+  getAllGoalsService,
 };
