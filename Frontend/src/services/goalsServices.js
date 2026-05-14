@@ -34,4 +34,4 @@ export const getGoals = async (queryParams = "") => {
   }
 
   return data;
-};
+}
