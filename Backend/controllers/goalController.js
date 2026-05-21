@@ -67,8 +67,76 @@ const getAllGoals = async (req, res, next) => {
   }
 };
 
+// Edit goal controller
+const editGoal = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+    const goalId = req.params.id;
+
+    const {
+      title,
+      description,
+      targetValue,
+      unit,
+      targetDate,
+      priority,
+      category,
+      status,
+    } = req.body;
+
+    const updatedGoal = await goalService.editGoalService({
+      goalId,
+      userId,
+      title,
+      description,
+      targetValue,
+      unit,
+      targetDate,
+      priority,
+      category,
+      status,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Goal updated successfully",
+      data: updatedGoal,
+    });
+  }
+  catch (error) {
+    next(error);
+  }
+};
+
+// Get single goal controller
+const getGoal = async (req, res, next) => {
+  try {
+
+    const userId = req.user.userId;
+    const goalId = req.params.id;
+
+    const goal = await goalService.getGoalService({
+      goalId,
+      userId,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Goal fetched successfully",
+      data: goal,
+    });
+
+  } catch (error) {
+
+    next(error);
+
+  }
+};
+
 // Exports
 module.exports = {
   createGoal,
   getAllGoals,
+  editGoal,
+  getGoal,
 }

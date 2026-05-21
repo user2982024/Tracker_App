@@ -9,6 +9,8 @@ const {
 const {
     createGoal,
     getAllGoals,
+    editGoal,
+    getGoal,
 } = require('../controllers/goalController');
 
 const validateRequest = require("../middlewares/validateRequest");
@@ -21,5 +23,11 @@ router.post("/", authMiddleware, validateCreateGoal, validateRequest, createGoal
 
 // Get all goals route (with pagination and filters)
 router.get("/", authMiddleware, getAllGoals);
+
+// Edit a goal route
+router.patch("/:id", authMiddleware, validateGoalId, validateUpdateGoal, validateRequest, editGoal);
+
+// Get a single goal route
+router.get("/:id", authMiddleware, validateGoalId, validateRequest, getGoal);
 
 module.exports = router;

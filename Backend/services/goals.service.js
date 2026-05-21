@@ -159,8 +159,134 @@ const getAllGoalsService = async ({
   };
 };
 
+// Update a goal service
+const editGoalService = async ({
+  goalId,
+  userId,
+  title,
+  description,
+  targetValue,
+  unit,
+  targetDate,
+  priority,
+  category,
+  status,
+}) => {
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  // Goal ID validation
+  if (!mongoose.Types.ObjectId.isValid(goalId)) {
+    throw new Error("Invalid goal ID");
+  }
+
+  // Find goal with ownership check
+  const goal = await Goal.findOne({
+    _id: goalId,
+    user: userId,
+  });
+
+  // Goal existence check
+  if (!goal) {
+    throw new Error("Goal not found");
+  }
+
+  // Allowed status values for editing
+  const allowedStatuses = ["active", "paused"];
+
+  // Prevent manual completion
+  if (status && !allowedStatuses.includes(status)) {
+    throw new Error("Invalid status update");
+  }
+
+  // Prevent targetValue from becoming smaller than current progress
+  if (
+    targetValue !== undefined &&
+    targetValue < goal.currentValue
+  ) {
+    throw new Error(
+      "Target value cannot be less than current progress"
+    );
+  }
+
+  // Safe update pbject
+  const updates = {};
+
+  // Editable fields only
+  if (title !== undefined) {
+    updates.title = title;
+  }
+
+  if (description !== undefined) {
+    updates.description = description;
+  }
+
+  if (targetValue !== undefined) {
+    updates.targetValue = targetValue;
+  }
+
+  if (unit !== undefined) {
+    updates.unit = unit;
+  }
+
+  if (targetDate !== undefined) {
+    updates.targetDate = targetDate;
+  }
+
+  if (priority !== undefined) {
+    updates.priority = priority;
+  }
+
+  if (category !== undefined) {
+    updates.category = category;
+  }
+
+  if (status !== undefined) {
+    updates.status = status;
+  }
+
+  // Apply updates safely
+  Object.keys(updates).forEach((key) => {
+    goal[key] = updates[key];
+  });
+
+  await goal.save();
+
+  return goal;
+};
+
+// Get a single todo service
+const getGoalService = async ({ goalId, userId }) => {
+
+  // Authentication check
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  // Goal ID validation
+  if (!mongoose.Types.ObjectId.isValid(goalId)) {
+    throw new Error("Invalid goal ID");
+  }
+
+  // Find goal with ownership check
+  const goal = await Goal.findOne({
+    _id: goalId,
+    user: userId,
+  }).lean({ virtuals: true });
+
+  // Goal existence check
+  if (!goal) {
+    throw new Error("Goal not found");
+  }
+
+  return goal;
+};
+
 // Exports
 module.exports = {
   createGoalService,
   getAllGoalsService,
+  editGoalService,
+  getGoalService,
 };

@@ -1,22 +1,32 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { createGoal } from "../../services/goalsServices";
+import {
+  createGoal,
+  updateGoal,
+} from "../../services/goalsServices";
 
-const GoalForm = ({ mode = "create" }) => {
+const GoalForm = ({
+  mode = "create",
+  initialData = {},
+  goalId = null,
+}) => {
+
   const isEdit = mode === "edit";
 
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    targetValue: "",
-    currentValue: "",
-    unit: "",
-    targetDate: "",
-    category: "personal",
-    priority: "medium",
+    title: initialData.title || "",
+    description: initialData.description || "",
+    targetValue: initialData.targetValue || "",
+    unit: initialData.unit || "",
+    targetDate: initialData.targetDate
+      ? initialData.targetDate.split("T")[0]
+      : "",
+    category: initialData.category || "personal",
+    priority: initialData.priority || "medium",
+    status: initialData.status || "active",
   });
 
   const [loading, setLoading] = useState(false);
@@ -38,47 +48,71 @@ const GoalForm = ({ mode = "create" }) => {
     try {
       setLoading(true);
 
-      await createGoal({
+      const payload = {
         ...formData,
         targetValue: Number(formData.targetValue),
-        currentValue: formData.currentValue ? Number(formData.currentValue) : 0,
-      });
+      };
 
-      // Reset form
-      setFormData({
-        title: "",
-        description: "",
-        targetValue: "",
-        currentValue: "",
-        unit: "",
-        targetDate: "",
-        category: "personal",
-        priority: "medium",
-      });
+      // Edit mode
+      if (isEdit) {
+        await updateGoal(goalId, payload);
+      }
+
+      // Create mode
+      else {
+        await createGoal(payload);
+
+        // Reset form only in create mode
+        setFormData({
+          title: "",
+          description: "",
+          targetValue: "",
+          unit: "",
+          targetDate: "",
+          category: "personal",
+          priority: "medium",
+          status: "active",
+        });
+      }
 
       navigate("/app/goals");
+
     } catch (error) {
-      console.error("Failed to create goal:", error.message);
+      console.error(
+        isEdit
+          ? "Failed to update goal:"
+          : "Failed to create goal:",
+        error.message
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  // Handle cancel
   const handleCancel = () => {
     navigate(-1);
-  }
+  };
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border max-w-2xl mx-auto">
+
       {/* Title */}
       <h2 className="text-lg font-semibold text-gray-800 mb-4">
         {isEdit ? "Edit Goal" : "Create New Goal"}
       </h2>
 
-      <form className="space-y-4" onSubmit={handleSubmit}>
+      <form
+        className="space-y-4"
+        onSubmit={handleSubmit}
+      >
+
         {/* Title */}
         <div>
-          <label className="text-sm text-gray-600">Title</label>
+          <label className="text-sm text-gray-600">
+            Title
+          </label>
+
           <input
             type="text"
             name="title"
@@ -91,7 +125,10 @@ const GoalForm = ({ mode = "create" }) => {
 
         {/* Description */}
         <div>
-          <label className="text-sm text-gray-600">Description</label>
+          <label className="text-sm text-gray-600">
+            Description
+          </label>
+
           <textarea
             rows="3"
             name="description"
@@ -104,8 +141,13 @@ const GoalForm = ({ mode = "create" }) => {
 
         {/* Target + Unit */}
         <div className="grid grid-cols-2 gap-4">
+
+          {/* Target Value */}
           <div>
-            <label className="text-sm text-gray-600">Target Value</label>
+            <label className="text-sm text-gray-600">
+              Target Value
+            </label>
+
             <input
               type="number"
               name="targetValue"
@@ -116,8 +158,12 @@ const GoalForm = ({ mode = "create" }) => {
             />
           </div>
 
+          {/* Unit */}
           <div>
-            <label className="text-sm text-gray-600">Unit</label>
+            <label className="text-sm text-gray-600">
+              Unit
+            </label>
+
             <input
               type="text"
               name="unit"
@@ -129,24 +175,12 @@ const GoalForm = ({ mode = "create" }) => {
           </div>
         </div>
 
-        {/* Current Value (ONLY for edit mode) */}
-        {isEdit && (
-          <div>
-            <label className="text-sm text-gray-600">Current Value</label>
-            <input
-              type="number"
-              name="currentValue"
-              value={formData.currentValue}
-              onChange={handleChange}
-              placeholder="Update progress"
-              className="w-full mt-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            />
-          </div>
-        )}
-
         {/* Target Date */}
         <div>
-          <label className="text-sm text-gray-600">Target Date</label>
+          <label className="text-sm text-gray-600">
+            Target Date
+          </label>
+
           <input
             type="date"
             name="targetDate"
@@ -158,9 +192,13 @@ const GoalForm = ({ mode = "create" }) => {
 
         {/* Category + Priority */}
         <div className="grid grid-cols-2 gap-4">
+
           {/* Category */}
           <div>
-            <label className="text-sm text-gray-600">Category</label>
+            <label className="text-sm text-gray-600">
+              Category
+            </label>
+
             <select
               name="category"
               value={formData.category}
@@ -177,7 +215,10 @@ const GoalForm = ({ mode = "create" }) => {
 
           {/* Priority */}
           <div>
-            <label className="text-sm text-gray-600">Priority</label>
+            <label className="text-sm text-gray-600">
+              Priority
+            </label>
+
             <select
               name="priority"
               value={formData.priority}
@@ -191,11 +232,31 @@ const GoalForm = ({ mode = "create" }) => {
           </div>
         </div>
 
+        {/* Status (ONLY edit mode) */}
+        {isEdit && (
+          <div>
+            <label className="text-sm text-gray-600">
+              Status
+            </label>
+
+            <select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="active">active</option>
+              <option value="paused">paused</option>
+            </select>
+          </div>
+        )}
+
         {/* Actions */}
         <div className="flex justify-end gap-3 pt-2">
+
           <button
-          onClick={handleCancel}
             type="button"
+            onClick={handleCancel}
             className="px-4 py-2 rounded-lg border text-sm text-gray-600 hover:bg-gray-100"
           >
             Cancel
@@ -206,7 +267,13 @@ const GoalForm = ({ mode = "create" }) => {
             disabled={loading}
             className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700"
           >
-            {loading ? "Creating..." : isEdit ? "Update goal" : "Create goal"}
+            {loading
+              ? isEdit
+                ? "Updating..."
+                : "Creating..."
+              : isEdit
+                ? "Update Goal"
+                : "Create Goal"}
           </button>
         </div>
       </form>

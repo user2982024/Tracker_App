@@ -21,6 +21,7 @@ import ArchivedNotesPage from "../pages/ArchivedNotesPage";
 import NoteViewPage from "../pages/NoteViewPage";
 import TodoViewPage from "../pages/TodoViewPage";
 import TodoEditPage from "../pages/TodoEditPage";
+import GoalEditPage from "../pages/GoalEditPage";
 
 // Forms
 import AuthForm from "../components/Auth/AuthForm";
@@ -72,6 +73,7 @@ const AppRoutes = () => {
           {/* Goals routes */}
           <Route path="goals" element={<GoalsPage />} />
           <Route path="goals/create" element={<GoalForm />} />
+          <Route path="goals/edit/:id" element={<GoalEditPage />} />
           
           <Route path="habits" element={<HabbitsPage />} />
         </Route>
