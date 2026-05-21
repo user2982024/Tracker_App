@@ -1,36 +1,47 @@
+import { CalendarDays, Flag } from "lucide-react";
+
 const GoalCard = ({ goal }) => {
 
   // Dynamic status styles
   const statusStyles = {
-    active: "bg-green-100 text-green-600",
-    completed: "bg-blue-100 text-blue-600",
-    paused: "bg-yellow-100 text-yellow-600",
+    active: "bg-emerald-100 text-emerald-700",
+    completed: "bg-blue-100 text-blue-700",
+    paused: "bg-amber-100 text-amber-700",
   };
 
   // Dynamic priority styles
   const priorityStyles = {
     low: "bg-gray-100 text-gray-600",
-    medium: "bg-orange-100 text-orange-600",
-    high: "bg-red-100 text-red-600",
+    medium: "bg-orange-100 text-orange-700",
+    high: "bg-red-100 text-red-700",
   };
 
+  // Format target date
+  const formattedTargetDate = goal.targetDate
+    ? new Date(goal.targetDate).toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      })
+    : null;
+
   return (
-    <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 space-y-4 hover:shadow-md transition-all duration-200">
+    <div className="group bg-white p-5 rounded-3xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 space-y-5">
 
       {/* Top Section */}
-      <div className="space-y-2">
+      <div className="space-y-3">
 
         {/* Title + Status */}
         <div className="flex items-start justify-between gap-3">
 
           {/* Title */}
-          <h3 className="text-base font-semibold text-gray-800 wrap-break-word">
+          <h3 className="text-[15px] font-semibold text-gray-800 leading-6 break-words">
             {goal.title}
           </h3>
 
           {/* Status Badge */}
           <span
-            className={`text-xs px-2.5 py-1 rounded-full capitalize whitespace-nowrap font-medium ${statusStyles[goal.status]}`}
+            className={`text-[11px] px-2.5 py-1 rounded-full capitalize whitespace-nowrap font-semibold tracking-wide ${statusStyles[goal.status]}`}
           >
             {goal.status}
           </span>
@@ -39,7 +50,7 @@ const GoalCard = ({ goal }) => {
 
         {/* Description */}
         {goal.description && (
-          <p className="text-sm text-gray-500 leading-relaxed wrap-break-word line-clamp-2">
+          <p className="text-sm text-gray-500 leading-6 break-words line-clamp-2">
             {goal.description}
           </p>
         )}
@@ -47,12 +58,12 @@ const GoalCard = ({ goal }) => {
       </div>
 
       {/* Progress Section */}
-      <div>
+      <div className="space-y-2.5">
 
         {/* Progress Info */}
-        <div className="flex items-center justify-between text-sm mb-2">
+        <div className="flex items-center justify-between text-sm">
 
-          <p className="text-gray-500">
+          <p className="text-gray-500 font-medium">
             {goal.currentValue} / {goal.targetValue} {goal.unit}
           </p>
 
@@ -63,33 +74,57 @@ const GoalCard = ({ goal }) => {
         </div>
 
         {/* Progress Bar */}
-        <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+        <div className="w-full h-2 bg-gray-100 rounded-full overflow-hidden">
 
           <div
-            className="bg-blue-600 h-full rounded-full transition-all duration-300"
+            className="h-full rounded-full bg-blue-600 transition-all duration-500"
             style={{
               width: `${goal.progressPercentage}%`,
             }}
-          ></div>
+          />
 
         </div>
 
       </div>
 
       {/* Bottom Section */}
-      <div className="flex items-center justify-between text-xs">
+      <div className="flex items-center justify-between gap-3 flex-wrap">
 
-        {/* Category */}
-        <span className="px-2.5 py-1 rounded-md bg-purple-100 text-purple-600 capitalize font-medium">
-          {goal.category}
-        </span>
+        {/* Left Metadata */}
+        <div className="flex items-center gap-2 flex-wrap">
 
-        {/* Priority */}
-        <span
-          className={`px-2.5 py-1 rounded-md capitalize font-medium ${priorityStyles[goal.priority]}`}
-        >
-          {goal.priority}
-        </span>
+          {/* Category */}
+          <span className="px-2.5 py-1 rounded-lg bg-purple-100 text-purple-700 text-xs font-semibold capitalize">
+            {goal.category}
+          </span>
+
+          {/* Priority */}
+          <div
+            className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold capitalize ${priorityStyles[goal.priority]}`}
+          >
+
+            <Flag size={12} />
+
+            <span>
+              {goal.priority}
+            </span>
+
+          </div>
+
+        </div>
+
+        {/* Target Date */}
+        {formattedTargetDate && (
+          <div className="flex items-center gap-1.5 text-xs text-gray-500 font-medium">
+
+            <CalendarDays size={14} />
+
+            <span>
+              {formattedTargetDate}
+            </span>
+
+          </div>
+        )}
 
       </div>
 
