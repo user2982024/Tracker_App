@@ -15,7 +15,7 @@ const GoalsProgress = ({ stats }) => {
       : 0;
 
   return (
-    <div className="bg-white p-5 rounded-xl shadow-sm border">
+    <div className="bg-white p-5 shadow-sm border border-gray-100 rounded-2xl">
 
       {/* Title */}
       <p className="text-sm text-gray-500 mb-2">

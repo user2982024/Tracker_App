@@ -32,7 +32,7 @@ const GoalsStats = ({ stats, goals }) => {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
       {/* Total Goals */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border flex items-center gap-4">
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
 
         <div className="p-3 rounded-full bg-blue-100 text-blue-600">
           <Target size={20} />
@@ -55,7 +55,7 @@ const GoalsStats = ({ stats, goals }) => {
       </div>
 
       {/* Completed */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border flex items-center gap-4">
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
 
         <div className="p-3 rounded-full bg-green-100 text-green-600">
           <CheckCircle2 size={20} />
@@ -78,7 +78,7 @@ const GoalsStats = ({ stats, goals }) => {
       </div>
 
       {/* Active */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border flex items-center gap-4">
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
 
         <div className="p-3 rounded-full bg-orange-100 text-orange-600">
           <Clock size={20} />
@@ -101,7 +101,7 @@ const GoalsStats = ({ stats, goals }) => {
       </div>
 
       {/* Average Progress */}
-      <div className="bg-white p-4 rounded-xl shadow-sm border flex items-center gap-4">
+      <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
 
         <div className="p-3 rounded-full bg-purple-100 text-purple-600">
           <TrendingUp size={20} />
