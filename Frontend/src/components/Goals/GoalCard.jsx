@@ -15,7 +15,7 @@ const GoalCard = ({ goal }) => {
   // Dynamic priority styles
   const priorityStyles = {
     low: "bg-gray-100 text-gray-600",
-    medium: "bg-orange-100 text-orange-700",
+    medium: "bg-yellow-100 text-yellow-700",
     high: "bg-red-100 text-red-700",
   };
 
@@ -39,8 +39,6 @@ const GoalCard = ({ goal }) => {
         group relative bg-white p-5 rounded-3xl
         border border-gray-100 shadow-sm
         hover:shadow-xl hover:border-gray-200
-        hover:-translate-y-1
-        transition-all duration-300
         space-y-5
       "
     >
@@ -108,13 +106,13 @@ const GoalCard = ({ goal }) => {
       </div>
 
       {/* Bottom Section */}
-      <div className="flex items-center justify-between gap-4 pt-1">
-        {/* Left Metadata */}
+      <div className="space-y-4 pt-1">
+        {/* Metadata Row */}
         <div className="flex items-center gap-2 flex-wrap">
           {/* Category */}
           <span
             className="
-        px-2.5 py-1 rounded-xl
+        px-3 py-1 rounded-full
         bg-purple-50 text-purple-700
         text-[11px] font-semibold capitalize
         border border-purple-100
@@ -127,9 +125,8 @@ const GoalCard = ({ goal }) => {
           <div
             className={`
         flex items-center gap-1
-        px-2.5 py-1 rounded-xl
+        px-3 py-1 rounded-full
         text-[11px] font-semibold capitalize
-        border
         ${priorityStyles[goal.priority]}
       `}
           >
@@ -143,7 +140,7 @@ const GoalCard = ({ goal }) => {
             <div
               className="
           flex items-center gap-1
-          px-2.5 py-1 rounded-xl
+          px-3 py-1 rounded-full
           bg-gray-50 text-gray-600
           text-[11px] font-medium
           border border-gray-100
@@ -156,55 +153,45 @@ const GoalCard = ({ goal }) => {
           )}
         </div>
 
-        {/* Right Actions */}
-        <div className="flex items-center gap-1.5 shrink-0">
-          {/* Focus Mode */}
+        {/* Action Row */}
+        <div className="flex justify-end items-center gap-1">
+          {/* Focus */}
           <button
             className="
-        w-8 h-8 rounded-xl
+        w-7 h-7 rounded-lg
         flex items-center justify-center
-        bg-gray-50 text-gray-500
-        border border-gray-100
-        hover:bg-indigo-50
-        hover:text-indigo-600
-        hover:border-indigo-100
-        transition-all duration-200
+       text-gray-400 hover:cursor-pointer hover:scale-110 hover:text-purple-500
       "
           >
-            <Eye size={14} />
+            <Eye size={15} />
           </button>
 
           {/* Edit */}
           <button
             onClick={handleEdit}
             className="
-        w-8 h-8 rounded-xl
-        flex items-center justify-center
-        bg-gray-50 text-gray-500
-        border border-gray-100
-        hover:bg-blue-50
+        w-7 h-7 rounded-lg
+        flex items-center justify-center text-gray-400
+        hover:cursor-pointer
         hover:text-blue-600
-        hover:border-blue-100
-        transition-all duration-200
+        hover:scale-110
       "
           >
-            <Pencil size={14} />
+            <Pencil size={15} />
           </button>
 
           {/* Delete */}
           <button
             className="
-        w-8 h-8 rounded-xl
+        w-7 h-7 rounded-lg
         flex items-center justify-center
-        bg-gray-50 text-gray-500
-        border border-gray-100
-        hover:bg-red-50
+       text-gray-400
+        hover:cursor-pointer
         hover:text-red-600
-        hover:border-red-100
-        transition-all duration-200
+        hover:scale-110
       "
           >
-            <Trash2 size={14} />
+            <Trash2 size={15} />
           </button>
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast";
 
 import {
   createGoal,
@@ -56,6 +57,7 @@ const GoalForm = ({
       // Edit mode
       if (isEdit) {
         await updateGoal(goalId, payload);
+        toast.success("Goal updated successfully!");
       }
 
       // Create mode
