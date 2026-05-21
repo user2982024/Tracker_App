@@ -22,6 +22,7 @@ const GoalsPage = () => {
   const [pagination, setPagination] = useState(null);
 
   const [status, setStatus] = useState("all");
+  const [sortBy, setSortBy] = useState("default");
 
   // Debounce search
   useEffect(() => {
@@ -32,10 +33,10 @@ const GoalsPage = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
-  // Reset page when search or status changes
+  // Reset page when search, sattus or sort by changes
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearch, status]);
+  }, [debouncedSearch, status, sortBy]);
 
   const fetchGoals = async () => {
     try {
@@ -52,6 +53,11 @@ const GoalsPage = () => {
       // Status filter
       if (status !== "all") {
         queryParams.append("status", status);
+      }
+
+      // Sort
+      if (sortBy !== "default") {
+        queryParams.append("sortBy", sortBy);
       }
 
       // Pagination
@@ -74,7 +80,7 @@ const GoalsPage = () => {
   // Refresh goals
   useEffect(() => {
     fetchGoals();
-  }, [debouncedSearch, page, status]);
+  }, [debouncedSearch, page, status, sortBy]);
 
   return (
     <div className="p-6 space-y-6">
@@ -88,7 +94,7 @@ const GoalsPage = () => {
       <GoalsProgress stats={stats} />
 
       {/* Filters + Sorting */}
-      <GoalsFilters status={status} setStatus={setStatus} />
+      <GoalsFilters status={status} setStatus={setStatus} sortBy={sortBy} setSortBy={setSortBy} />
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">

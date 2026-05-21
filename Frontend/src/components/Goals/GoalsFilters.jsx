@@ -8,6 +8,8 @@ import {
 const GoalsFilters = ({
   status,
   setStatus,
+  sortBy,
+  setSortBy,
 }) => {
 
   const filters = [
@@ -67,7 +69,10 @@ const GoalsFilters = ({
       {/* Sort Dropdown */}
       <div>
 
-        <select className="px-4 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+        <select 
+        value={sortBy}
+        onChange={(e) => setSortBy(e.target.value)}
+        className="px-4 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
 
           <option value="default">
             Sort by: Default
