@@ -1,38 +1,84 @@
-import { List, Clock, CheckCircle2 } from "lucide-react";
+import {
+  List,
+  Clock,
+  CheckCircle2,
+  PauseCircle,
+} from "lucide-react";
 
-const GoalsFilters = () => {
+const GoalsFilters = ({
+  status,
+  setStatus,
+}) => {
+
+  const filters = [
+    {
+      label: "All",
+      value: "all",
+      icon: List,
+    },
+    {
+      label: "Active",
+      value: "active",
+      icon: Clock,
+    },
+    {
+      label: "Completed",
+      value: "completed",
+      icon: CheckCircle2,
+    },
+    {
+      label: "Paused",
+      value: "paused",
+      icon: PauseCircle,
+    },
+  ];
+
   return (
-    <div className="bg-white p-4 rounded-xl shadow-sm border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
-      {/* Tabs */}
-      <div className="flex items-center gap-2">
+      {/* Status Filters */}
+      <div className="flex items-center gap-2 flex-wrap">
 
-        {/* All */}
-        <button className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-100 text-blue-600 text-sm font-medium">
-          <List size={16} />
-          All
-        </button>
+        {filters.map((filter) => {
 
-        {/* Active */}
-        <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 text-sm font-medium transition">
-          <Clock size={16} />
-          Active
-        </button>
+          const Icon = filter.icon;
 
-        {/* Completed */}
-        <button className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 text-sm font-medium transition">
-          <CheckCircle2 size={16} />
-          Completed
-        </button>
+          return (
+            <button
+              key={filter.value}
+              onClick={() => setStatus(filter.value)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-200 ${
+                status === filter.value
+                  ? "bg-blue-600 text-white border-blue-600 shadow-sm"
+                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+              }`}
+            >
+
+              <Icon size={16} />
+
+              {filter.label}
+
+            </button>
+          );
+        })}
 
       </div>
 
       {/* Sort Dropdown */}
       <div>
-        <select className="px-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-          <option value="default">Sort by: Default</option>
-          <option value="targetDate">Sort by: Target Date</option>
+
+        <select className="px-4 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+          <option value="default">
+            Sort by: Default
+          </option>
+
+          <option value="targetDate">
+            Sort by: Target Date
+          </option>
+
         </select>
+
       </div>
 
     </div>
