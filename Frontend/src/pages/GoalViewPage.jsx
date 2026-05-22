@@ -7,12 +7,13 @@ import {
   Flag,
   Target,
   TrendingUp,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 
 import { getGoal } from "../services/goalsServices";
 
 const GoalViewPage = () => {
-
   const navigate = useNavigate();
 
   // Get goal ID from route params
@@ -25,9 +26,7 @@ const GoalViewPage = () => {
 
   // Fetch single goal
   const fetchGoal = async () => {
-
     try {
-
       setLoading(true);
       setError(null);
 
@@ -36,24 +35,16 @@ const GoalViewPage = () => {
 
       // Save goal
       setGoal(data);
-
     } catch (error) {
-
       setError(error.message || "Failed to fetch goal");
-
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
   // Fetch goal on page load
   useEffect(() => {
-
     fetchGoal();
-
   }, [id]);
 
   // Loading state
@@ -66,9 +57,7 @@ const GoalViewPage = () => {
             rounded-3xl p-8 shadow-sm
           "
         >
-          <p className="text-sm text-gray-500">
-            Loading goal...
-          </p>
+          <p className="text-sm text-gray-500">Loading goal...</p>
         </div>
       </div>
     );
@@ -109,7 +98,7 @@ const GoalViewPage = () => {
   // Progress percentage
   const progressPercentage = Math.min(
     Math.round((goal.currentValue / goal.targetValue) * 100),
-    100
+    100,
   );
 
   // Dynamic status styles
@@ -126,9 +115,13 @@ const GoalViewPage = () => {
     high: "bg-red-100 text-red-700",
   };
 
+  // Navigate to edit page
+  const handleEdit = () => {
+    navigate(`/app/goals/edit/${goal._id}`);
+  };
+
   return (
     <div className="p-6 space-y-6">
-
       {/* Back Button */}
       <button
         onClick={() => navigate("/app/goals")}
@@ -154,15 +147,11 @@ const GoalViewPage = () => {
           p-8 space-y-8
         "
       >
-
         {/* Top Content */}
         <div className="space-y-5">
-
           {/* Title + Status */}
           <div className="flex items-start justify-between gap-4 flex-wrap">
-
             <div className="space-y-3">
-
               {/* Title */}
               <h1
                 className="
@@ -185,7 +174,6 @@ const GoalViewPage = () => {
                   {goal.description}
                 </p>
               )}
-
             </div>
 
             {/* Status Badge */}
@@ -199,7 +187,6 @@ const GoalViewPage = () => {
             >
               {goal.status}
             </span>
-
           </div>
 
           {/* Progress Card */}
@@ -210,12 +197,9 @@ const GoalViewPage = () => {
               rounded-3xl p-6 space-y-5
             "
           >
-
             {/* Progress Top */}
             <div className="flex items-center justify-between flex-wrap gap-4">
-
               <div className="space-y-1">
-
                 <p
                   className="
                     text-xs uppercase tracking-wide
@@ -228,7 +212,6 @@ const GoalViewPage = () => {
                 <h2 className="text-3xl font-bold text-gray-900">
                   {progressPercentage}%
                 </h2>
-
               </div>
 
               {/* Progress Stats */}
@@ -244,14 +227,11 @@ const GoalViewPage = () => {
                 <p className="text-sm font-semibold text-gray-700">
                   {goal.currentValue} / {goal.targetValue} {goal.unit}
                 </p>
-
               </div>
-
             </div>
 
             {/* Progress Bar */}
             <div className="space-y-2">
-
               <div
                 className="
                   w-full h-4 rounded-full
@@ -273,16 +253,12 @@ const GoalViewPage = () => {
               <p className="text-sm text-gray-500">
                 Keep pushing forward — consistency compounds over time.
               </p>
-
             </div>
-
           </div>
-
         </div>
 
         {/* Details Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-
           {/* Category */}
           <div
             className="
@@ -290,21 +266,17 @@ const GoalViewPage = () => {
               rounded-2xl p-5 space-y-3
             "
           >
-
             <div className="flex items-center gap-2">
-
               <Target size={16} className="text-purple-600" />
 
               <p className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
                 Category
               </p>
-
             </div>
 
             <p className="text-sm font-semibold text-gray-800 capitalize">
               {goal.category || "Not specified"}
             </p>
-
           </div>
 
           {/* Priority */}
@@ -314,15 +286,12 @@ const GoalViewPage = () => {
               rounded-2xl p-5 space-y-3
             "
           >
-
             <div className="flex items-center gap-2">
-
               <Flag size={16} className="text-red-500" />
 
               <p className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
                 Priority
               </p>
-
             </div>
 
             <span
@@ -335,7 +304,6 @@ const GoalViewPage = () => {
             >
               {goal.priority || "Not specified"}
             </span>
-
           </div>
 
           {/* Start Date */}
@@ -345,15 +313,12 @@ const GoalViewPage = () => {
               rounded-2xl p-5 space-y-3
             "
           >
-
             <div className="flex items-center gap-2">
-
               <CalendarDays size={16} className="text-gray-500" />
 
               <p className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
                 Start Date
               </p>
-
             </div>
 
             <p className="text-sm font-semibold text-gray-800">
@@ -361,7 +326,6 @@ const GoalViewPage = () => {
                 ? new Date(goal.startDate).toLocaleDateString()
                 : "Not specified"}
             </p>
-
           </div>
 
           {/* Target Date */}
@@ -371,15 +335,12 @@ const GoalViewPage = () => {
               rounded-2xl p-5 space-y-3
             "
           >
-
             <div className="flex items-center gap-2">
-
               <CalendarDays size={16} className="text-blue-500" />
 
               <p className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
                 Target Date
               </p>
-
             </div>
 
             <p className="text-sm font-semibold text-gray-800">
@@ -387,13 +348,52 @@ const GoalViewPage = () => {
                 ? new Date(goal.targetDate).toLocaleDateString()
                 : "Not specified"}
             </p>
-
           </div>
-
         </div>
 
-      </div>
+        {/* Action Buttons */}
+        <div className="flex justify-end items-center gap-3 pt-2">
+          {/* Edit Button */}
+          <button
+            onClick={handleEdit}
+            className="
+      flex items-center gap-2
+      px-4 py-2.5 rounded-2xl
+      bg-blue-50 text-blue-600
+      border border-blue-100
+      text-sm font-semibold
+      hover:bg-blue-100
+      hover:scale-[1.02]
+      transition-all duration-200
+      hover:cursor-pointer
+    "
+          >
+            <Pencil size={16} />
 
+            <span>Edit Goal</span>
+          </button>
+
+          {/* Delete Button */}
+          <button
+            // onClick={handleDelete}
+            className="
+      flex items-center gap-2
+      px-4 py-2.5 rounded-2xl
+      bg-red-50 text-red-600
+      border border-red-100
+      text-sm font-semibold
+      hover:bg-red-100
+      hover:scale-[1.02]
+      transition-all duration-200
+      hover:cursor-pointer
+    "
+          >
+            <Trash2 size={16} />
+
+            <span>Delete Goal</span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
