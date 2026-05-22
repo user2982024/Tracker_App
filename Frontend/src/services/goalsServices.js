@@ -56,7 +56,7 @@ export const updateGoal = async (goalId, goalData) => {
   return data;
 };
 
-// Get single goal
+// Get a single goal
 export const getGoal = async (goalId) => {
   const response = await fetch(
     `${BASE_URL}/${goalId}`,

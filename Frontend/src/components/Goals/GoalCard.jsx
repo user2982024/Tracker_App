@@ -33,6 +33,11 @@ const GoalCard = ({ goal }) => {
     navigate(`/app/goals/edit/${goal._id}`);
   };
 
+  // Navigate to goal details page
+  const handleFocus = () => {
+    navigate(`/app/goals/${goal._id}`);
+  }
+
   return (
     <div
       className="
@@ -157,6 +162,7 @@ const GoalCard = ({ goal }) => {
         <div className="flex justify-end items-center gap-1">
           {/* Focus */}
           <button
+          onClick={handleFocus}
             className="
         w-7 h-7 rounded-lg
         flex items-center justify-center
