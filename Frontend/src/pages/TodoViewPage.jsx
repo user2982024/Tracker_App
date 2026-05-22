@@ -69,9 +69,7 @@ const TodoViewPage = () => {
 
   const handlePinToggle = async () => {
     try {
-      const res = todo.pinned
-        ? await unpinTodo(id)
-        : await pinTodo(id);
+      const res = todo.pinned ? await unpinTodo(id) : await pinTodo(id);
 
       toast.success(res.message);
       fetchTodo();
@@ -114,10 +112,10 @@ const TodoViewPage = () => {
   const statusColor = completed
     ? "green"
     : isOverdue
-    ? "red"
-    : isPending
-    ? "yellow"
-    : "gray";
+      ? "red"
+      : isPending
+        ? "yellow"
+        : "gray";
 
   const colorMap = {
     green: {
@@ -147,7 +145,11 @@ const TodoViewPage = () => {
       {/* Back Button */}
       <button
         onClick={() => navigate("/app/todos")}
-        className="flex items-center gap-2 bg-blue-100 hover:bg-blue-100 px-3 py-2 rounded-3xl hover:cursor-pointer text-blue-600 hover: mb-10"
+        className="flex items-center gap-2
+          text-sm font-medium text-gray-500
+          hover:text-gray-800 mb-6 sm:mb-8
+          transition-colors duration-200
+          hover:cursor-pointer"
       >
         <ArrowLeft size={18} />
         Back to Todos
@@ -182,9 +184,7 @@ const TodoViewPage = () => {
             <button
               onClick={handleToggle}
               className={`w-5 h-5 rounded-full border-2 flex items-center justify-center hover:cursor-pointer ${
-                completed
-                  ? "bg-green-500 border-green-500"
-                  : "border-gray-400"
+                completed ? "bg-green-500 border-green-500" : "border-gray-400"
               }`}
             >
               {completed && <Check size={14} className="text-white" />}

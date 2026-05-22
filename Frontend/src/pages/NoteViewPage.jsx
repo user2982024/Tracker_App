@@ -9,7 +9,14 @@ import {
   unpinNote,
 } from "../services/notesService";
 import { toast } from "react-hot-toast";
-import { Pencil, Trash2, Archive, ArchiveRestore, Pin } from "lucide-react";
+import {
+  Pencil,
+  Trash2,
+  Archive,
+  ArchiveRestore,
+  Pin,
+  ArrowLeft,
+} from "lucide-react";
 import Modal from "../components/UI/Modal";
 
 const NoteViewPage = () => {
@@ -99,9 +106,15 @@ const NoteViewPage = () => {
         {/* Back */}
         <button
           onClick={() => navigate(-1)}
-          className="bg-blue-100 hover:bg-blue-200 px-3 py-2 rounded-3xl text-sm text-blue-600 cursor-pointer transition-all hover:scale-105"
+          className="flex items-center gap-2
+          text-sm font-medium text-gray-500
+          hover:text-gray-800
+          transition-colors duration-200
+          hover:cursor-pointer"
         >
-          ← Back
+          <ArrowLeft size={18} />
+
+          <span>Back to Notes</span>
         </button>
 
         {/* Actions */}
