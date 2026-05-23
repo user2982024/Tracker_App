@@ -283,10 +283,37 @@ const getGoalService = async ({ goalId, userId }) => {
   return goal;
 };
 
+// Delete a goal service
+const deleteGoalService = async ({ goalId, userId }) => {
+  // Authentication check
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  // Goal ID validation
+  if (!mongoose.Types.ObjectId.isValid(goalId)) {
+    throw new Error("Invalid goal ID");
+  }
+
+  // Find and delete goal with ownership check
+  const deletedGoal = await Goal.findOneAndDelete({
+    _id: goalId,
+    user: userId,
+  });
+
+  // Goal existence check
+  if (!goal) {
+    throw new Error("Goal not found");
+  }
+
+  return deletedGoal;
+};
+
 // Exports
 module.exports = {
   createGoalService,
   getAllGoalsService,
   editGoalService,
   getGoalService,
+  deleteGoalService,
 };

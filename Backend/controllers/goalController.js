@@ -102,8 +102,7 @@ const editGoal = async (req, res, next) => {
       message: "Goal updated successfully",
       data: updatedGoal,
     });
-  }
-  catch (error) {
+  } catch (error) {
     next(error);
   }
 };
@@ -111,7 +110,6 @@ const editGoal = async (req, res, next) => {
 // Get single goal controller
 const getGoal = async (req, res, next) => {
   try {
-
     const userId = req.user.userId;
     const goalId = req.params.id;
 
@@ -125,11 +123,29 @@ const getGoal = async (req, res, next) => {
       message: "Goal fetched successfully",
       data: goal,
     });
-
   } catch (error) {
-
     next(error);
+  }
+};
 
+// Delete goal controller
+const deleteGoal = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+    const goalId = req.params.id;
+
+    const deletedGoal = await goalService.deleteGoalService({
+      userId,
+      goalId,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Goal deleted successfully",
+      data: deletedGoal,
+    });
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -139,4 +155,5 @@ module.exports = {
   getAllGoals,
   editGoal,
   getGoal,
-}
+  deleteGoal,
+};

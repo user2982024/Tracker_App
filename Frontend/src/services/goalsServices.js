@@ -76,3 +76,22 @@ export const getGoal = async (goalId) => {
 
   return data.data;
 };
+
+// Delete a single goal
+export const deleteGoal = async (goalId) => {
+  const response = await fetch(`${BASE_URL}/${goalId}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Failed to delete goal");
+  }
+
+  return data;
+};
+
+
+

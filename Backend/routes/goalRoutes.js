@@ -11,6 +11,7 @@ const {
     getAllGoals,
     editGoal,
     getGoal,
+    deleteGoal,
 } = require('../controllers/goalController');
 
 const validateRequest = require("../middlewares/validateRequest");
@@ -26,6 +27,9 @@ router.get("/", authMiddleware, getAllGoals);
 
 // Edit a goal route
 router.patch("/:id", authMiddleware, validateGoalId, validateUpdateGoal, validateRequest, editGoal);
+
+// Delete a goal route
+router.delete("/:id", authMiddleware, validateGoalId, validateRequest, deleteGoal);
 
 // Get a single goal route
 router.get("/:id", authMiddleware, validateGoalId, validateRequest, getGoal);
