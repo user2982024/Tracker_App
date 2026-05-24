@@ -91,7 +91,5 @@ export const deleteGoal = async (goalId) => {
   }
 
   return data;
-};
-
-
+}
 
