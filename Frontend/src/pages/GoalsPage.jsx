@@ -34,7 +34,6 @@ const GoalsPage = () => {
 
   // Delete modal state
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
   const [goalToDelete, setGoalToDelete] = useState(null);
 
   // Debounce search

@@ -1,7 +1,8 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const goalSchema = new mongoose.Schema(
   {
+    // Goal owner
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -9,6 +10,7 @@ const goalSchema = new mongoose.Schema(
       index: true,
     },
 
+    // Goal title
     title: {
       type: String,
       required: [true, "Goal title is required"],
@@ -17,55 +19,91 @@ const goalSchema = new mongoose.Schema(
       maxlength: [200, "Title cannot exceed 200 characters"],
     },
 
+    // Optional description
     description: {
       type: String,
       trim: true,
       maxlength: [1000, "Description cannot exceed 1000 characters"],
     },
 
-    // Quantifiable goal system
+    // Goal type
+    // (Future scalable architecture)
+    goalType: {
+      type: String,
+      enum: ["quantitative"],
+      default: "quantitative",
+    },
+
+    // Quantitative goal system
     targetValue: {
       type: Number,
       required: [true, "Target value is required"],
-      min: [1, "Target must be at least 1"],
+      min: [1, "Target value must be at least 1"],
     },
 
+    // Cached aggregate progress
+    // Source of truth will be GoalProgress collection
     currentValue: {
       type: Number,
       default: 0,
-      min: [0, "Progress cannot be negative"],
+      min: [0, "Current progress cannot be negative"],
       validate: {
         validator: function (value) {
           return value <= this.targetValue;
         },
-        message: "Progress cannot exceed target value",
+        message: "Current progress cannot exceed target value",
       },
     },
 
-    // Flexible unit system 
+    // Flexible measurement unit
+    // Examples:
+    // questions, books, hours, workouts
     unit: {
       type: String,
       required: [true, "Unit is required"],
       trim: true,
-      maxlength: 50,
+      maxlength: [50, "Unit cannot exceed 50 characters"],
     },
 
-    // Timeline (important for analytics & UX)
+    // Analytics
+
+    // Total number of progress logs
+    // Helps with analytics & UX later
+    totalLogs: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+
+    // Last time user logged progress
+    // Useful for streaks, reminders, inactivity detection
+    lastProgressDate: {
+      type: Date,
+      default: null,
+    },
+
+    // Timeline system
+
+    // Goal creation / start date
     startDate: {
       type: Date,
       default: Date.now,
     },
 
+    // Goal deadline
     targetDate: {
       type: Date,
+      default: null,
     },
 
+    // Completion timestamp
     completedAt: {
       type: Date,
       default: null,
     },
 
     // Status system
+
     status: {
       type: String,
       enum: ["active", "completed", "paused"],
@@ -73,21 +111,24 @@ const goalSchema = new mongoose.Schema(
       index: true,
     },
 
-    // Priority (reuse from todos)
+    // Priority system
+
     priority: {
       type: String,
       enum: ["low", "medium", "high"],
       default: "medium",
     },
 
-    // UI/UX features
+    // UI/ UX fetaures
+
     isPinned: {
       type: Boolean,
       default: false,
       index: true,
     },
 
-    // Categorization (dashboard filters later)
+    // Categorization
+
     category: {
       type: String,
       enum: ["health", "career", "learning", "finance", "personal"],
@@ -99,25 +140,25 @@ const goalSchema = new mongoose.Schema(
   }
 );
 
+// Pre-save hook
 
-// Pre-save hook → auto-manage completion logic
-goalSchema.pre("save", async function () {
-  if (this.isModified("currentValue") || this.isModified("targetValue")) {
-    if (this.currentValue >= this.targetValue) {
-      this.status = "completed";
+goalSchema.pre("save", function (next) {
+  // Mark goal as completed
+  if (this.currentValue >= this.targetValue) {
+    this.status = "completed";
 
-      if (!this.completedAt) {
-        this.completedAt = new Date();
-      }
-    } else {
-      this.status = "active";
-      this.completedAt = null;
+    // Set completedAt only once
+    if (!this.completedAt) {
+      this.completedAt = new Date();
     }
   }
+
+  next();
 });
 
+// Virtuals
 
-// Virtual progress percentage 
+// Progress percentage
 goalSchema.virtual("progressPercentage").get(function () {
   if (!this.targetValue) return 0;
 
@@ -125,7 +166,13 @@ goalSchema.virtual("progressPercentage").get(function () {
 });
 
 
-// Virtual → overdue detection
+// Remaining progress
+goalSchema.virtual("remainingValue").get(function () {
+  return Math.max(this.targetValue - this.currentValue, 0);
+});
+
+
+// Overdue detection
 goalSchema.virtual("isOverdue").get(function () {
   return (
     this.targetDate &&
@@ -134,17 +181,30 @@ goalSchema.virtual("isOverdue").get(function () {
   );
 });
 
+// Include virtuals
 
-// Include virtuals in responses
 goalSchema.set("toJSON", { virtuals: true });
 goalSchema.set("toObject", { virtuals: true });
 
+// Indexes
 
-// Indexes for performance 
+// Dashboard queries
 goalSchema.index({ user: 1, status: 1 });
+
+// Pinned goals sorting
 goalSchema.index({ user: 1, isPinned: -1, updatedAt: -1 });
+
+// Category filtering
 goalSchema.index({ user: 1, category: 1 });
+
+// Deadline sorting/filtering
 goalSchema.index({ user: 1, targetDate: 1 });
 
+// Combined dashboard analytics
+goalSchema.index({
+  user: 1,
+  status: 1,
+  category: 1,
+});
 
 module.exports = mongoose.model("Goal", goalSchema);
