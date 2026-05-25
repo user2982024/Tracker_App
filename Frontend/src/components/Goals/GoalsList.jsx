@@ -1,6 +1,6 @@
 import GoalCard from "./GoalCard";
 
-const GoalsList = ({ goals, loading }) => {
+const GoalsList = ({ goals, loading, onDelete }) => {
   
   // Loading State
   if (loading) {
@@ -37,7 +37,7 @@ const GoalsList = ({ goals, loading }) => {
       {goals.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {goals.map((goal) => (
-            <GoalCard goal={goal} key={goal._id} />
+            <GoalCard goal={goal} onDelete={onDelete} key={goal._id} />
           ))}
         </div>
       ) : (

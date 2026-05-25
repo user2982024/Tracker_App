@@ -2,7 +2,7 @@ import { CalendarDays, Flag, Pencil, Eye, Trash2 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
 
-const GoalCard = ({ goal }) => {
+const GoalCard = ({ goal, onDelete }) => {
   const navigate = useNavigate();
 
   // Dynamic status styles
@@ -36,7 +36,7 @@ const GoalCard = ({ goal }) => {
   // Navigate to goal details page
   const handleFocus = () => {
     navigate(`/app/goals/${goal._id}`);
-  }
+  };
 
   return (
     <div
@@ -162,7 +162,7 @@ const GoalCard = ({ goal }) => {
         <div className="flex justify-end items-center gap-1">
           {/* Focus */}
           <button
-          onClick={handleFocus}
+            onClick={handleFocus}
             className="
         w-7 h-7 rounded-lg
         flex items-center justify-center
@@ -188,6 +188,7 @@ const GoalCard = ({ goal }) => {
 
           {/* Delete */}
           <button
+            onClick={() => onDelete(goal._id)}
             className="
         w-7 h-7 rounded-lg
         flex items-center justify-center

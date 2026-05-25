@@ -302,7 +302,7 @@ const deleteGoalService = async ({ goalId, userId }) => {
   });
 
   // Goal existence check
-  if (!goal) {
+  if (!deletedGoal) {
     throw new Error("Goal not found");
   }
 
