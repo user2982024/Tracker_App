@@ -149,6 +149,7 @@ const deleteGoal = async (req, res, next) => {
   }
 };
 
+
 // Exports
 module.exports = {
   createGoal,
