@@ -157,4 +157,4 @@ module.exports = {
   editGoal,
   getGoal,
   deleteGoal,
-};
+}
