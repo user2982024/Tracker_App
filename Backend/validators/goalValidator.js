@@ -119,7 +119,6 @@ const validateUpdateGoal = [
     .withMessage("Priority must be low, medium, or high"),
 ];
 
-
 // Validate Goal ID
 const validateGoalId = [
   param("id")
@@ -127,10 +126,37 @@ const validateGoalId = [
     .withMessage("Invalid goal ID"),
 ];
 
+// Validate Add Goal Progress
+const validateAddGoalProgress = [
+  param("goalId")
+    .isMongoId()
+    .withMessage("Invalid goal ID"),
+
+  body("value")
+    .notEmpty()
+    .withMessage("Progress value is required")
+    .isInt({ min: 1 })
+    .withMessage("Progress value must be at least 1"),
+
+  body("note")
+    .optional()
+    .isLength({ max: 500 })
+    .withMessage("Progress note cannot exceed 500 characters")
+    .trim(),
+];
+
+// Validate Progress ID
+const validateProgressId = [
+  param("progressId")
+    .isMongoId()
+    .withMessage("Invalid progress ID"),
+];
 
 // Exports
 module.exports = {
   validateCreateGoal,
   validateUpdateGoal,
   validateGoalId,
+  validateAddGoalProgress,
+  validateProgressId,
 };
