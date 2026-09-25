@@ -8,7 +8,7 @@ const {
 const addGoalProgress = async (req, res, next) => {
   try {
     // Get authenticated user's ID
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     // Get goal ID from URL parameter
     const { goalId } = req.params;
@@ -17,7 +17,12 @@ const addGoalProgress = async (req, res, next) => {
     const { value, note } = req.body;
 
     // Call service layer
-    const result = await addGoalProgressService(userId, goalId, value, note);
+    const result = await addGoalProgressService(
+      userId,
+      goalId,
+      value,
+      note,
+    );
 
     // Send successful response
     res.status(201).json({
@@ -34,7 +39,7 @@ const addGoalProgress = async (req, res, next) => {
 const getGoalProgress = async (req, res, next) => {
   try {
     // Get authenticated user's ID
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     // Get goal ID from URL parameter
     const { goalId } = req.params;
@@ -42,7 +47,7 @@ const getGoalProgress = async (req, res, next) => {
     // Call service layer
     const progress = await getGoalProgressService(
       userId,
-      goalId
+      goalId,
     );
 
     // Send successful response
@@ -59,7 +64,7 @@ const getGoalProgress = async (req, res, next) => {
 const deleteGoalProgress = async (req, res, next) => {
   try {
     // Get authenticated user's ID
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     // Get progress ID from URL parameter
     const { progressId } = req.params;
@@ -67,7 +72,7 @@ const deleteGoalProgress = async (req, res, next) => {
     // Call service layer
     const result = await deleteGoalProgressService(
       userId,
-      progressId
+      progressId,
     );
 
     // Send successful response

@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 
 import { getGoal } from "../services/goalsServices";
+import { getGoalProgress } from "../services/goalProgressServices";
 
 const GoalViewPage = () => {
   const navigate = useNavigate();
@@ -23,6 +24,10 @@ const GoalViewPage = () => {
   const [goal, setGoal] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  // Goal progress history state
+  const [progressHistory, setProgressHistory] = useState([]);
+  const [progressLoading, setProgressLoading] = useState(false);
 
   // Fetch single goal
   const fetchGoal = async () => {
@@ -42,9 +47,25 @@ const GoalViewPage = () => {
     }
   };
 
-  // Fetch goal on page load
+  // Fetch goal progress history
+  const fetchProgressHistory = async () => {
+    try {
+      setProgressLoading(true);
+
+      const data = await getGoalProgress(id);
+
+      setProgressHistory(data.data || []);
+    } catch (error) {
+      setError(error.message || "Failed to fetch goal progress");
+    } finally {
+      setProgressLoading(false);
+    }
+  };
+
+  // Fetch goal and progress history when page loads
   useEffect(() => {
     fetchGoal();
+    fetchProgressHistory();
   }, [id]);
 
   // Loading state
@@ -357,16 +378,16 @@ const GoalViewPage = () => {
           <button
             onClick={handleEdit}
             className="
-      flex items-center gap-2
-      px-4 py-2.5 rounded-2xl
-      bg-blue-50 text-blue-600
-      border border-blue-100
-      text-sm font-semibold
-      hover:bg-blue-100
-      hover:scale-[1.02]
-      transition-all duration-200
-      hover:cursor-pointer
-    "
+              flex items-center gap-2
+              px-4 py-2.5 rounded-2xl
+              bg-blue-50 text-blue-600
+              border border-blue-100
+              text-sm font-semibold
+              hover:bg-blue-100
+              hover:scale-[1.02]
+              transition-all duration-200
+              hover:cursor-pointer
+            "
           >
             <Pencil size={16} />
 
@@ -375,18 +396,17 @@ const GoalViewPage = () => {
 
           {/* Delete Button */}
           <button
-            // onClick={handleDelete}
             className="
-      flex items-center gap-2
-      px-4 py-2.5 rounded-2xl
-      bg-red-50 text-red-600
-      border border-red-100
-      text-sm font-semibold
-      hover:bg-red-100
-      hover:scale-[1.02]
-      transition-all duration-200
-      hover:cursor-pointer
-    "
+              flex items-center gap-2
+              px-4 py-2.5 rounded-2xl
+              bg-red-50 text-red-600
+              border border-red-100
+              text-sm font-semibold
+              hover:bg-red-100
+              hover:scale-[1.02]
+              transition-all duration-200
+              hover:cursor-pointer
+            "
           >
             <Trash2 size={16} />
 

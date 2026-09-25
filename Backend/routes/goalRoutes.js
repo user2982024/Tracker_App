@@ -75,8 +75,6 @@ router.post(
 router.get(
   "/:goalId/progress",
   authMiddleware,
-  validateAddGoalProgress,
-  validateRequest,
   getGoalProgress,
 );
 
