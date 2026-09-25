@@ -141,8 +141,8 @@ const goalSchema = new mongoose.Schema(
 );
 
 // Pre-save hook
-
-goalSchema.pre("save", function (next) {
+// Pre-save hook
+goalSchema.pre("save", function () {
   // Mark goal as completed
   if (this.currentValue >= this.targetValue) {
     this.status = "completed";
@@ -152,8 +152,6 @@ goalSchema.pre("save", function (next) {
       this.completedAt = new Date();
     }
   }
-
-  next();
 });
 
 // Virtuals

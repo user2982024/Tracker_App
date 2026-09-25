@@ -20,7 +20,7 @@ const {
   addGoalProgress,
   getGoalProgress,
   deleteGoalProgress,
-} = require("../controllers/goalsProgress.controller");
+} = require("../controllers/goalProgressController");
 
 const validateRequest = require("../middlewares/validateRequest");
 
