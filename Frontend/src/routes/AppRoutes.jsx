@@ -23,6 +23,7 @@ import TodoViewPage from "../pages/TodoViewPage";
 import TodoEditPage from "../pages/TodoEditPage";
 import GoalEditPage from "../pages/GoalEditPage";
 import GoalViewPage from "../pages/GoalViewPage";
+import GoalProgressHistoryPage from "../pages/GoalProgressHistoryPage";
 
 // Forms
 import AuthForm from "../components/Auth/AuthForm";
@@ -32,7 +33,10 @@ import GoalForm from "../components/Goals/GoalForm";
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Public Routes */}
+      {/* ==================================================
+          Public Routes
+          ================================================== */}
+
       <Route element={<PublicRoutes />}>
         <Route path="/" element={<LandingPage />} />
 
@@ -55,28 +59,54 @@ const AppRoutes = () => {
         />
       </Route>
 
-      {/* Protected Routes */}
+      {/* ==================================================
+          Protected Routes
+          ================================================== */}
+
       <Route element={<ProtectedRoutes />}>
         <Route path="/app" element={<AppLayout />}>
+          {/* Dashboard */}
           <Route index element={<Dashboard />} />
 
-          {/* Notes routes */}
+          {/* ==================================================
+              Notes Routes
+              ================================================== */}
+
           <Route path="notes" element={<NotesPage />} />
-          <Route path="notes/archive" element={<ArchivedNotesPage />}/>
-          <Route path="notes/:id" element={<NoteViewPage />}/>
+          <Route path="notes/archive" element={<ArchivedNotesPage />} />
+          <Route path="notes/:id" element={<NoteViewPage />} />
           <Route path="notes/:id/edit" element={<NoteEditPage />} />
 
-          {/* Todos routes */}
+          {/* ==================================================
+              Todos Routes
+              ================================================== */}
+
           <Route path="todos" element={<TodosPage />} />
           <Route path="todos/edit/:id" element={<TodoEditPage />} />
-          <Route path="todos/:id" element={<TodoViewPage />} /> 
-          
-          {/* Goals routes */}
+          <Route path="todos/:id" element={<TodoViewPage />} />
+
+          {/* ==================================================
+              Goals Routes
+              ================================================== */}
+
           <Route path="goals" element={<GoalsPage />} />
+
           <Route path="goals/create" element={<GoalForm />} />
+
           <Route path="goals/edit/:id" element={<GoalEditPage />} />
+
           <Route path="goals/:id" element={<GoalViewPage />} />
-          
+
+          {/* Goal Progress History */}
+          <Route
+            path="goals/:id/history"
+            element={<GoalProgressHistoryPage />}
+          />
+
+          {/* ==================================================
+              Habits Routes
+              ================================================== */}
+
           <Route path="habits" element={<HabbitsPage />} />
         </Route>
       </Route>
