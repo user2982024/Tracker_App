@@ -92,3 +92,21 @@ export const deleteGoal = async (goalId) => {
 
   return data;
 };
+
+// Delete all completed goals
+export const deleteCompletedGoals = async () => {
+  const response = await fetch(`${BASE_URL}/completed`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(
+      data.message || "Failed to delete completed goals",
+    );
+  }
+
+  return data;
+};

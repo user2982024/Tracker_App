@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
 import toast from "react-hot-toast";
+import { Trash2, Loader2 } from "lucide-react";
 
 import GoalsHeader from "../components/Goals/GoalsHeader";
 import GoalsStats from "../components/Goals/GoalsStats";
@@ -10,9 +11,11 @@ import GoalsList from "../components/Goals/GoalsList";
 import GoalsPagination from "../components/Goals/GoalsPagination";
 import Modal from "../components/UI/Modal";
 
-import { getGoals, deleteGoal } from "../services/goalsServices";
-
-import { Trash2 } from "lucide-react";
+import {
+  getGoals,
+  deleteGoal,
+  deleteCompletedGoals,
+} from "../services/goalsServices";
 
 const GoalsPage = () => {
   const [goals, setGoals] = useState([]);
@@ -30,9 +33,16 @@ const GoalsPage = () => {
   const [status, setStatus] = useState("all");
   const [sortBy, setSortBy] = useState("default");
 
-  // Delete modal state
+  // Individual goal deletion
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [goalToDelete, setGoalToDelete] = useState(null);
+  const [deletingGoal, setDeletingGoal] = useState(false);
+
+  // Delete completed goals
+  const [isDeleteCompletedModalOpen, setIsDeleteCompletedModalOpen] =
+    useState(false);
+  const [deletingCompletedGoals, setDeletingCompletedGoals] =
+    useState(false);
 
   // Debounce search
   useEffect(() => {
@@ -43,7 +53,7 @@ const GoalsPage = () => {
     return () => clearTimeout(timer);
   }, [search]);
 
-  // Reset page when filters/search changes
+  // Reset page when filters/search change
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch, status, sortBy]);
@@ -56,70 +66,138 @@ const GoalsPage = () => {
 
       const queryParams = new URLSearchParams();
 
-      // Search
       if (debouncedSearch.trim()) {
         queryParams.append("search", debouncedSearch.trim());
       }
 
-      // Status filter
       if (status !== "all") {
         queryParams.append("status", status);
       }
 
-      // Sort
       if (sortBy !== "default") {
         queryParams.append("sortBy", sortBy);
       }
 
-      // Pagination
       queryParams.append("page", page);
       queryParams.append("limit", 9);
 
       const data = await getGoals(`?${queryParams.toString()}`);
 
       setGoals(data.data.goals || []);
-
       setStats(data.data.stats || null);
-
       setPagination(data.data.pagination || null);
+
+      return data;
     } catch (error) {
       setError(error.message || "Failed to fetch goals");
+      throw error;
     } finally {
       setLoading(false);
     }
   };
 
-  // Open delete modal
+  // Open individual goal deletion modal
   const handleDeleteClick = (goalId) => {
     setGoalToDelete(goalId);
-
     setIsDeleteModalOpen(true);
   };
 
-  // Confirm delete
+  // Close individual goal deletion modal
+  const handleCloseDeleteModal = () => {
+    if (deletingGoal) return;
+
+    setIsDeleteModalOpen(false);
+    setGoalToDelete(null);
+  };
+
+  // Confirm individual goal deletion
   const handleConfirmDelete = async () => {
+    if (!goalToDelete || deletingGoal) return;
+
     try {
+      setDeletingGoal(true);
+
       await deleteGoal(goalToDelete);
 
-      // Refresh goals
-      await fetchGoals();
-
-      // Close modal
       setIsDeleteModalOpen(false);
-
-      // Reset goal
       setGoalToDelete(null);
 
-      // Success toast
       toast.success("Goal deleted successfully");
+
+      await fetchGoals();
     } catch (error) {
       toast.error(error.message || "Failed to delete goal");
+    } finally {
+      setDeletingGoal(false);
     }
   };
 
-  // Refresh goals
+  // Open completed goals confirmation modal
+  const handleDeleteCompletedClick = () => {
+    if (deletingCompletedGoals) return;
+
+    setIsDeleteCompletedModalOpen(true);
+  };
+
+  // Close completed goals confirmation modal
+  const handleCloseDeleteCompletedModal = () => {
+    if (deletingCompletedGoals) return;
+
+    setIsDeleteCompletedModalOpen(false);
+  };
+
+  // Confirm deletion of all completed goals
+  const handleConfirmDeleteCompleted = async () => {
+    if (deletingCompletedGoals) return;
+
+    try {
+      setDeletingCompletedGoals(true);
+
+      const result = await deleteCompletedGoals();
+
+      const deletedGoals = result.data?.deletedGoals ?? 0;
+      const deletedProgressEntries =
+        result.data?.deletedProgressEntries ?? 0;
+
+      setIsDeleteCompletedModalOpen(false);
+
+      if (deletedGoals === 0) {
+        toast.success("No completed goals found.");
+      } else {
+        toast.success(
+          `Deleted ${deletedGoals} completed goal(s) and ${deletedProgressEntries} progress entr${
+            deletedProgressEntries === 1 ? "y" : "ies"
+          }.`,
+        );
+      }
+
+      // Refresh list and statistics
+      const refreshedData = await fetchGoals();
+
+      // Correct the page if the current page no longer exists
+      const totalPages = refreshedData.data?.pagination?.totalPages;
+
+      if (
+        page > 1 &&
+        typeof totalPages === "number" &&
+        page > totalPages
+      ) {
+        setPage(Math.max(1, totalPages));
+      }
+    } catch (error) {
+      toast.error(
+        error.message || "Failed to delete completed goals",
+      );
+    } finally {
+      setDeletingCompletedGoals(false);
+    }
+  };
+
+  // Refresh goals when query settings change
   useEffect(() => {
-    fetchGoals();
+    fetchGoals().catch(() => {
+      // fetchGoals already updates the page error state.
+    });
   }, [debouncedSearch, page, status, sortBy]);
 
   return (
@@ -127,13 +205,13 @@ const GoalsPage = () => {
       {/* Header */}
       <GoalsHeader search={search} setSearch={setSearch} />
 
-      {/* Stats */}
+      {/* Statistics */}
       <GoalsStats stats={stats} goals={goals} />
 
       {/* Overall Progress */}
       <GoalsProgress stats={stats} />
 
-      {/* Filters + Sorting */}
+      {/* Filters and Sorting */}
       <GoalsFilters
         status={status}
         setStatus={setStatus}
@@ -144,6 +222,7 @@ const GoalsPage = () => {
       {/* Error */}
       {error && (
         <div
+          role="alert"
           className="
             bg-red-50 border border-red-200
             text-red-600 px-4 py-3
@@ -155,79 +234,171 @@ const GoalsPage = () => {
       )}
 
       {/* Goals List */}
-      <GoalsList goals={goals} loading={loading} onDelete={handleDeleteClick} />
+      <GoalsList
+        goals={goals}
+        loading={loading}
+        onDelete={handleDeleteClick}
+      />
 
       {/* Goals Pagination */}
-      <GoalsPagination pagination={pagination} page={page} setPage={setPage} />
+      <GoalsPagination
+        pagination={pagination}
+        page={page}
+        setPage={setPage}
+      />
 
-      {/* Delete Completed Goals Button */}
+      {/* Delete Completed Goals Button - Bottom Right */}
       <div className="flex justify-end pt-2">
         <button
           type="button"
+          onClick={handleDeleteCompletedClick}
+          disabled={deletingCompletedGoals}
           className="
-      inline-flex items-center justify-center gap-2
-      px-4 py-2.5
-      rounded-xl
-      border border-red-300
-      bg-white
-      text-red-600 text-sm font-medium
-      hover:bg-red-50
-      hover:border-red-300
-      transition-colors duration-200
-      hover:cursor-pointer
-    "
+            inline-flex items-center justify-center gap-2
+            px-4 py-2.5
+            rounded-xl
+            border border-red-200
+            bg-white
+            text-red-600 text-sm font-medium
+            hover:bg-red-50
+            hover:border-red-300
+            transition-colors duration-200
+            disabled:opacity-50
+            disabled:cursor-not-allowed
+            hover:cursor-pointer
+          "
         >
           <Trash2 size={16} />
           Delete Completed
         </button>
       </div>
 
-      {/* Delete Goal Modal */}
+      {/* Individual Goal Delete Modal */}
       <Modal
         isOpen={isDeleteModalOpen}
-        onClose={() => {
-          setIsDeleteModalOpen(false);
-          setGoalToDelete(null);
-        }}
+        onClose={handleCloseDeleteModal}
         title="Delete Goal"
         actions={
           <>
-            {/* Cancel Button */}
             <button
-              onClick={() => {
-                setIsDeleteModalOpen(false);
-                setGoalToDelete(null);
-              }}
+              type="button"
+              onClick={handleCloseDeleteModal}
+              disabled={deletingGoal}
               className="
                 px-4 py-2 rounded-xl
                 border border-gray-200
                 text-sm font-medium text-gray-600
                 hover:bg-gray-50
                 transition-colors duration-200
+                disabled:opacity-50
+                disabled:cursor-not-allowed
                 hover:cursor-pointer
               "
             >
               Cancel
             </button>
 
-            {/* Delete Button */}
             <button
+              type="button"
               onClick={handleConfirmDelete}
+              disabled={!goalToDelete || deletingGoal}
               className="
+                min-w-24
+                inline-flex items-center justify-center gap-2
                 px-4 py-2 rounded-xl
                 bg-red-500 text-white
                 text-sm font-medium
                 hover:bg-red-600
+                disabled:opacity-50
+                disabled:cursor-not-allowed
                 transition-colors duration-200
                 hover:cursor-pointer
               "
             >
-              Delete
+              {deletingGoal ? (
+                <>
+                  <Loader2 size={15} className="animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
             </button>
           </>
         }
       >
         Are you sure you want to delete this goal? This action cannot be undone.
+      </Modal>
+
+      {/* Delete Completed Goals Confirmation Modal */}
+      <Modal
+        isOpen={isDeleteCompletedModalOpen}
+        onClose={handleCloseDeleteCompletedModal}
+        title="Delete Completed Goals"
+        actions={
+          <>
+            {/* Cancel */}
+            <button
+              type="button"
+              onClick={handleCloseDeleteCompletedModal}
+              disabled={deletingCompletedGoals}
+              className="
+                px-4 py-2 rounded-xl
+                border border-gray-200
+                bg-white
+                text-sm font-medium text-gray-600
+                hover:bg-gray-50
+                transition-colors duration-200
+                disabled:opacity-50
+                disabled:cursor-not-allowed
+                hover:cursor-pointer
+              "
+            >
+              Cancel
+            </button>
+
+            {/* Confirm deletion */}
+            <button
+              type="button"
+              onClick={handleConfirmDeleteCompleted}
+              disabled={deletingCompletedGoals}
+              className="
+                min-w-36
+                inline-flex items-center justify-center gap-2
+                px-4 py-2 rounded-xl
+                bg-red-500 text-white
+                text-sm font-medium
+                hover:bg-red-600
+                transition-colors duration-200
+                disabled:opacity-50
+                disabled:cursor-not-allowed
+                hover:cursor-pointer
+              "
+            >
+              {deletingCompletedGoals ? (
+                <>
+                  <Loader2 size={15} className="animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 size={15} />
+                  Delete Completed
+                </>
+              )}
+            </button>
+          </>
+        }
+      >
+        <p className="text-sm leading-6 text-gray-600">
+          Are you sure you want to permanently delete all completed
+          goals and their associated progress history?
+        </p>
+
+        <p className="mt-3 rounded-lg bg-red-50 border border-red-100 p-3 text-sm text-red-700">
+          <strong>Warning:</strong> This action cannot be undone.
+          Active and paused goals will not be deleted.
+        </p>
       </Modal>
     </div>
   );
