@@ -1,6 +1,6 @@
 const goalService = require("../services/goals.service");
 
-// Create goal controller
+// Create Goal Controller
 const createGoal = async (req, res, next) => {
   try {
     const {
@@ -30,7 +30,7 @@ const createGoal = async (req, res, next) => {
       priority,
     );
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Goal created successfully",
       data: goal,
@@ -40,12 +40,19 @@ const createGoal = async (req, res, next) => {
   }
 };
 
-// Get all goals controller
+// Get All Goals Controller
 const getAllGoals = async (req, res, next) => {
   try {
     const userId = req.user.userId;
 
-    const { page, limit, status, category, search, sortBy } = req.query;
+    const {
+      page,
+      limit,
+      status,
+      category,
+      search,
+      sortBy,
+    } = req.query;
 
     const result = await goalService.getAllGoalsService({
       userId,
@@ -57,7 +64,7 @@ const getAllGoals = async (req, res, next) => {
       sortBy,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Goals fetched successfully",
       data: result,
@@ -67,7 +74,7 @@ const getAllGoals = async (req, res, next) => {
   }
 };
 
-// Edit goal controller
+// Edit Goal Controller
 const editGoal = async (req, res, next) => {
   try {
     const userId = req.user.userId;
@@ -97,7 +104,7 @@ const editGoal = async (req, res, next) => {
       status,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Goal updated successfully",
       data: updatedGoal,
@@ -107,7 +114,7 @@ const editGoal = async (req, res, next) => {
   }
 };
 
-// Get single goal controller
+// Get Single Goal Controller
 const getGoal = async (req, res, next) => {
   try {
     const userId = req.user.userId;
@@ -118,7 +125,7 @@ const getGoal = async (req, res, next) => {
       userId,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Goal fetched successfully",
       data: goal,
@@ -128,7 +135,7 @@ const getGoal = async (req, res, next) => {
   }
 };
 
-// Delete goal controller
+// Delete Single Goal Controller
 const deleteGoal = async (req, res, next) => {
   try {
     const userId = req.user.userId;
@@ -139,7 +146,7 @@ const deleteGoal = async (req, res, next) => {
       goalId,
     });
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Goal deleted successfully",
       data: deletedGoal,
@@ -147,8 +154,30 @@ const deleteGoal = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};
 
+// Delete All Completed Goals Controller
+const deleteCompletedGoals = async (req, res, next) => {
+  try {
+    const userId = req.user.userId;
+
+    const result =
+      await goalService.deleteCompletedGoalsService({
+        userId,
+      });
+
+    return res.status(200).json({
+      success: true,
+      message: result.message,
+      data: {
+        deletedGoals: result.deletedGoals,
+        deletedProgressEntries: result.deletedProgressEntries,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 // Exports
 module.exports = {
@@ -157,4 +186,5 @@ module.exports = {
   editGoal,
   getGoal,
   deleteGoal,
-}
+  deleteCompletedGoals,
+};

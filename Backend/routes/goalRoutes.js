@@ -14,6 +14,7 @@ const {
   editGoal,
   getGoal,
   deleteGoal,
+  deleteCompletedGoals,
 } = require("../controllers/goalController");
 
 const {
@@ -23,12 +24,11 @@ const {
 } = require("../controllers/goalProgressController");
 
 const validateRequest = require("../middlewares/validateRequest");
-
 const authMiddleware = require("../middlewares/authMiddleware");
 
 const router = express.Router();
 
-// Create a goal route
+// Create a goal
 router.post(
   "/",
   authMiddleware,
@@ -37,10 +37,17 @@ router.post(
   createGoal,
 );
 
-// Get all goals route (with pagination and filters)
+// Get all goals (with pagination and filters)
 router.get("/", authMiddleware, getAllGoals);
 
-// Edit a goal route
+// Delete all completed goals
+router.delete(
+  "/completed",
+  authMiddleware,
+  deleteCompletedGoals,
+);
+
+// Edit a goal
 router.patch(
   "/:id",
   authMiddleware,
@@ -50,7 +57,7 @@ router.patch(
   editGoal,
 );
 
-// Delete a goal route
+// Delete a single goal
 router.delete(
   "/:id",
   authMiddleware,
@@ -59,8 +66,14 @@ router.delete(
   deleteGoal,
 );
 
-// Get a single goal route
-router.get("/:id", authMiddleware, validateGoalId, validateRequest, getGoal);
+// Get a single goal
+router.get(
+  "/:id",
+  authMiddleware,
+  validateGoalId,
+  validateRequest,
+  getGoal,
+);
 
 // Add progress to a goal
 router.post(

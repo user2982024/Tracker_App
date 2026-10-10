@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Goal = require("../models/Goal");
+const GoalProgress = require("../models/GoalProgress");
 
+// Create Goal Service
 const createGoalService = async (
   title,
   description,
@@ -13,52 +15,81 @@ const createGoalService = async (
   category,
   priority,
 ) => {
-  // Title check
-  if (!title) {
+  // Title validation
+  if (!title || !title.trim()) {
     throw new Error("Title is required");
   }
 
-  // Authentication check
+  // Authentication validation
   if (!userId) {
     throw new Error("User not authenticated");
   }
 
-  // Core goal fields validation
-  if (!targetValue) {
-    throw new Error("Target value is required");
+  // Target validation
+  if (
+    targetValue === undefined ||
+    targetValue === null ||
+    !Number.isFinite(Number(targetValue)) ||
+    Number(targetValue) <= 0
+  ) {
+    throw new Error("Target value must be greater than zero");
   }
 
-  if (!unit) {
+  // Unit validation
+  if (!unit || !unit.trim()) {
     throw new Error("Unit is required");
   }
 
+  // Current value validation
+  if (
+    currentValue !== undefined &&
+    currentValue !== null &&
+    (
+      !Number.isFinite(Number(currentValue)) ||
+      Number(currentValue) < 0
+    )
+  ) {
+    throw new Error("Current value must be a non-negative number");
+  }
+
+  const normalizedTarget = Number(targetValue);
+  const normalizedCurrent =
+    currentValue === undefined || currentValue === null
+      ? 0
+      : Number(currentValue);
+
   // Business rule
-  if (currentValue !== undefined && currentValue > targetValue) {
+  if (normalizedCurrent > normalizedTarget) {
     throw new Error("Current value cannot exceed target value");
   }
 
   const goalData = {
-    title,
+    title: title.trim(),
     user: userId,
-    targetValue,
-    unit,
+    targetValue: normalizedTarget,
+    unit: unit.trim(),
   };
 
   // Optional fields
-  if (description) goalData.description = description;
-  if (currentValue !== undefined) goalData.currentValue = currentValue;
+  if (description !== undefined) {
+    goalData.description = description;
+  }
+
+  if (currentValue !== undefined && currentValue !== null) {
+    goalData.currentValue = normalizedCurrent;
+  }
+
   if (startDate) goalData.startDate = startDate;
   if (targetDate) goalData.targetDate = targetDate;
   if (category) goalData.category = category;
   if (priority) goalData.priority = priority;
 
-  // Create goal
   const goal = await Goal.create(goalData);
 
   return goal;
 };
 
-// Get all goals service
+// Get All Goals Service
 const getAllGoalsService = async ({
   userId,
   page = 1,
@@ -75,25 +106,36 @@ const getAllGoalsService = async ({
   page = Number(page);
   limit = Number(limit);
 
-  if (page < 1) page = 1;
-  if (limit < 1) limit = 6;
+  if (!Number.isInteger(page) || page < 1) {
+    page = 1;
+  }
+
+  if (!Number.isInteger(limit) || limit < 1) {
+    limit = 6;
+  }
 
   const skip = (page - 1) * limit;
-
   const query = { user: userId };
 
   // Search
   if (search && search.trim() !== "") {
+    const escapedSearch = search.trim().replace(
+      /[.*+?^${}()|[\]\\]/g,
+      "\\$&",
+    );
+
     query.$or = [
-      { title: { $regex: search.trim(), $options: "i" } },
-      { description: { $regex: search.trim(), $options: "i" } },
+      { title: { $regex: escapedSearch, $options: "i" } },
+      { description: { $regex: escapedSearch, $options: "i" } },
     ];
   }
 
+  // Status filter
   if (status && status !== "all") {
     query.status = status;
   }
 
+  // Category filter
   if (category && category !== "all") {
     query.category = category;
   }
@@ -105,7 +147,10 @@ const getAllGoalsService = async ({
   };
 
   if (sortBy === "targetDate") {
-    sortOption = { targetDate: 1 };
+    sortOption = {
+      targetDate: 1,
+      _id: 1,
+    };
   }
 
   // Fetch goals
@@ -119,8 +164,10 @@ const getAllGoalsService = async ({
   const totalGoals = await Goal.countDocuments(query);
   const totalPages = Math.ceil(totalGoals / limit);
 
-  // Stats
-  const allGoals = await Goal.find({ user: userId }).lean();
+  // Statistics across all of the user's goals
+  const allGoals = await Goal.find({ user: userId })
+    .select("status targetDate")
+    .lean();
 
   let active = 0;
   let completed = 0;
@@ -159,7 +206,7 @@ const getAllGoalsService = async ({
   };
 };
 
-// Update a goal service
+// Edit Goal Service
 const editGoalService = async ({
   goalId,
   userId,
@@ -176,46 +223,57 @@ const editGoalService = async ({
     throw new Error("User not authenticated");
   }
 
-  // Goal ID validation
   if (!mongoose.Types.ObjectId.isValid(goalId)) {
     throw new Error("Invalid goal ID");
   }
 
-  // Find goal with ownership check
   const goal = await Goal.findOne({
     _id: goalId,
     user: userId,
   });
 
-  // Goal existence check
   if (!goal) {
     throw new Error("Goal not found");
   }
 
-  // Allowed status values for editing
+  // Only active and paused statuses may be set manually.
+  // Completion is managed by the progress system.
   const allowedStatuses = ["active", "paused"];
 
-  // Prevent manual completion
-  if (status && !allowedStatuses.includes(status)) {
+  if (status !== undefined && !allowedStatuses.includes(status)) {
     throw new Error("Invalid status update");
   }
 
-  // Prevent targetValue from becoming smaller than current progress
-  if (
-    targetValue !== undefined &&
-    targetValue < goal.currentValue
-  ) {
-    throw new Error(
-      "Target value cannot be less than current progress"
-    );
+  // Validate target value
+  if (targetValue !== undefined) {
+    if (
+      !Number.isFinite(Number(targetValue)) ||
+      Number(targetValue) <= 0
+    ) {
+      throw new Error("Target value must be greater than zero");
+    }
+
+    if (Number(targetValue) < goal.currentValue) {
+      throw new Error(
+        "Target value cannot be less than current progress",
+      );
+    }
   }
 
-  // Safe update pbject
+  // Prevent changing a completed goal back to active or paused.
+  if (goal.status === "completed" && status !== undefined) {
+    throw new Error("A completed goal cannot be reopened through editing");
+  }
+
+  // Prepare permitted updates
   const updates = {};
 
-  // Editable fields only
   if (title !== undefined) {
-    updates.title = title;
+    if (typeof title !== "string" || !title.trim()) {
+      throw new Error("Title cannot be empty");
+    }
+
+    updates.title = title.trim();
   }
 
   if (description !== undefined) {
@@ -223,11 +281,15 @@ const editGoalService = async ({
   }
 
   if (targetValue !== undefined) {
-    updates.targetValue = targetValue;
+    updates.targetValue = Number(targetValue);
   }
 
   if (unit !== undefined) {
-    updates.unit = unit;
+    if (typeof unit !== "string" || !unit.trim()) {
+      throw new Error("Unit cannot be empty");
+    }
+
+    updates.unit = unit.trim();
   }
 
   if (targetDate !== undefined) {
@@ -246,36 +308,28 @@ const editGoalService = async ({
     updates.status = status;
   }
 
-  // Apply updates safely
-  Object.keys(updates).forEach((key) => {
-    goal[key] = updates[key];
-  });
+  Object.assign(goal, updates);
 
   await goal.save();
 
   return goal;
 };
 
-// Get a single todo service
+// Get Single Goal Service
 const getGoalService = async ({ goalId, userId }) => {
-
-  // Authentication check
   if (!userId) {
     throw new Error("User not authenticated");
   }
 
-  // Goal ID validation
   if (!mongoose.Types.ObjectId.isValid(goalId)) {
     throw new Error("Invalid goal ID");
   }
 
-  // Find goal with ownership check
   const goal = await Goal.findOne({
     _id: goalId,
     user: userId,
   }).lean({ virtuals: true });
 
-  // Goal existence check
   if (!goal) {
     throw new Error("Goal not found");
   }
@@ -283,30 +337,138 @@ const getGoalService = async ({ goalId, userId }) => {
   return goal;
 };
 
-// Delete a goal service
+// Delete Single Goal Service
 const deleteGoalService = async ({ goalId, userId }) => {
-  // Authentication check
   if (!userId) {
     throw new Error("User not authenticated");
   }
 
-  // Goal ID validation
   if (!mongoose.Types.ObjectId.isValid(goalId)) {
     throw new Error("Invalid goal ID");
   }
 
-  // Find and delete goal with ownership check
-  const deletedGoal = await Goal.findOneAndDelete({
+  // Find the goal and verify ownership first.
+  const goal = await Goal.findOne({
     _id: goalId,
     user: userId,
-  });
+  }).select("_id");
 
-  // Goal existence check
-  if (!deletedGoal) {
+  if (!goal) {
     throw new Error("Goal not found");
   }
 
-  return deletedGoal;
+  // A transaction keeps the goal and its history consistent.
+  const session = await mongoose.startSession();
+
+  try {
+    let deletedGoal = null;
+
+    await session.withTransaction(async () => {
+      // Recheck ownership inside the transaction.
+      deletedGoal = await Goal.findOneAndDelete({
+        _id: goalId,
+        user: userId,
+      }).session(session);
+
+      if (!deletedGoal) {
+        throw new Error("Goal not found");
+      }
+
+      await GoalProgress.deleteMany(
+        {
+          goal: goal._id,
+          user: userId,
+        },
+        { session },
+      );
+    });
+
+    return deletedGoal;
+  } finally {
+    await session.endSession();
+  }
+};
+
+// Delete All Completed Goals Service
+const deleteCompletedGoalsService = async ({ userId }) => {
+  // Authentication validation
+  if (!userId) {
+    throw new Error("User not authenticated");
+  }
+
+  // Validate the user's ID before database operations.
+  if (!mongoose.Types.ObjectId.isValid(userId)) {
+    throw new Error("Invalid user ID");
+  }
+
+  const session = await mongoose.startSession();
+
+  try {
+    let result = {
+      deletedGoals: 0,
+      deletedProgressEntries: 0,
+    };
+
+    await session.withTransaction(async () => {
+      // Select only completed goals belonging to this user.
+      const completedGoals = await Goal.find({
+        user: userId,
+        status: "completed",
+      })
+        .select("_id")
+        .session(session)
+        .lean();
+
+      // Nothing to delete is a valid outcome.
+      if (completedGoals.length === 0) {
+        result = {
+          deletedGoals: 0,
+          deletedProgressEntries: 0,
+        };
+
+        return;
+      }
+
+      const completedGoalIds = completedGoals.map(
+        (goal) => goal._id,
+      );
+
+      // Delete the associated history for these goals only.
+      const progressDeletion = await GoalProgress.deleteMany(
+        {
+          user: userId,
+          goal: { $in: completedGoalIds },
+        },
+        { session },
+      );
+
+      // Delete only the completed goals selected above.
+      const goalDeletion = await Goal.deleteMany(
+        {
+          _id: { $in: completedGoalIds },
+          user: userId,
+          status: "completed",
+        },
+        { session },
+      );
+
+      result = {
+        deletedGoals: goalDeletion.deletedCount,
+        deletedProgressEntries: progressDeletion.deletedCount,
+      };
+    });
+
+    return {
+      message:
+        result.deletedGoals === 0
+          ? "No completed goals found"
+          : "Completed goals deleted successfully",
+      deletedGoals: result.deletedGoals,
+      deletedProgressEntries: result.deletedProgressEntries,
+    };
+  } finally {
+    await session.endSession();
+  }
 };
 
 // Exports
@@ -316,4 +478,5 @@ module.exports = {
   editGoalService,
   getGoalService,
   deleteGoalService,
+  deleteCompletedGoalsService,
 };
