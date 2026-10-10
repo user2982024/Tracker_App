@@ -10,13 +10,11 @@ import GoalsList from "../components/Goals/GoalsList";
 import GoalsPagination from "../components/Goals/GoalsPagination";
 import Modal from "../components/UI/Modal";
 
-import {
-  getGoals,
-  deleteGoal,
-} from "../services/goalsServices";
+import { getGoals, deleteGoal } from "../services/goalsServices";
+
+import { Trash2 } from "lucide-react";
 
 const GoalsPage = () => {
-
   const [goals, setGoals] = useState([]);
   const [stats, setStats] = useState(null);
 
@@ -38,27 +36,21 @@ const GoalsPage = () => {
 
   // Debounce search
   useEffect(() => {
-
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
     }, 500);
 
     return () => clearTimeout(timer);
-
   }, [search]);
 
   // Reset page when filters/search changes
   useEffect(() => {
-
     setPage(1);
-
   }, [debouncedSearch, status, sortBy]);
 
   // Fetch goals
   const fetchGoals = async () => {
-
     try {
-
       setLoading(true);
       setError(null);
 
@@ -66,10 +58,7 @@ const GoalsPage = () => {
 
       // Search
       if (debouncedSearch.trim()) {
-        queryParams.append(
-          "search",
-          debouncedSearch.trim()
-        );
+        queryParams.append("search", debouncedSearch.trim());
       }
 
       // Status filter
@@ -86,46 +75,30 @@ const GoalsPage = () => {
       queryParams.append("page", page);
       queryParams.append("limit", 9);
 
-      const data = await getGoals(
-        `?${queryParams.toString()}`
-      );
+      const data = await getGoals(`?${queryParams.toString()}`);
 
       setGoals(data.data.goals || []);
 
       setStats(data.data.stats || null);
 
-      setPagination(
-        data.data.pagination || null
-      );
-
+      setPagination(data.data.pagination || null);
     } catch (error) {
-
-      setError(
-        error.message || "Failed to fetch goals"
-      );
-
+      setError(error.message || "Failed to fetch goals");
     } finally {
-
       setLoading(false);
-
     }
-
   };
 
   // Open delete modal
   const handleDeleteClick = (goalId) => {
-
     setGoalToDelete(goalId);
 
     setIsDeleteModalOpen(true);
-
   };
 
   // Confirm delete
   const handleConfirmDelete = async () => {
-
     try {
-
       await deleteGoal(goalToDelete);
 
       // Refresh goals
@@ -139,38 +112,23 @@ const GoalsPage = () => {
 
       // Success toast
       toast.success("Goal deleted successfully");
-
     } catch (error) {
-
-      toast.error(
-        error.message || "Failed to delete goal"
-      );
-
+      toast.error(error.message || "Failed to delete goal");
     }
-
   };
 
   // Refresh goals
   useEffect(() => {
-
     fetchGoals();
-
   }, [debouncedSearch, page, status, sortBy]);
 
   return (
     <div className="p-6 space-y-6">
-
       {/* Header */}
-      <GoalsHeader
-        search={search}
-        setSearch={setSearch}
-      />
+      <GoalsHeader search={search} setSearch={setSearch} />
 
       {/* Stats */}
-      <GoalsStats
-        stats={stats}
-        goals={goals}
-      />
+      <GoalsStats stats={stats} goals={goals} />
 
       {/* Overall Progress */}
       <GoalsProgress stats={stats} />
@@ -197,18 +155,32 @@ const GoalsPage = () => {
       )}
 
       {/* Goals List */}
-      <GoalsList
-        goals={goals}
-        loading={loading}
-        onDelete={handleDeleteClick}
-      />
+      <GoalsList goals={goals} loading={loading} onDelete={handleDeleteClick} />
 
       {/* Goals Pagination */}
-      <GoalsPagination
-        pagination={pagination}
-        page={page}
-        setPage={setPage}
-      />
+      <GoalsPagination pagination={pagination} page={page} setPage={setPage} />
+
+      {/* Delete Completed Goals Button */}
+      <div className="flex justify-end pt-2">
+        <button
+          type="button"
+          className="
+      inline-flex items-center justify-center gap-2
+      px-4 py-2.5
+      rounded-xl
+      border border-red-300
+      bg-white
+      text-red-600 text-sm font-medium
+      hover:bg-red-50
+      hover:border-red-300
+      transition-colors duration-200
+      hover:cursor-pointer
+    "
+        >
+          <Trash2 size={16} />
+          Delete Completed
+        </button>
+      </div>
 
       {/* Delete Goal Modal */}
       <Modal
@@ -255,13 +227,10 @@ const GoalsPage = () => {
           </>
         }
       >
-        Are you sure you want to delete this goal?
-        This action cannot be undone.
+        Are you sure you want to delete this goal? This action cannot be undone.
       </Modal>
-
     </div>
   );
-
 };
 
 export default GoalsPage;
