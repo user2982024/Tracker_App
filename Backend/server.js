@@ -1,12 +1,16 @@
+
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./utils/db");
 const cookieParser = require("cookie-parser");
+
 const authRoutes = require("./routes/authRoutes");
 const notesRoutes = require("./routes/notesRoutes");
 const todoRoutes = require("./routes/todoRoutes");
 const goalRoutes = require("./routes/goalRoutes");
+const habitRoutes = require("./routes/habitRoutes");
+
 const errorHandler = require("./middlewares/errorMiddleware");
 
 // Load environment variables
@@ -15,10 +19,12 @@ dotenv.config();
 const app = express();
 
 // Enable CORS
-app.use(cors({
-  origin: "http://localhost:5173",
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 // Middleware
 app.use(express.json());
@@ -36,19 +42,22 @@ app.use("/api/todos", todoRoutes);
 // Goal routes
 app.use("/api/goals", goalRoutes);
 
+// Habit routes
+app.use("/api/habits", habitRoutes);
+
 // Error handling middleware
 app.use(errorHandler);
 
 // Start server
 const startServer = async () => {
-    // connect DB first
-    await connectDB(); 
+  // Connect to the database first
+  await connectDB();
 
-    const PORT = process.env.PORT || 5000;
+  const PORT = process.env.PORT || 5000;
 
-    app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-    });
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 };
 
 startServer();
