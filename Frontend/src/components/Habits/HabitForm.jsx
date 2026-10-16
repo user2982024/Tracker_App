@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Loader2, Pin, X } from "lucide-react";
 
@@ -128,8 +127,7 @@ const HabitForm = ({
     }
 
     if (description.length > 1000) {
-      nextErrors.description =
-        "Description cannot exceed 1000 characters.";
+      nextErrors.description = "Description cannot exceed 1000 characters.";
     }
 
     if (!CATEGORIES.some((item) => item.value === form.category)) {
@@ -144,16 +142,15 @@ const HabitForm = ({
       nextErrors.frequency = "Please select a valid frequency.";
     }
 
-    if (
-      form.frequency === "specific_days" &&
-      form.daysOfWeek.length === 0
-    ) {
+    if (form.frequency === "specific_days" && form.daysOfWeek.length === 0) {
       nextErrors.daysOfWeek = "Select at least one day.";
     }
 
-    if (form.daysOfWeek.some(
-      (day) => !WEEKDAYS.some((item) => item.value === day),
-    )) {
+    if (
+      form.daysOfWeek.some(
+        (day) => !WEEKDAYS.some((item) => item.value === day),
+      )
+    ) {
       nextErrors.daysOfWeek = "One or more selected days are invalid.";
     }
 
@@ -186,10 +183,7 @@ const HabitForm = ({
       category: form.category,
       priority: form.priority,
       frequency: form.frequency,
-      daysOfWeek:
-        form.frequency === "specific_days"
-          ? form.daysOfWeek
-          : [],
+      daysOfWeek: form.frequency === "specific_days" ? form.daysOfWeek : [],
       unit: form.unit.trim(),
       isPinned: form.isPinned,
     };
@@ -223,18 +217,6 @@ const HabitForm = ({
               : "Build a routine by setting up a habit."}
           </p>
         </div>
-
-        {onCancel && (
-          <button
-            type="button"
-            onClick={onCancel}
-            disabled={loading}
-            aria-label="Close habit form"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-gray-500 transition hover:bg-gray-100 disabled:opacity-50"
-          >
-            <X size={19} />
-          </button>
-        )}
       </div>
 
       <div>
@@ -274,9 +256,7 @@ const HabitForm = ({
         <textarea
           id="habit-description"
           value={form.description}
-          onChange={(event) =>
-            updateField("description", event.target.value)
-          }
+          onChange={(event) => updateField("description", event.target.value)}
           placeholder="Why is this habit important to you?"
           rows={3}
           maxLength={1000}
@@ -286,9 +266,7 @@ const HabitForm = ({
         />
         <div className="mt-1 flex justify-between gap-3">
           {errors.description ? (
-            <p className="text-xs text-rose-600">
-              {errors.description}
-            </p>
+            <p className="text-xs text-rose-600">{errors.description}</p>
           ) : (
             <span />
           )}
@@ -399,9 +377,7 @@ const HabitForm = ({
               })}
             </div>
             {errors.daysOfWeek && (
-              <p className="mt-2 text-xs text-rose-600">
-                {errors.daysOfWeek}
-              </p>
+              <p className="mt-2 text-xs text-rose-600">{errors.daysOfWeek}</p>
             )}
           </fieldset>
         )}
@@ -424,18 +400,14 @@ const HabitForm = ({
             min="0.01"
             step="any"
             value={form.targetValue}
-            onChange={(event) =>
-              updateField("targetValue", event.target.value)
-            }
+            onChange={(event) => updateField("targetValue", event.target.value)}
             placeholder="e.g. 30"
             disabled={loading}
             aria-invalid={Boolean(errors.targetValue)}
             className={inputClass("targetValue")}
           />
           {errors.targetValue && (
-            <p className="mt-1 text-xs text-rose-600">
-              {errors.targetValue}
-            </p>
+            <p className="mt-1 text-xs text-rose-600">{errors.targetValue}</p>
           )}
         </div>
 
@@ -500,11 +472,7 @@ const HabitForm = ({
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading && <Loader2 size={16} className="animate-spin" />}
-          {loading
-            ? "Saving..."
-            : isEditing
-              ? "Save Changes"
-              : "Create Habit"}
+          {loading ? "Saving..." : isEditing ? "Save Changes" : "Create Habit"}
         </button>
       </div>
     </form>
