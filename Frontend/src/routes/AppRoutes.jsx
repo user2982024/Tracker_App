@@ -1,4 +1,3 @@
-
 import { Routes, Route } from "react-router-dom";
 
 // Route guards
@@ -24,6 +23,7 @@ import TodoEditPage from "../pages/TodoEditPage";
 import GoalEditPage from "../pages/GoalEditPage";
 import GoalViewPage from "../pages/GoalViewPage";
 import GoalProgressHistoryPage from "../pages/GoalProgressHistoryPage";
+import HabitHistory from "../components/Habits/HabitHistory";
 
 // Forms
 import AuthForm from "../components/Auth/AuthForm";
@@ -75,11 +75,15 @@ const AppRoutes = () => {
           <Route path="goals" element={<GoalsPage />} />
           <Route path="goals/create" element={<GoalForm />} />
           <Route path="goals/edit/:id" element={<GoalEditPage />} />
-          <Route path="goals/:id/history" element={<GoalProgressHistoryPage />} />
+          <Route
+            path="goals/:id/history"
+            element={<GoalProgressHistoryPage />}
+          />
           <Route path="goals/:id" element={<GoalViewPage />} />
 
           {/* Habits */}
           <Route path="habits" element={<Habits />} />
+          <Route path="habits/:habitId/history" element={<HabitHistory />} />
         </Route>
       </Route>
     </Routes>

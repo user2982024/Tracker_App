@@ -1,6 +1,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 import {
   Archive,
   CheckCircle2,
@@ -19,7 +20,6 @@ import {
 import HabitStats from "../components/Habits/HabitStats";
 import HabitCard from "../components/Habits/HabitCard";
 import HabitForm from "../components/Habits/HabitForm";
-import HabitHistory from "../components/Habits/HabitHistory";
 import HabitFormModal from "../components/Habits/HabitFormModal";
 
 import {
@@ -72,6 +72,7 @@ const getCompletionDate = (completion) => {
 };
 
 const Habits = () => {
+  const navigate = useNavigate();
   const [habits, setHabits] = useState([]);
   const [stats, setStats] = useState(null);
   const [pagination, setPagination] = useState(null);
@@ -92,7 +93,6 @@ const Habits = () => {
 
   const [habitToDelete, setHabitToDelete] = useState(null);
   const [habitToArchive, setHabitToArchive] = useState(null);
-  const [historyHabit, setHistoryHabit] = useState(null);
 
   const [completionByHabit, setCompletionByHabit] = useState({});
   const [streakByHabit, setStreakByHabit] = useState({});
@@ -396,13 +396,17 @@ const Habits = () => {
     }
   };
 
-  const loadHistory = useCallback(
-    (habitId, historyPage, limit) =>
-      getHabitHistory(
-        habitId,
-        `?page=${historyPage}&limit=${limit}`,
-      ),
-    [],
+  // Navigate to the dedicated history page with the selected habit ID.
+  const handleViewHistory = useCallback(
+    (habit) => {
+      if (!habit?._id) {
+        toast.error("Unable to open history: habit ID is missing.");
+        return;
+      }
+
+      navigate(`/app/habits/${habit._id}/history`);
+    },
+    [navigate],
   );
 
   const currentPage = Number(pagination?.currentPage ?? page);
@@ -571,15 +575,6 @@ const Habits = () => {
         />
       </HabitFormModal>
 
-      {historyHabit && (
-        <HabitHistory
-          key={historyHabit._id}
-          habit={historyHabit}
-          getHistory={loadHistory}
-          onClose={() => setHistoryHabit(null)}
-        />
-      )}
-
       <section aria-label={showArchived ? "Archived habits" : "Your habits"}>
         <div className="mb-4 flex items-center justify-between gap-3">
           <div>
@@ -661,7 +656,7 @@ const Habits = () => {
                   onEdit={handleEditClick}
                   onArchive={handleArchiveClick}
                   onDelete={setHabitToDelete}
-                  onViewHistory={setHistoryHabit}
+                  onViewHistory={handleViewHistory}
                 />
               );
             })}
