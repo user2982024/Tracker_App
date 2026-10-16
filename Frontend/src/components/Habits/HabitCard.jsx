@@ -1,0 +1,304 @@
+
+import {
+  Archive,
+  CalendarDays,
+  Check,
+  CheckCircle2,
+  Circle,
+  Clock3,
+  Flame,
+  MoreHorizontal,
+  Pencil,
+  Pin,
+  RotateCcw,
+  Target,
+  Trash2,
+} from "lucide-react";
+import { useState } from "react";
+
+const WEEKDAYS = [
+  { value: 0, label: "Sun" },
+  { value: 1, label: "Mon" },
+  { value: 2, label: "Tue" },
+  { value: 3, label: "Wed" },
+  { value: 4, label: "Thu" },
+  { value: 5, label: "Fri" },
+  { value: 6, label: "Sat" },
+];
+
+const PRIORITY_STYLES = {
+  low: "bg-gray-100 text-gray-600",
+  medium: "bg-amber-50 text-amber-700",
+  high: "bg-rose-50 text-rose-700",
+};
+
+const CATEGORY_STYLES = {
+  health: "bg-emerald-50 text-emerald-700",
+  career: "bg-blue-50 text-blue-700",
+  learning: "bg-violet-50 text-violet-700",
+  finance: "bg-amber-50 text-amber-700",
+  personal: "bg-pink-50 text-pink-700",
+};
+
+const formatLabel = (value = "") =>
+  String(value)
+    .replace(/[_-]/g, " ")
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+const HabitCard = ({
+  habit,
+  completed = false,
+  completion = null,
+  streak = 0,
+  loading = false,
+  onToggleComplete,
+  onEdit,
+  onArchive,
+  onDelete,
+  onViewHistory,
+}) => {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  if (!habit) return null;
+
+  const {
+    _id,
+    title = "Untitled habit",
+    description = "",
+    category = "personal",
+    priority = "medium",
+    frequency = "daily",
+    daysOfWeek = [],
+    targetValue,
+    unit = "",
+    isPinned = false,
+    isArchived = false,
+  } = habit;
+
+  const normalizedPriority = String(priority).toLowerCase();
+  const normalizedCategory = String(category).toLowerCase();
+
+  const priorityStyle =
+    PRIORITY_STYLES[normalizedPriority] || PRIORITY_STYLES.medium;
+
+  const categoryStyle =
+    CATEGORY_STYLES[normalizedCategory] || CATEGORY_STYLES.personal;
+
+  const scheduledDays = WEEKDAYS.filter((day) =>
+    daysOfWeek.includes(day.value),
+  );
+
+  const handleAction = (callback, ...args) => {
+    setMenuOpen(false);
+    if (!loading && typeof callback === "function") {
+      callback(...args);
+    }
+  };
+
+  const handleToggle = () => {
+    if (!loading && typeof onToggleComplete === "function") {
+      onToggleComplete(habit, completed, completion);
+    }
+  };
+
+  return (
+    <article
+      className={`rounded-2xl border bg-white p-5 shadow-sm transition-all duration-200 hover:shadow-md ${
+        completed
+          ? "border-emerald-100"
+          : "border-gray-100"
+      } ${isArchived ? "opacity-70" : ""}`}
+    >
+      <div className="flex items-start gap-3">
+        <button
+          type="button"
+          onClick={handleToggle}
+          disabled={loading || isArchived}
+          aria-label={
+            completed
+              ? `Undo completion of ${title}`
+              : `Mark ${title} as completed`
+          }
+          aria-pressed={completed}
+          className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+            completed
+              ? "border-emerald-500 bg-emerald-500 text-white"
+              : "border-gray-300 text-transparent hover:border-emerald-500 hover:text-emerald-500"
+          }`}
+        >
+          {loading ? (
+            <span
+              className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
+              aria-hidden="true"
+            />
+          ) : completed ? (
+            <Check size={16} strokeWidth={3} />
+          ) : (
+            <Circle size={16} />
+          )}
+        </button>
+
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <h3
+              className={`break-words text-base font-semibold ${
+                completed
+                  ? "text-gray-500 line-through"
+                  : "text-gray-900"
+              }`}
+            >
+              {title}
+            </h3>
+
+            {isPinned && (
+              <Pin
+                size={14}
+                className="shrink-0 text-amber-500"
+                aria-label="Pinned habit"
+              />
+            )}
+
+            {completed && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
+                <CheckCircle2 size={12} />
+                Completed
+              </span>
+            )}
+          </div>
+
+          {description && (
+            <p className="mt-1 whitespace-pre-line break-words text-sm leading-5 text-gray-500">
+              {description}
+            </p>
+          )}
+
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <span
+              className={`rounded-full px-2.5 py-1 text-xs font-medium ${categoryStyle}`}
+            >
+              {formatLabel(category)}
+            </span>
+
+            <span
+              className={`rounded-full px-2.5 py-1 text-xs font-medium ${priorityStyle}`}
+            >
+              {formatLabel(priority)} priority
+            </span>
+
+            {frequency === "daily" ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-gray-50 px-2.5 py-1 text-xs text-gray-600">
+                <CalendarDays size={12} />
+                Every day
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 rounded-full bg-gray-50 px-2.5 py-1 text-xs text-gray-600">
+                <CalendarDays size={12} />
+                {scheduledDays.length > 0
+                  ? scheduledDays.map((day) => day.label).join(", ")
+                  : "Selected days"}
+              </span>
+            )}
+          </div>
+
+          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-500">
+            {targetValue !== undefined && targetValue !== null && (
+              <span className="inline-flex items-center gap-1.5">
+                <Target size={14} />
+                Target: {targetValue}
+                {unit ? ` ${unit}` : ""}
+              </span>
+            )}
+
+            {streak > 0 && (
+              <span className="inline-flex items-center gap-1.5 font-medium text-orange-600">
+                <Flame size={14} />
+                {streak} day{streak === 1 ? "" : "s"} streak
+              </span>
+            )}
+
+            {completion?.createdAt && (
+              <span className="inline-flex items-center gap-1.5">
+                <Clock3 size={14} />
+                Completed
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="relative shrink-0">
+          <button
+            type="button"
+            onClick={() => setMenuOpen((previous) => !previous)}
+            disabled={loading}
+            aria-label={`Actions for ${title}`}
+            aria-expanded={menuOpen}
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800 disabled:opacity-50"
+          >
+            <MoreHorizontal size={20} />
+          </button>
+
+          {menuOpen && (
+            <>
+              <button
+                type="button"
+                aria-label="Close actions menu"
+                className="fixed inset-0 z-10 cursor-default"
+                onClick={() => setMenuOpen(false)}
+              />
+
+              <div className="absolute right-0 top-10 z-20 w-48 rounded-xl border border-gray-100 bg-white p-1.5 shadow-lg">
+                {onEdit && (
+                  <button
+                    type="button"
+                    onClick={() => handleAction(onEdit, habit)}
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    <Pencil size={15} />
+                    Edit habit
+                  </button>
+                )}
+
+                {onViewHistory && (
+                  <button
+                    type="button"
+                    onClick={() => handleAction(onViewHistory, habit)}
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    <CalendarDays size={15} />
+                    View history
+                  </button>
+                )}
+
+                {onArchive && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleAction(onArchive, habit, !isArchived)
+                    }
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50"
+                  >
+                    <Archive size={15} />
+                    {isArchived ? "Restore habit" : "Archive habit"}
+                  </button>
+                )}
+
+                {onDelete && (
+                  <button
+                    type="button"
+                    onClick={() => handleAction(onDelete, habit)}
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-rose-600 hover:bg-rose-50"
+                  >
+                    <Trash2 size={15} />
+                    Delete habit
+                  </button>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+};
+
+export default HabitCard;

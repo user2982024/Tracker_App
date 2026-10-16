@@ -1,9 +1,8 @@
+
 import { Routes, Route } from "react-router-dom";
 
-// Protected Routes
+// Route guards
 import ProtectedRoutes from "./ProtectedRoutes";
-
-// Public Routes
 import PublicRoutes from "./PublicRoutes";
 
 // Layouts
@@ -16,9 +15,10 @@ import Dashboard from "../pages/Dashboard";
 import NotesPage from "../pages/NotesPage";
 import TodosPage from "../pages/TodosPage";
 import GoalsPage from "../pages/GoalsPage";
-import HabbitsPage from "../pages/HabbitsPage";
+import Habits from "../pages/Habits";
 import ArchivedNotesPage from "../pages/ArchivedNotesPage";
 import NoteViewPage from "../pages/NoteViewPage";
+import NoteEditPage from "../pages/NoteEditPage";
 import TodoViewPage from "../pages/TodoViewPage";
 import TodoEditPage from "../pages/TodoEditPage";
 import GoalEditPage from "../pages/GoalEditPage";
@@ -27,16 +27,12 @@ import GoalProgressHistoryPage from "../pages/GoalProgressHistoryPage";
 
 // Forms
 import AuthForm from "../components/Auth/AuthForm";
-import NoteEditPage from "../pages/NoteEditPage";
 import GoalForm from "../components/Goals/GoalForm";
 
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* ==================================================
-          Public Routes
-          ================================================== */}
-
+      {/* Public routes */}
       <Route element={<PublicRoutes />}>
         <Route path="/" element={<LandingPage />} />
 
@@ -59,55 +55,31 @@ const AppRoutes = () => {
         />
       </Route>
 
-      {/* ==================================================
-          Protected Routes
-          ================================================== */}
-
+      {/* Protected application routes */}
       <Route element={<ProtectedRoutes />}>
         <Route path="/app" element={<AppLayout />}>
-          {/* Dashboard */}
           <Route index element={<Dashboard />} />
 
-          {/* ==================================================
-              Notes Routes
-              ================================================== */}
-
+          {/* Notes */}
           <Route path="notes" element={<NotesPage />} />
           <Route path="notes/archive" element={<ArchivedNotesPage />} />
           <Route path="notes/:id" element={<NoteViewPage />} />
           <Route path="notes/:id/edit" element={<NoteEditPage />} />
 
-          {/* ==================================================
-              Todos Routes
-              ================================================== */}
-
+          {/* To-Dos */}
           <Route path="todos" element={<TodosPage />} />
           <Route path="todos/edit/:id" element={<TodoEditPage />} />
           <Route path="todos/:id" element={<TodoViewPage />} />
 
-          {/* ==================================================
-              Goals Routes
-              ================================================== */}
-
+          {/* Goals */}
           <Route path="goals" element={<GoalsPage />} />
-
           <Route path="goals/create" element={<GoalForm />} />
-
           <Route path="goals/edit/:id" element={<GoalEditPage />} />
-
+          <Route path="goals/:id/history" element={<GoalProgressHistoryPage />} />
           <Route path="goals/:id" element={<GoalViewPage />} />
 
-          {/* Goal Progress History */}
-          <Route
-            path="goals/:id/history"
-            element={<GoalProgressHistoryPage />}
-          />
-
-          {/* ==================================================
-              Habits Routes
-              ================================================== */}
-
-          <Route path="habits" element={<HabbitsPage />} />
+          {/* Habits */}
+          <Route path="habits" element={<Habits />} />
         </Route>
       </Route>
     </Routes>

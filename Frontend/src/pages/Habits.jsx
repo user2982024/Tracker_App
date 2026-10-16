@@ -1,0 +1,836 @@
+
+import { useCallback, useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
+import {
+  Archive,
+  CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
+  CircleAlert,
+  ClipboardList,
+  Loader2,
+  Plus,
+  RefreshCw,
+  Search,
+  Trash2,
+  X,
+} from "lucide-react";
+
+import HabitStats from "../components/Habits/HabitStats";
+import HabitCard from "../components/Habits/HabitCard";
+import HabitForm from "../components/Habits/HabitForm";
+import HabitHistory from "../components/Habits/HabitHistory";
+import HabitFormModal from "../components/Habits/HabitFormModal";
+
+import {
+  getHabits,
+  createHabit,
+  updateHabit,
+  archiveHabit,
+  deleteHabit,
+  completeHabit,
+  undoHabitCompletion,
+  getHabitHistory,
+  getHabitStreak,
+} from "../services/habitServices";
+
+const PAGE_SIZE = 9;
+
+const getToday = () => {
+  const now = new Date();
+
+  return [
+    now.getFullYear(),
+    String(now.getMonth() + 1).padStart(2, "0"),
+    String(now.getDate()).padStart(2, "0"),
+  ].join("-");
+};
+
+const getResponseData = (response) => response?.data ?? response ?? {};
+
+const getCompletionDate = (completion) => {
+  if (!completion?.date) return null;
+
+  const rawDate = completion.date;
+
+  if (
+    typeof rawDate === "string" &&
+    /^\d{4}-\d{2}-\d{2}$/.test(rawDate)
+  ) {
+    return rawDate;
+  }
+
+  const date = new Date(rawDate);
+
+  if (Number.isNaN(date.getTime())) return null;
+
+  return [
+    date.getUTCFullYear(),
+    String(date.getUTCMonth() + 1).padStart(2, "0"),
+    String(date.getUTCDate()).padStart(2, "0"),
+  ].join("-");
+};
+
+const Habits = () => {
+  const [habits, setHabits] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [pagination, setPagination] = useState(null);
+
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [actionId, setActionId] = useState(null);
+  const [error, setError] = useState("");
+
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const [showArchived, setShowArchived] = useState(false);
+
+  const [showForm, setShowForm] = useState(false);
+  const [selectedHabit, setSelectedHabit] = useState(null);
+
+  const [habitToDelete, setHabitToDelete] = useState(null);
+  const [habitToArchive, setHabitToArchive] = useState(null);
+  const [historyHabit, setHistoryHabit] = useState(null);
+
+  const [completionByHabit, setCompletionByHabit] = useState({});
+  const [streakByHabit, setStreakByHabit] = useState({});
+
+  const today = useMemo(() => getToday(), []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search.trim());
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, showArchived]);
+
+  const fetchHabits = useCallback(
+    async ({ silent = false } = {}) => {
+      try {
+        if (silent) {
+          setRefreshing(true);
+        } else {
+          setLoading(true);
+        }
+
+        setError("");
+
+        const params = new URLSearchParams({
+          page: String(page),
+          limit: String(PAGE_SIZE),
+          isArchived: String(showArchived),
+        });
+
+        if (debouncedSearch) {
+          params.set("search", debouncedSearch);
+        }
+
+        const response = await getHabits(`?${params.toString()}`);
+        const result = getResponseData(response);
+
+        const nextHabits = Array.isArray(result.habits)
+          ? result.habits
+          : [];
+
+        setHabits(nextHabits);
+        setStats(result.stats ?? null);
+        setPagination(result.pagination ?? null);
+
+        const habitIds = new Set(nextHabits.map((habit) => habit._id));
+
+        setCompletionByHabit((previous) =>
+          Object.fromEntries(
+            Object.entries(previous).filter(([id]) => habitIds.has(id)),
+          ),
+        );
+
+        setStreakByHabit((previous) =>
+          Object.fromEntries(
+            Object.entries(previous).filter(([id]) => habitIds.has(id)),
+          ),
+        );
+      } catch (err) {
+        setError(err?.message || "Failed to load habits.");
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
+      }
+    },
+    [page, showArchived, debouncedSearch],
+  );
+
+  useEffect(() => {
+    fetchHabits();
+  }, [fetchHabits]);
+
+  // Load today's completion and current streak for each visible habit.
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadHabitDetails = async () => {
+      if (!habits.length || showArchived) {
+        setCompletionByHabit({});
+        setStreakByHabit({});
+        return;
+      }
+
+      const results = await Promise.all(
+        habits.map(async (habit) => {
+          try {
+            const [historyResponse, streakResponse] = await Promise.all([
+              getHabitHistory(
+                habit._id,
+                `?startDate=${today}&endDate=${today}&page=1&limit=1`,
+              ),
+              getHabitStreak(habit._id),
+            ]);
+
+            const historyData = getResponseData(historyResponse);
+            const streakData = getResponseData(streakResponse);
+
+            const records = Array.isArray(historyData.history)
+              ? historyData.history
+              : Array.isArray(historyData.completions)
+                ? historyData.completions
+                : Array.isArray(historyData.data?.history)
+                  ? historyData.data.history
+                  : Array.isArray(historyData.data?.completions)
+                    ? historyData.data.completions
+                    : Array.isArray(historyData)
+                      ? historyData
+                      : [];
+
+            const completion =
+              records.find(
+                (record) => getCompletionDate(record) === today,
+              ) ?? null;
+
+            const streak =
+              Number(
+                streakData.streak ??
+                  streakData.currentStreak ??
+                  streakData.data?.streak ??
+                  streakData.data?.currentStreak ??
+                  0,
+              ) || 0;
+
+            return {
+              id: habit._id,
+              completion,
+              streak,
+            };
+          } catch {
+            return {
+              id: habit._id,
+              completion: null,
+              streak: 0,
+            };
+          }
+        }),
+      );
+
+      if (cancelled) return;
+
+      setCompletionByHabit((previous) => {
+        const next = { ...previous };
+
+        results.forEach(({ id, completion }) => {
+          next[id] = completion;
+        });
+
+        return next;
+      });
+
+      setStreakByHabit((previous) => {
+        const next = { ...previous };
+
+        results.forEach(({ id, streak }) => {
+          next[id] = streak;
+        });
+
+        return next;
+      });
+    };
+
+    loadHabitDetails();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [habits, today, showArchived]);
+
+  // Open the modal for creating a habit.
+  const handleCreateClick = () => {
+    if (saving || showArchived) return;
+
+    setSelectedHabit(null);
+    setShowForm(true);
+  };
+
+  // Open the same modal for editing a habit.
+  const handleEditClick = (habit) => {
+    if (saving) return;
+
+    setSelectedHabit(habit);
+    setShowForm(true);
+  };
+
+  const handleCloseForm = useCallback(() => {
+    if (saving) return;
+
+    setShowForm(false);
+    setSelectedHabit(null);
+  }, [saving]);
+
+  // Create or update a habit without navigating away.
+  const handleSaveHabit = async (habitData) => {
+    if (saving) return;
+
+    try {
+      setSaving(true);
+
+      if (selectedHabit?._id) {
+        await updateHabit(selectedHabit._id, habitData);
+        toast.success("Habit updated successfully.");
+      } else {
+        await createHabit(habitData);
+        toast.success("Habit created successfully.");
+      }
+
+      setShowForm(false);
+      setSelectedHabit(null);
+
+      await fetchHabits({ silent: true });
+    } catch (err) {
+      toast.error(err?.message || "Failed to save habit.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleToggleComplete = async (
+    habit,
+    completed,
+    completion,
+  ) => {
+    if (!habit?._id || actionId) return;
+
+    try {
+      setActionId(habit._id);
+
+      if (completed) {
+        if (!completion?._id) {
+          toast.error(
+            "Could not identify this completion. Refresh and try again.",
+          );
+          return;
+        }
+
+        await undoHabitCompletion(completion._id);
+        toast.success("Habit completion undone.");
+      } else {
+        await completeHabit(habit._id, { date: today });
+        toast.success("Habit completed. Great work!");
+      }
+
+      await fetchHabits({ silent: true });
+    } catch (err) {
+      toast.error(err?.message || "Failed to update habit completion.");
+    } finally {
+      setActionId(null);
+    }
+  };
+
+  const handleArchiveClick = (habit, shouldArchive) => {
+    setHabitToArchive({ habit, shouldArchive });
+  };
+
+  const handleConfirmArchive = async () => {
+    if (!habitToArchive || actionId) return;
+
+    const { habit, shouldArchive } = habitToArchive;
+
+    try {
+      setActionId(habit._id);
+
+      await archiveHabit(habit._id, shouldArchive);
+
+      toast.success(
+        shouldArchive
+          ? "Habit archived successfully."
+          : "Habit restored successfully.",
+      );
+
+      setHabitToArchive(null);
+      await fetchHabits({ silent: true });
+    } catch (err) {
+      toast.error(err?.message || "Failed to update habit archive status.");
+    } finally {
+      setActionId(null);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!habitToDelete || actionId) return;
+
+    try {
+      setActionId(habitToDelete._id);
+
+      await deleteHabit(habitToDelete._id);
+
+      toast.success("Habit deleted successfully.");
+      setHabitToDelete(null);
+
+      await fetchHabits({ silent: true });
+    } catch (err) {
+      toast.error(err?.message || "Failed to delete habit.");
+    } finally {
+      setActionId(null);
+    }
+  };
+
+  const loadHistory = useCallback(
+    (habitId, historyPage, limit) =>
+      getHabitHistory(
+        habitId,
+        `?page=${historyPage}&limit=${limit}`,
+      ),
+    [],
+  );
+
+  const currentPage = Number(pagination?.currentPage ?? page);
+  const totalPages = Number(pagination?.totalPages ?? 1);
+
+  const totalHabits = Number(
+    pagination?.totalHabits ?? stats?.totalActiveHabits ?? 0,
+  );
+
+  const displayedHabits = useMemo(
+    () =>
+      [...habits].sort((a, b) => {
+        if (Boolean(a.isPinned) !== Boolean(b.isPinned)) {
+          return Number(Boolean(b.isPinned)) - Number(Boolean(a.isPinned));
+        }
+
+        return new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0);
+      }),
+    [habits],
+  );
+
+  const scheduledToday = Number(stats?.scheduledToday ?? 0);
+  const completedToday = Number(stats?.completedToday ?? 0);
+
+  return (
+    <main className="space-y-6 p-4 sm:p-6 lg:p-8">
+      <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <div className="flex items-center gap-2">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+            <ClipboardList size={23} />
+          </div>
+
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+              Daily Habits
+            </h1>
+            <p className="mt-1 text-sm text-gray-500">
+              Build consistency, one day at a time.
+            </p>
+          </div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleCreateClick}
+          disabled={showArchived || saving}
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <Plus size={18} />
+          Create Habit
+        </button>
+      </header>
+
+      {!showArchived && (
+        <HabitStats
+          stats={{
+            ...stats,
+            totalActiveHabits: stats?.totalActiveHabits ?? totalHabits,
+          }}
+        />
+      )}
+
+      <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="relative w-full lg:max-w-md">
+            <Search
+              size={18}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
+            />
+
+            <input
+              type="search"
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search your habits..."
+              aria-label="Search habits"
+              className="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-10 pr-4 text-sm outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100"
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setShowArchived((previous) => !previous)}
+              className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition ${
+                showArchived
+                  ? "border-blue-200 bg-blue-50 text-blue-700"
+                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
+              }`}
+            >
+              <Archive size={16} />
+              {showArchived ? "View Active Habits" : "View Archived"}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => fetchHabits({ silent: true })}
+              disabled={refreshing || loading}
+              aria-label="Refresh habits"
+              className="inline-flex items-center gap-2 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 disabled:opacity-50"
+            >
+              {refreshing ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <RefreshCw size={16} />
+              )}
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        {!showArchived && (
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-gray-500">
+            <span>
+              {completedToday} of {scheduledToday} scheduled habits completed
+            </span>
+
+            {scheduledToday > 0 && (
+              <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
+                {Math.round((completedToday / scheduledToday) * 100)}%
+              </span>
+            )}
+          </div>
+        )}
+      </section>
+
+      {error && (
+        <div
+          role="alert"
+          className="flex flex-col gap-3 rounded-2xl border border-rose-100 bg-rose-50 p-4 sm:flex-row sm:items-center sm:justify-between"
+        >
+          <div className="flex items-start gap-3">
+            <CircleAlert size={20} className="mt-0.5 shrink-0 text-rose-600" />
+
+            <div>
+              <p className="text-sm font-semibold text-rose-800">
+                Could not load habits
+              </p>
+              <p className="mt-1 text-sm text-rose-700">{error}</p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => fetchHabits()}
+            className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-rose-200 bg-white px-4 py-2 text-sm font-medium text-rose-700 hover:bg-rose-100 sm:self-auto"
+          >
+            <RefreshCw size={15} />
+            Try again
+          </button>
+        </div>
+      )}
+
+      {/* Create/Edit Form Modal */}
+      <HabitFormModal
+        isOpen={showForm}
+        onClose={handleCloseForm}
+        loading={saving}
+      >
+        <HabitForm
+          key={selectedHabit?._id ?? "new-habit"}
+          initialData={selectedHabit}
+          loading={saving}
+          onSubmit={handleSaveHabit}
+          onCancel={handleCloseForm}
+        />
+      </HabitFormModal>
+
+      {historyHabit && (
+        <HabitHistory
+          key={historyHabit._id}
+          habit={historyHabit}
+          getHistory={loadHistory}
+          onClose={() => setHistoryHabit(null)}
+        />
+      )}
+
+      <section aria-label={showArchived ? "Archived habits" : "Your habits"}>
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-semibold text-gray-900">
+              {showArchived ? "Archived Habits" : "Your Habits"}
+            </h2>
+
+            <p className="mt-1 text-sm text-gray-500">
+              {loading
+                ? "Loading your habits..."
+                : `${habits.length} habit${habits.length === 1 ? "" : "s"} on this page`}
+            </p>
+          </div>
+
+          {loading && (
+            <Loader2 size={20} className="animate-spin text-blue-600" />
+          )}
+        </div>
+
+        {loading && habits.length === 0 ? (
+          <div className="flex min-h-52 flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white text-gray-500">
+            <Loader2 size={28} className="animate-spin text-blue-600" />
+            <p className="mt-3 text-sm">Loading your habits...</p>
+          </div>
+        ) : !error && displayedHabits.length === 0 ? (
+          <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-white px-5 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-50 text-gray-400">
+              {showArchived ? (
+                <Archive size={26} />
+              ) : (
+                <CheckCircle2 size={26} />
+              )}
+            </div>
+
+            <h3 className="mt-4 text-base font-semibold text-gray-900">
+              {showArchived
+                ? "No archived habits"
+                : debouncedSearch
+                  ? "No matching habits"
+                  : "Start building your habits"}
+            </h3>
+
+            <p className="mt-2 max-w-md text-sm leading-6 text-gray-500">
+              {showArchived
+                ? "Habits you archive will appear here."
+                : debouncedSearch
+                  ? "Try a different search term."
+                  : "Create your first habit and start building a consistent daily routine."}
+            </p>
+
+            {!showArchived && !debouncedSearch && (
+              <button
+                type="button"
+                onClick={handleCreateClick}
+                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+              >
+                <Plus size={17} />
+                Create your first habit
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+            {displayedHabits.map((habit) => {
+              const completion = completionByHabit[habit._id] ?? null;
+              const completed =
+                Boolean(completion) &&
+                getCompletionDate(completion) === today;
+
+              return (
+                <HabitCard
+                  key={habit._id}
+                  habit={habit}
+                  completed={completed}
+                  completion={completed ? completion : null}
+                  streak={streakByHabit[habit._id] ?? 0}
+                  loading={actionId === habit._id}
+                  onToggleComplete={handleToggleComplete}
+                  onEdit={handleEditClick}
+                  onArchive={handleArchiveClick}
+                  onDelete={setHabitToDelete}
+                  onViewHistory={setHistoryHabit}
+                />
+              );
+            })}
+          </div>
+        )}
+
+        {!loading && !error && habits.length > 0 && totalPages > 1 && (
+          <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-gray-500">
+              Page {currentPage} of {totalPages}
+            </p>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() =>
+                  setPage((previous) => Math.max(1, previous - 1))
+                }
+                disabled={currentPage <= 1}
+                className="inline-flex items-center gap-1 rounded-xl border border-gray-200 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                <ChevronLeft size={16} />
+                Previous
+              </button>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setPage((previous) => Math.min(totalPages, previous + 1))
+                }
+                disabled={currentPage >= totalPages}
+                className="inline-flex items-center gap-1 rounded-xl border border-gray-200 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Next
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* Archive / Restore Confirmation */}
+      {habitToArchive && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="archive-habit-title"
+            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <h2
+                id="archive-habit-title"
+                className="text-lg font-semibold text-gray-900"
+              >
+                {habitToArchive.shouldArchive ? "Archive habit?" : "Restore habit?"}
+              </h2>
+
+              <button
+                type="button"
+                onClick={() => setHabitToArchive(null)}
+                disabled={Boolean(actionId)}
+                aria-label="Close confirmation"
+                className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 disabled:opacity-50"
+              >
+                <X size={19} />
+              </button>
+            </div>
+
+            <p className="mt-3 text-sm leading-6 text-gray-600">
+              {habitToArchive.shouldArchive
+                ? `Archive "${habitToArchive.habit.title}"? It will be removed from your active habits but can be restored later.`
+                : `Restore "${habitToArchive.habit.title}" to your active habits?`}
+            </p>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setHabitToArchive(null)}
+                disabled={Boolean(actionId)}
+                className="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={handleConfirmArchive}
+                disabled={Boolean(actionId)}
+                className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+              >
+                {actionId ? "Please wait..." : "Confirm"}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {/* Delete Confirmation */}
+      {habitToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-habit-title"
+            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 text-rose-600">
+                  <Trash2 size={20} />
+                </div>
+
+                <h2
+                  id="delete-habit-title"
+                  className="text-lg font-semibold text-gray-900"
+                >
+                  Delete habit?
+                </h2>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setHabitToDelete(null)}
+                disabled={Boolean(actionId)}
+                aria-label="Close delete confirmation"
+                className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 disabled:opacity-50"
+              >
+                <X size={19} />
+              </button>
+            </div>
+
+            <p className="mt-4 text-sm leading-6 text-gray-600">
+              Are you sure you want to delete{" "}
+              <span className="font-semibold text-gray-900">
+                {habitToDelete.title}
+              </span>
+              ? This action cannot be undone.
+            </p>
+
+            <div className="mt-6 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setHabitToDelete(null)}
+                disabled={Boolean(actionId)}
+                className="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                disabled={Boolean(actionId)}
+                className="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50"
+              >
+                {actionId ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <Trash2 size={16} />
+                )}
+                Delete
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+    </main>
+  );
+};
+
+export default Habits;
