@@ -210,11 +210,13 @@ const TodosPage = () => {
       />
 
       {/* Pagination */}
-      <TodoPagination
-        currentPage={page}
-        totalPages={pagination.totalPages || 1}
-        onPageChange={(newPage) => setPage(newPage)}
-      />
+      {!loading && todos.length > 0 && pagination.totalPages > 1 && (
+        <TodoPagination
+          currentPage={page}
+          totalPages={pagination.totalPages}
+          onPageChange={(newPage) => setPage(newPage)}
+        />
+      )}
 
       <FormModal
         isOpen={showForm}

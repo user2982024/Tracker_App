@@ -250,11 +250,13 @@ const GoalsPage = () => {
       />
 
       {/* Goals Pagination */}
-      <GoalsPagination
-        pagination={pagination}
-        page={page}
-        setPage={setPage}
-      />
+      {!loading && goals.length > 0 && (
+        <GoalsPagination
+          pagination={pagination}
+          page={page}
+          setPage={setPage}
+        />
+      )}
 
       <FormModal
         isOpen={isGoalFormOpen}
@@ -273,12 +275,13 @@ const GoalsPage = () => {
       </FormModal>
 
       {/* Delete Completed Goals Button - Bottom Right */}
-      <div className="flex justify-end pt-2">
-        <button
-          type="button"
-          onClick={handleDeleteCompletedClick}
-          disabled={deletingCompletedGoals}
-          className="
+      {!loading && stats?.total > 0 && (
+        <div className="flex justify-end pt-2">
+          <button
+            type="button"
+            onClick={handleDeleteCompletedClick}
+            disabled={deletingCompletedGoals}
+            className="
             inline-flex items-center justify-center gap-2
             px-4 py-2.5
             rounded-xl
@@ -292,11 +295,12 @@ const GoalsPage = () => {
             disabled:cursor-not-allowed
             hover:cursor-pointer
           "
-        >
-          <Trash2 size={16} />
-          Delete Completed
-        </button>
-      </div>
+          >
+            <Trash2 size={16} />
+            Delete Completed
+          </button>
+        </div>
+      )}
 
       {/* Individual Goal Delete Modal */}
       <Modal

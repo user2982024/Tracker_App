@@ -149,21 +149,23 @@ const ArchivedNotesPage = () => {
           />
 
           {/* Pagination */}
-          <div className="flex gap-2 mt-6 justify-center">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setPage(i + 1)}
-                className={`px-3 py-1 rounded cursor-pointer ${
-                  page === i + 1
-                    ? "bg-blue-600 text-white"
-                    : "bg-border"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
+          {totalPages > 1 && (
+            <div className="flex gap-2 mt-6 justify-center">
+              {Array.from({ length: totalPages }, (_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setPage(i + 1)}
+                  className={`px-3 py-1 rounded cursor-pointer ${
+                    page === i + 1
+                      ? "bg-blue-600 text-white"
+                      : "bg-border"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+          )}
         </>
       )}
 

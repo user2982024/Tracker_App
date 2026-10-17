@@ -253,21 +253,23 @@ const NotesPage = () => {
       )}
 
       {/* Pagination */}
-      <div className="mt-6 flex justify-center gap-2">
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentPage(i + 1)}
-            className={`rounded px-3 py-1 cursor-pointer ${
-              currentPage === i + 1
-                ? "bg-blue-600 text-white"
-                : "bg-border"
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div>
+      {!loading && notes.length > 0 && totalPages > 1 && (
+        <div className="mt-6 flex justify-center gap-2">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(i + 1)}
+              className={`rounded px-3 py-1 cursor-pointer ${
+                currentPage === i + 1
+                  ? "bg-blue-600 text-white"
+                  : "bg-border"
+              }`}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+      )}
 
       <FormModal
         isOpen={showForm}

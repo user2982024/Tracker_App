@@ -1,6 +1,8 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const TodosPagination = ({ currentPage, totalPages, onPageChange }) => {
+  if (!Number.isFinite(totalPages) || totalPages <= 1) return null;
+
   const getPages = () => {
     const pages = [];
     const delta = 1;

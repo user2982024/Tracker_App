@@ -125,7 +125,7 @@ const Habits = () => {
         const params = new URLSearchParams({
           page: String(page),
           limit: String(PAGE_SIZE),
-          isArchived: String(showArchived),
+          archived: String(showArchived),
         });
 
         if (debouncedSearch) {
