@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Search, Plus } from "lucide-react";
 
-const GoalsHeader = ({ search, setSearch }) => {
+const GoalsHeader = ({ search, setSearch, onCreate }) => {
   const navigate = useNavigate();
 
   return (
@@ -38,7 +38,7 @@ const GoalsHeader = ({ search, setSearch }) => {
         {/* Add Goal Button */}
         <button
           type="button"
-          onClick={() => navigate("/app/goals/create")}
+          onClick={onCreate ?? (() => navigate("/app/goals/create"))}
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-600 text-white dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-400 transition text-sm"
         >
           <Plus size={16} />

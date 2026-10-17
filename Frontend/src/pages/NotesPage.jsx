@@ -6,6 +6,7 @@ import NotesList from "../components/Notes/NotesList";
 import Spinner from "../components/UI/Spinner";
 import NoteForm from "../components/Notes/NoteForm";
 import Modal from "../components/UI/Modal";
+import FormModal from "../components/UI/FormModal";
 
 import {
   getNotes,
@@ -237,64 +238,59 @@ const NotesPage = () => {
         </div>
       )}
 
-      {showForm ? (
-        <div className="flex-1 flex items-center justify-center">
-          <div className="w-full max-w-xl">
-            <NoteForm
-              key={isEditMode ? selectedNote?._id ?? "edit-note" : "new-note"}
-              onSubmit={handleSubmit}
-              isEditMode={isEditMode}
-              selectedNote={selectedNote}
-            />
-
-            <div className="mt-4 flex justify-center">
-              <button
-                onClick={() => {
-                  setShowForm(false);
-                  setIsEditMode(false);
-                  setSelectedNote(null);
-                }}
-                className="px-6 py-2 bg-surface-secondary text-foreground rounded-lg hover:bg-surface-hover transition cursor-pointer"
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
+      {loading ? (
+        <Spinner fullPage size={40} />
       ) : (
-        <>
-          {loading ? (
-            <Spinner fullPage size={40} />
-          ) : (
-            <NotesList
-              notes={notes}
-              onEdit={handleEdit}
-              onDelete={handleDeleteClick}   // ✅ UPDATED
-              onArchive={handleArchive}
-              onPin={handlePin}
-              onUnpin={handleUnpin}
-              mode="active"
-            />
-          )}
-
-          {/* Pagination */}
-          <div className="flex gap-2 mt-6 justify-center">
-            {Array.from({ length: totalPages }, (_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`px-3 py-1 rounded cursor-pointer ${
-                  currentPage === i + 1
-                    ? "bg-blue-600 text-white"
-                    : "bg-border"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
-          </div>
-        </>
+        <NotesList
+          notes={notes}
+          onEdit={handleEdit}
+          onDelete={handleDeleteClick}
+          onArchive={handleArchive}
+          onPin={handlePin}
+          onUnpin={handleUnpin}
+          mode="active"
+        />
       )}
+
+      {/* Pagination */}
+      <div className="mt-6 flex justify-center gap-2">
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentPage(i + 1)}
+            className={`rounded px-3 py-1 cursor-pointer ${
+              currentPage === i + 1
+                ? "bg-blue-600 text-white"
+                : "bg-border"
+            }`}
+          >
+            {i + 1}
+          </button>
+        ))}
+      </div>
+
+      <FormModal
+        isOpen={showForm}
+        onClose={() => {
+          setShowForm(false);
+          setIsEditMode(false);
+          setSelectedNote(null);
+        }}
+        title={isEditMode ? "Edit Note" : "Create Note"}
+        subtitle="Capture the details you want to remember"
+      >
+        <NoteForm
+          key={isEditMode ? selectedNote?._id ?? "edit-note" : "new-note"}
+          onSubmit={handleSubmit}
+          onCancel={() => {
+            setShowForm(false);
+            setIsEditMode(false);
+            setSelectedNote(null);
+          }}
+          isEditMode={isEditMode}
+          selectedNote={selectedNote}
+        />
+      </FormModal>
 
       {/* ======================
           DELETE SINGLE MODAL

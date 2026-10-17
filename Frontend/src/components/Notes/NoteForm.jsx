@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const NoteForm = ({ onSubmit, isEditMode, selectedNote }) => {
+const NoteForm = ({ onSubmit, onCancel, isEditMode, selectedNote }) => {
   const [formData, setFormData] = useState(() => ({
     title: "",
     content: "",
@@ -36,15 +36,7 @@ const NoteForm = ({ onSubmit, isEditMode, selectedNote }) => {
   return (
     <form
       onSubmit={handleSubmit}
-      className="
-        bg-surface
-        p-4 sm:p-6
-        rounded-2xl
-        shadow-md
-        space-y-4
-        max-w-2xl
-        mx-auto
-      "
+      className="space-y-4"
     >
       {/* Title */}
       <label className="text-foreground-muted font-semibold" htmlFor="title">Title</label>
@@ -71,10 +63,17 @@ const NoteForm = ({ onSubmit, isEditMode, selectedNote }) => {
       />
 
       {/* Button */}
-      <div className="flex justify-center">
+      <div className="flex justify-end gap-3 pt-2">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="rounded-lg border border-border px-5 py-2 text-foreground-secondary transition hover:bg-surface-secondary"
+        >
+          Cancel
+        </button>
         <button
           type="submit"
-          className="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition hover:cursor-pointer"
+          className="rounded-lg bg-blue-600 px-5 py-2 text-white transition hover:bg-blue-700"
         >
           {isEditMode ? "Update Note" : "Save Note"}
         </button>

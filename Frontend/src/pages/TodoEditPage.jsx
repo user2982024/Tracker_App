@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Spinner from "../components/UI/Spinner";
+import FormModal from "../components/UI/FormModal";
 
 import TodoForm from "../components/Todos/TodoForm";
 import { getTodo } from "../services/todoServices";
@@ -39,7 +40,12 @@ const TodoEditPage = () => {
   if (!todo) return null;
 
   return (
-    <div className="p-6">
+    <FormModal
+      isOpen
+      title="Edit Todo"
+      subtitle="Update the details of this task"
+      onClose={() => navigate(-1)}
+    >
       <TodoForm
         todoToEdit={todo}
         onTodoCreated={() => {
@@ -49,7 +55,7 @@ const TodoEditPage = () => {
           navigate(-1); // go back
         }}
       />
-    </div>
+    </FormModal>
   );
 };
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Spinner from "../components/UI/Spinner";
+import FormModal from "../components/UI/FormModal";
 
 import GoalForm from "../components/Goals/GoalForm";
 
@@ -46,9 +47,14 @@ const GoalEditPage = () => {
   if (!goal) return null;
 
   return (
-    <div className="p-6">
+    <FormModal
+      isOpen
+      title="Edit Goal"
+      subtitle="Update the details of this goal"
+      onClose={() => navigate(-1)}
+    >
       <GoalForm mode="edit" initialData={goal} goalId={goal._id} />
-    </div>
+    </FormModal>
   );
 };
 

@@ -85,10 +85,7 @@ const TodoForm = ({ todoToEdit, onTodoCreated, onCancel }) => {
   };
 
   return (
-    <div className="bg-surface border border-border rounded-xl p-6 max-w-xl mx-auto">
-      <h2 className="text-lg font-semibold mb-4">
-        {isEditMode ? "Edit Todo" : "Create Todo"}
-      </h2>
+    <div className="w-full">
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         {/* Title */}

@@ -7,6 +7,7 @@ import TodoList from "../components/Todos/TodoList";
 import TodoPagination from "../components/Todos/TodoPagination";
 import TodoForm from "../components/Todos/TodoForm";
 import Modal from "../components/UI/Modal";
+import FormModal from "../components/UI/FormModal";
 
 import {
   getAllTodos,
@@ -179,8 +180,51 @@ const TodosPage = () => {
         hasCompleted={stats?.completed > 0}
       />
 
-      {/* Conditional rendering */}
-      {showForm ? (
+      {/* Stats */}
+      <TodoStats stats={stats} />
+
+      {/* Filters */}
+      <TodoFilters
+        currentFilter={filter}
+        onFilterChange={(newFilter) => {
+          setFilter(newFilter);
+          setPage(1);
+        }}
+        sortBy={sortBy}
+        onSortChange={(newSort) => {
+          setSortBy(newSort);
+          setPage(1);
+        }}
+      />
+
+      {/* List */}
+      <TodoList
+        todos={todos}
+        loading={loading}
+        currentFilter={filter}
+        onRefresh={fetchTodos}
+        onEdit={handleEditTodo}
+        onDelete={handleOpenDeleteModal}
+        onPin={handlePin}
+        onUnpin={handleUnpin}
+      />
+
+      {/* Pagination */}
+      <TodoPagination
+        currentPage={page}
+        totalPages={pagination.totalPages || 1}
+        onPageChange={(newPage) => setPage(newPage)}
+      />
+
+      <FormModal
+        isOpen={showForm}
+        onClose={() => {
+          setShowForm(false);
+          setTodoToEdit(null);
+        }}
+        title={todoToEdit ? "Edit Todo" : "Create Todo"}
+        subtitle="Plan and organize your tasks"
+      >
         <TodoForm
           todoToEdit={todoToEdit}
           onTodoCreated={() => {
@@ -194,45 +238,7 @@ const TodosPage = () => {
             setTodoToEdit(null);
           }}
         />
-      ) : (
-        <>
-          {/* Stats */}
-          <TodoStats stats={stats} />
-
-          {/* Filters */}
-          <TodoFilters
-            currentFilter={filter}
-            onFilterChange={(newFilter) => {
-              setFilter(newFilter);
-              setPage(1);
-            }}
-            sortBy={sortBy}
-            onSortChange={(newSort) => {
-              setSortBy(newSort);
-              setPage(1);
-            }}
-          />
-
-          {/* List */}
-          <TodoList
-            todos={todos}
-            loading={loading}
-            currentFilter={filter}
-            onRefresh={fetchTodos}
-            onEdit={handleEditTodo}
-            onDelete={handleOpenDeleteModal}
-            onPin={handlePin}
-            onUnpin={handleUnpin}
-          />
-
-          {/* Pagination */}
-          <TodoPagination
-            currentPage={page}
-            totalPages={pagination.totalPages || 1}
-            onPageChange={(newPage) => setPage(newPage)}
-          />
-        </>
-      )}
+      </FormModal>
 
       {/* Delete Confirmation Modal */}
       <Modal

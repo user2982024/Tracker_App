@@ -21,6 +21,7 @@ import NoteEditPage from "../pages/NoteEditPage";
 import TodoViewPage from "../pages/TodoViewPage";
 import TodoEditPage from "../pages/TodoEditPage";
 import GoalEditPage from "../pages/GoalEditPage";
+import GoalCreatePage from "../pages/GoalCreatePage";
 import GoalViewPage from "../pages/GoalViewPage";
 import GoalProgressHistoryPage from "../pages/GoalProgressHistoryPage";
 import HabitHistory from "../components/Habits/HabitHistory";
@@ -28,7 +29,6 @@ import SettingsPage from "../pages/SettingsPage";
 
 // Forms
 import AuthForm from "../components/Auth/AuthForm";
-import GoalForm from "../components/Goals/GoalForm";
 
 const AppRoutes = () => {
   return (
@@ -74,7 +74,7 @@ const AppRoutes = () => {
 
           {/* Goals */}
           <Route path="goals" element={<GoalsPage />} />
-          <Route path="goals/create" element={<GoalForm />} />
+          <Route path="goals/create" element={<GoalCreatePage />} />
           <Route path="goals/edit/:id" element={<GoalEditPage />} />
           <Route
             path="goals/:id/history"

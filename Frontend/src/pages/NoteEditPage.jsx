@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Spinner from "../components/UI/Spinner";
+import FormModal from "../components/UI/FormModal";
 import { getNoteById, updateNote } from "../services/notesService";
 import NoteForm from "../components/Notes/NoteForm";
 import { toast } from "react-hot-toast";
@@ -50,21 +51,19 @@ const NoteEditPage = () => {
   }
 
   return (
-    <div className="p-6">
-      {/* Back */}
-      <button
-        onClick={() => navigate(-1)}
-        className="mb-4 text-sm text-blue-600 dark:text-blue-300 hover:underline"
-      >
-        ← Back
-      </button>
-
+    <FormModal
+      isOpen
+      title="Edit Note"
+      subtitle="Update this note"
+      onClose={() => navigate(-1)}
+    >
       <NoteForm
         onSubmit={handleUpdate}
+        onCancel={() => navigate(-1)}
         isEditMode={true}
         selectedNote={note}
       />
-    </div>
+    </FormModal>
   );
 };
 

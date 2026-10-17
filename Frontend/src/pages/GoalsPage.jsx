@@ -11,6 +11,8 @@ import GoalsFilters from "../components/Goals/GoalsFilters";
 import GoalsList from "../components/Goals/GoalsList";
 import GoalsPagination from "../components/Goals/GoalsPagination";
 import Modal from "../components/UI/Modal";
+import FormModal from "../components/UI/FormModal";
+import GoalForm from "../components/Goals/GoalForm";
 
 import {
   getGoals,
@@ -42,6 +44,7 @@ const GoalsPage = () => {
   // Delete completed goals
   const [isDeleteCompletedModalOpen, setIsDeleteCompletedModalOpen] =
     useState(false);
+  const [isGoalFormOpen, setIsGoalFormOpen] = useState(false);
   const [deletingCompletedGoals, setDeletingCompletedGoals] =
     useState(false);
 
@@ -204,7 +207,11 @@ const GoalsPage = () => {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <GoalsHeader search={search} setSearch={setSearch} />
+      <GoalsHeader
+        search={search}
+        setSearch={setSearch}
+        onCreate={() => setIsGoalFormOpen(true)}
+      />
 
       {/* Statistics */}
       <GoalsStats stats={stats} goals={goals} />
@@ -248,6 +255,22 @@ const GoalsPage = () => {
         page={page}
         setPage={setPage}
       />
+
+      <FormModal
+        isOpen={isGoalFormOpen}
+        onClose={() => setIsGoalFormOpen(false)}
+        title="Create Goal"
+        subtitle="Set a clear target to work toward"
+      >
+        <GoalForm
+          mode="create"
+          onCancel={() => setIsGoalFormOpen(false)}
+          onComplete={() => {
+            setIsGoalFormOpen(false);
+            fetchGoals();
+          }}
+        />
+      </FormModal>
 
       {/* Delete Completed Goals Button - Bottom Right */}
       <div className="flex justify-end pt-2">

@@ -12,6 +12,8 @@ const GoalForm = ({
   mode = "create",
   initialData = {},
   goalId = null,
+  onComplete,
+  onCancel,
 }) => {
 
   const isEdit = mode === "edit";
@@ -78,7 +80,8 @@ const GoalForm = ({
         });
       }
 
-      navigate("/app/goals");
+      if (onComplete) onComplete();
+      else navigate("/app/goals");
 
     } catch (error) {
       console.error(
@@ -94,11 +97,12 @@ const GoalForm = ({
 
   // Handle cancel
   const handleCancel = () => {
-    navigate(-1);
+    if (onCancel) onCancel();
+    else navigate(-1);
   };
 
   return (
-    <div className="bg-surface p-6 rounded-xl shadow-sm border border-border max-w-2xl mx-auto">
+    <div className="w-full">
 
       {/* Title */}
       <h2 className="text-lg font-semibold text-foreground mb-4">
