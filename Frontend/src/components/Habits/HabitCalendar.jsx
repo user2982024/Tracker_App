@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Circle,
 } from "lucide-react";
+import Spinner from "../UI/Spinner";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -192,9 +193,10 @@ const HabitCalendar = ({
       </div>
 
       {loading && (
-        <p className="mt-3 text-center text-sm text-foreground-muted">
+        <div className="mt-3 flex flex-col items-center gap-2 text-sm text-foreground-muted">
+          <Spinner size={20} label="Loading history" />
           Loading history…
-        </p>
+        </div>
       )}
     </section>
   );

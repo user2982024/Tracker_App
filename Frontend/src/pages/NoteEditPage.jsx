@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Spinner from "../components/UI/Spinner";
 import { getNoteById, updateNote } from "../services/notesService";
 import NoteForm from "../components/Notes/NoteForm";
 import { toast } from "react-hot-toast";
@@ -41,7 +42,7 @@ const NoteEditPage = () => {
   };
 
   if (loading) {
-    return <div className="text-center mt-10">Loading...</div>;
+    return <Spinner fullPage size={40} />;
   }
 
   if (!note) {

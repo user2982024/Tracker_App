@@ -1,16 +1,11 @@
 import GoalCard from "./GoalCard";
+import Spinner from "../UI/Spinner";
 
 const GoalsList = ({ goals, loading, onDelete }) => {
   
   // Loading State
   if (loading) {
-    return (
-      <div className="flex justify-center py-10">
-        <p className="text-sm text-foreground-muted">
-          Loading goals...
-        </p>
-      </div>
-    );
+    return <Spinner fullPage size={40} />;
   }
 
   // Empty State

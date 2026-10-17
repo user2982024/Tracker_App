@@ -1,27 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const NoteForm = ({ onSubmit, isEditMode, selectedNote }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState(() => ({
     title: "",
     content: "",
-  });
-
-  // Pre-fill form in edit mode
-  useEffect(() => {
-    if (isEditMode && selectedNote) {
-      setFormData({
-        title: selectedNote.title || "",
-        content: selectedNote.content || "",
-      });
-    }
-    else {
-      // Reset when switching to create mode
-      setFormData({
-        title: "",
-        content: "",
-      });
-    }
-  }, [isEditMode, selectedNote]);
+    ...(isEditMode && selectedNote
+      ? {
+          title: selectedNote.title || "",
+          content: selectedNote.content || "",
+        }
+      : {}),
+  }));
 
   // Handle input change
   const handleChange = (e) => {

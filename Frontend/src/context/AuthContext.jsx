@@ -3,6 +3,7 @@ import { signoutUser, getAuthenticatedUser } from "../services/authServices";
 
 const AuthContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
@@ -15,7 +16,7 @@ export const AuthProvider = ({ children }) => {
       try {
         const data = await getAuthenticatedUser();
         setUser(data.user);
-      } catch (error) {
+      } catch {
         setUser(null);
       } finally {
         setLoading(false);

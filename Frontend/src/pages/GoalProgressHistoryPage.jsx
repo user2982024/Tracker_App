@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
 import { useNavigate, useParams } from "react-router-dom";
+import Spinner from "../components/UI/Spinner";
 
 import {
   ArrowLeft,
   CalendarDays,
-  Loader2,
   Trash2,
   TrendingUp,
 } from "lucide-react";
@@ -167,19 +167,7 @@ const GoalProgressHistoryPage = () => {
   // ==================================================
 
   if (loading) {
-    return (
-      <div className="p-6">
-        <div className="bg-surface border border-border rounded-3xl p-8 shadow-sm">
-          <div className="flex items-center gap-3">
-            <Loader2 size={20} className="animate-spin text-blue-600 dark:text-blue-400" />
-
-            <p className="text-sm text-foreground-muted">
-              Loading full progress history...
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+    return <Spinner fullPage size={40} />;
   }
 
   // ==================================================
@@ -420,7 +408,7 @@ const GoalProgressHistoryPage = () => {
                   aria-label="Delete progress entry"
                 >
                   {deletingProgressId === progress._id ? (
-                    <Loader2 size={17} className="animate-spin" />
+                    <Spinner size={17} label="Deleting progress record" />
                   ) : (
                     <Trash2 size={17} />
                   )}
@@ -458,7 +446,7 @@ const GoalProgressHistoryPage = () => {
             >
               {deletingProgressId ? (
                 <>
-                  <Loader2 size={15} className="animate-spin" />
+                  <Spinner size={15} label="Updating progress" />
 
                   <span>Deleting...</span>
                 </>

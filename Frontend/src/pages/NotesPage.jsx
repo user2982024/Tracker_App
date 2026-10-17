@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import useDebounce from "../hooks/useDebounce";
 import NotesHeader from "../components/Notes/NotesHeader";
 import NotesList from "../components/Notes/NotesList";
+import Spinner from "../components/UI/Spinner";
 import NoteForm from "../components/Notes/NoteForm";
 import Modal from "../components/UI/Modal";
 
@@ -240,6 +241,7 @@ const NotesPage = () => {
         <div className="flex-1 flex items-center justify-center">
           <div className="w-full max-w-xl">
             <NoteForm
+              key={isEditMode ? selectedNote?._id ?? "edit-note" : "new-note"}
               onSubmit={handleSubmit}
               isEditMode={isEditMode}
               selectedNote={selectedNote}
@@ -262,7 +264,7 @@ const NotesPage = () => {
       ) : (
         <>
           {loading ? (
-            <p className="text-foreground-muted mt-4">Loading notes...</p>
+            <Spinner fullPage size={40} />
           ) : (
             <NotesList
               notes={notes}

@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { Loader2, Pin, X } from "lucide-react";
+import { useState } from "react";
+import { Pin, X } from "lucide-react";
+import Spinner from "../UI/Spinner";
 
 const WEEKDAYS = [
   { value: 1, label: "Monday" },
@@ -37,43 +38,36 @@ const INITIAL_FORM = {
   isPinned: false,
 };
 
+const getFormValues = (initialData) => {
+  if (!initialData) return INITIAL_FORM;
+
+  return {
+    title: initialData.title ?? "",
+    description: initialData.description ?? "",
+    category: initialData.category ?? "personal",
+    priority: initialData.priority ?? "medium",
+    frequency: initialData.frequency ?? "daily",
+    daysOfWeek: Array.isArray(initialData.daysOfWeek)
+      ? initialData.daysOfWeek
+      : [],
+    targetValue:
+      initialData.targetValue === undefined || initialData.targetValue === null
+        ? ""
+        : String(initialData.targetValue),
+    unit: initialData.unit ?? "",
+    isPinned: Boolean(initialData.isPinned),
+  };
+};
+
 const HabitForm = ({
   initialData = null,
   onSubmit,
   onCancel,
   loading = false,
 }) => {
-  const [form, setForm] = useState(INITIAL_FORM);
+  const [form, setForm] = useState(() => getFormValues(initialData));
   const [errors, setErrors] = useState({});
   const isEditing = Boolean(initialData?._id);
-
-  useEffect(() => {
-    if (!initialData) {
-      setForm(INITIAL_FORM);
-      setErrors({});
-      return;
-    }
-
-    setForm({
-      title: initialData.title ?? "",
-      description: initialData.description ?? "",
-      category: initialData.category ?? "personal",
-      priority: initialData.priority ?? "medium",
-      frequency: initialData.frequency ?? "daily",
-      daysOfWeek: Array.isArray(initialData.daysOfWeek)
-        ? initialData.daysOfWeek
-        : [],
-      targetValue:
-        initialData.targetValue === undefined ||
-        initialData.targetValue === null
-          ? ""
-          : String(initialData.targetValue),
-      unit: initialData.unit ?? "",
-      isPinned: Boolean(initialData.isPinned),
-    });
-
-    setErrors({});
-  }, [initialData]);
 
   const updateField = (field, value) => {
     setForm((previous) => ({ ...previous, [field]: value }));
@@ -471,7 +465,7 @@ const HabitForm = ({
           disabled={loading}
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {loading && <Loader2 size={16} className="animate-spin" />}
+          {loading && <Spinner size={16} label="Saving habit" />}
           {loading ? "Saving..." : isEditing ? "Save Changes" : "Create Habit"}
         </button>
       </div>

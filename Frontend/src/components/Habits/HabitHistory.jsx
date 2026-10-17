@@ -9,10 +9,10 @@ import {
   ChevronRight,
   Clock3,
   ClipboardList,
-  LoaderCircle,
   RefreshCw,
   TrendingUp,
 } from "lucide-react";
+import Spinner from "../UI/Spinner";
 
 // Correct path for src/components/Habits/HabitHistory.jsx
 import {
@@ -402,11 +402,7 @@ const HabitHistory = () => {
                 role="status"
                 aria-live="polite"
               >
-                <LoaderCircle
-                  size={30}
-                  className="animate-spin text-blue-600 dark:text-blue-400"
-                  aria-hidden="true"
-                />
+                <Spinner size={30} label="Loading completion history" />
                 <p className="mt-4 text-sm font-medium text-foreground-secondary">
                   Loading completion history…
                 </p>

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
 import { createTodo, updateTodo } from "../../services/todoServices";
+import Spinner from "../UI/Spinner";
 
 const TodoForm = ({ todoToEdit, onTodoCreated, onCancel }) => {
   // Detect mode
@@ -159,7 +160,12 @@ const TodoForm = ({ todoToEdit, onTodoCreated, onCancel }) => {
             disabled={loading}
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition hover:cursor-pointer"
           >
-            {loading ? "Saving..." : isEditMode ? "Update Todo" : "Create Todo"}
+            {loading ? (
+              <span className="inline-flex items-center justify-center gap-2">
+                <Spinner size={16} label="Saving todo" />
+                Saving...
+              </span>
+            ) : isEditMode ? "Update Todo" : "Create Todo"}
           </button>
         </div>
       </form>

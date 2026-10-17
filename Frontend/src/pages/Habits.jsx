@@ -9,7 +9,6 @@ import {
   ChevronRight,
   CircleAlert,
   ClipboardList,
-  Loader2,
   Plus,
   RefreshCw,
   Search,
@@ -21,6 +20,7 @@ import HabitStats from "../components/Habits/HabitStats";
 import HabitCard from "../components/Habits/HabitCard";
 import HabitForm from "../components/Habits/HabitForm";
 import HabitFormModal from "../components/Habits/HabitFormModal";
+import Spinner from "../components/UI/Spinner";
 
 import {
   getHabits,
@@ -431,6 +431,10 @@ const Habits = () => {
   const scheduledToday = Number(stats?.scheduledToday ?? 0);
   const completedToday = Number(stats?.completedToday ?? 0);
 
+  if (loading && habits.length === 0 && !error) {
+    return <Spinner fullPage size={40} label="Loading habits" />;
+  }
+
   return (
     <main className="space-y-6 p-4 sm:p-6 lg:p-8">
       <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
@@ -453,7 +457,7 @@ const Habits = () => {
           type="button"
           onClick={handleCreateClick}
           disabled={showArchived || saving}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 btn-hover"
         >
           <Plus size={18} />
           Create Habit
@@ -491,7 +495,7 @@ const Habits = () => {
             <button
               type="button"
               onClick={() => setShowArchived((previous) => !previous)}
-              className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition ${
+              className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition btn-hover ${
                 showArchived
                   ? "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-500/25 dark:bg-blue-500/10 dark:text-blue-300"
                   : "border-border text-foreground-muted hover:bg-surface-secondary"
@@ -506,10 +510,10 @@ const Habits = () => {
               onClick={() => fetchHabits({ silent: true })}
               disabled={refreshing || loading}
               aria-label="Refresh habits"
-              className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground-muted transition hover:bg-surface-secondary disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground-muted transition hover:bg-surface-secondary disabled:opacity-50 btn-hover"
             >
               {refreshing ? (
-                <Loader2 size={16} className="animate-spin" />
+                <Spinner size={16} />
               ) : (
                 <RefreshCw size={16} />
               )}
@@ -552,7 +556,7 @@ const Habits = () => {
           <button
             type="button"
             onClick={() => fetchHabits()}
-            className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-rose-200 bg-surface px-4 py-2 text-sm font-medium text-rose-700 hover:bg-rose-100 sm:self-auto dark:border-rose-500/25 dark:text-rose-300 dark:hover:bg-rose-500/20"
+            className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-rose-200 bg-surface px-4 py-2 text-sm font-medium text-rose-700 hover:bg-rose-100 sm:self-auto dark:border-rose-500/25 dark:text-rose-300 dark:hover:bg-rose-500/20 btn-hover"
           >
             <RefreshCw size={15} />
             Try again
@@ -590,14 +594,14 @@ const Habits = () => {
           </div>
 
           {loading && (
-            <Loader2 size={20} className="animate-spin text-blue-600 dark:text-blue-400" />
+            <Spinner size={20} />
           )}
         </div>
 
         {loading && habits.length === 0 ? (
           <div className="flex min-h-52 flex-col items-center justify-center rounded-2xl border border-border bg-surface text-foreground-muted">
-            <Loader2 size={28} className="animate-spin text-blue-600 dark:text-blue-400" />
-            <p className="mt-3 text-sm">Loading your habits...</p>
+            <Spinner size={40} className="mb-3" />
+            <p className="text-sm">Loading your habits...</p>
           </div>
         ) : !error && displayedHabits.length === 0 ? (
           <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-surface px-5 text-center">
@@ -629,7 +633,7 @@ const Habits = () => {
               <button
                 type="button"
                 onClick={handleCreateClick}
-                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700"
+                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-700 btn-hover"
               >
                 <Plus size={17} />
                 Create your first habit
@@ -676,7 +680,7 @@ const Habits = () => {
                   setPage((previous) => Math.max(1, previous - 1))
                 }
                 disabled={currentPage <= 1}
-                className="inline-flex items-center gap-1 rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground-muted hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex items-center gap-1 rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground-muted hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-40 btn-hover"
               >
                 <ChevronLeft size={16} />
                 Previous
@@ -688,7 +692,7 @@ const Habits = () => {
                   setPage((previous) => Math.min(totalPages, previous + 1))
                 }
                 disabled={currentPage >= totalPages}
-                className="inline-flex items-center gap-1 rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground-muted hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex items-center gap-1 rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground-muted hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-40 btn-hover"
               >
                 Next
                 <ChevronRight size={16} />
@@ -737,7 +741,7 @@ const Habits = () => {
                 type="button"
                 onClick={() => setHabitToArchive(null)}
                 disabled={Boolean(actionId)}
-                className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary disabled:opacity-50"
+                className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary disabled:opacity-50 btn-hover"
               >
                 Cancel
               </button>
@@ -746,9 +750,14 @@ const Habits = () => {
                 type="button"
                 onClick={handleConfirmArchive}
                 disabled={Boolean(actionId)}
-                className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                className="rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 disabled:opacity-50 btn-hover"
               >
-                {actionId ? "Please wait..." : "Confirm"}
+                {actionId ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Spinner size={16} label="Archiving habit" />
+                    Please wait...
+                  </span>
+                ) : "Confirm"}
               </button>
             </div>
           </section>
@@ -802,7 +811,7 @@ const Habits = () => {
                 type="button"
                 onClick={() => setHabitToDelete(null)}
                 disabled={Boolean(actionId)}
-                className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary disabled:opacity-50"
+                className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary disabled:opacity-50 btn-hover"
               >
                 Cancel
               </button>
@@ -811,10 +820,10 @@ const Habits = () => {
                 type="button"
                 onClick={handleConfirmDelete}
                 disabled={Boolean(actionId)}
-                className="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-xl bg-rose-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50 btn-hover"
               >
                 {actionId ? (
-                  <Loader2 size={16} className="animate-spin" />
+                  <Spinner size={16} />
                 ) : (
                   <Trash2 size={16} />
                 )}

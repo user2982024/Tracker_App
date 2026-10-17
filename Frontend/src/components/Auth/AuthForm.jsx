@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import { signinUser, signupUser } from "../../services/authServices";
 import ThemeToggle from "../UI/ThemeToggle";
+import Spinner from "../UI/Spinner";
 
 const AuthForm = ({ mode = "signup" }) => {
   const { setUser } = useAuth();
@@ -168,7 +169,12 @@ const AuthForm = ({ mode = "signup" }) => {
             className="w-full bg-blue-600 text-white py-2.5 rounded-lg 
                        font-medium hover:bg-blue-700 transition duration-200 hover:cursor-pointer"
           >
-            {loading ? "Processing..." : isSignup ? "Sign Up" : "Sign In"}
+            {loading ? (
+              <span className="inline-flex items-center justify-center gap-2">
+                <Spinner size={16} label="Processing" />
+                Processing...
+              </span>
+            ) : isSignup ? "Sign Up" : "Sign In"}
           </button>
 
           {/* Switch Link */}

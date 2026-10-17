@@ -11,7 +11,6 @@ import {
   Pencil,
   Trash2,
   Plus,
-  Loader2,
   CheckCircle2,
   Clock3,
   X,
@@ -21,6 +20,7 @@ import {
 import { getGoal, deleteGoal } from "../services/goalsServices";
 
 import Modal from "../components/UI/Modal";
+import Spinner from "../components/UI/Spinner";
 
 import {
   addGoalProgress,
@@ -441,17 +441,7 @@ const GoalViewPage = () => {
   // ====================================================
 
   if (loading) {
-    return (
-      <div className="p-6">
-        <div className="bg-surface border border-border rounded-3xl p-8 shadow-sm">
-          <div className="flex items-center gap-3">
-            <Loader2 size={20} className="animate-spin text-blue-600 dark:text-blue-400" />
-
-            <p className="text-sm text-foreground-muted">Loading goal...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <Spinner fullPage size={40} />;
   }
 
   // ====================================================
@@ -1009,7 +999,7 @@ const GoalViewPage = () => {
                   >
                     {addingProgress ? (
                       <>
-                        <Loader2 size={17} className="animate-spin" />
+                        <Spinner size={17} label="Deleting progress record" />
 
                         <span>Adding...</span>
                       </>
@@ -1055,7 +1045,7 @@ const GoalViewPage = () => {
         {progressLoading && (
           <div className="flex items-center justify-center py-10">
             <div className="flex items-center gap-3 text-sm text-foreground-muted">
-              <Loader2 size={20} className="animate-spin text-blue-600 dark:text-blue-400" />
+              <Spinner size={20} label="Loading progress history" />
 
               <span>Loading progress history...</span>
             </div>
@@ -1144,7 +1134,7 @@ const GoalViewPage = () => {
                     aria-label="Delete progress entry"
                   >
                     {deletingProgressId === progress._id ? (
-                      <Loader2 size={17} className="animate-spin" />
+                      <Spinner size={17} label="Updating progress" />
                     ) : (
                       <Trash2 size={17} />
                     )}
@@ -1198,7 +1188,7 @@ const GoalViewPage = () => {
             >
               {deletingGoal ? (
                 <>
-                  <Loader2 size={15} className="animate-spin" />
+                  <Spinner size={15} label="Deleting goal" />
 
                   <span>Deleting...</span>
                 </>
@@ -1243,7 +1233,7 @@ const GoalViewPage = () => {
             >
               {deletingProgressId ? (
                 <>
-                  <Loader2 size={15} className="animate-spin" />
+                  <Spinner size={15} label="Saving progress" />
 
                   <span>Deleting...</span>
                 </>

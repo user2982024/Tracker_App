@@ -1,4 +1,5 @@
 import TodoCard from "./TodoCard";
+import Spinner from "../UI/Spinner";
 
 const TodoList = ({
   todos,
@@ -13,11 +14,7 @@ const TodoList = ({
 
   // Loading state
   if (loading) {
-    return (
-      <div className="bg-surface border border-border rounded-xl p-6 text-center text-foreground-muted">
-        Loading todos...
-      </div>
-    );
+    return <Spinner fullPage size={40} />;
   }
 
   // Empty state

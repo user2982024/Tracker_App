@@ -15,6 +15,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
+import Spinner from "../UI/Spinner";
 
 const WEEKDAYS = [
   { value: 0, label: "Sun" },
@@ -120,17 +121,14 @@ const HabitCard = ({
               : `Mark ${title} as completed`
           }
           aria-pressed={completed}
-          className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
+          className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50 hover:scale-110 active:scale-95 cursor-pointer ${
             completed
-              ? "border-emerald-500 bg-emerald-500 text-white"
+              ? "border-emerald-500 bg-emerald-500 text-white shadow-sm shadow-emerald-200 dark:shadow-emerald-900/20"
               : "border-border-strong text-transparent hover:border-emerald-500 hover:text-emerald-500"
           }`}
         >
           {loading ? (
-            <span
-              className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent"
-              aria-hidden="true"
-            />
+            <Spinner size={14} />
           ) : completed ? (
             <Check size={16} strokeWidth={3} />
           ) : (
@@ -232,7 +230,7 @@ const HabitCard = ({
             disabled={loading}
             aria-label={`Actions for ${title}`}
             aria-expanded={menuOpen}
-            className="flex h-9 w-9 items-center justify-center rounded-xl text-foreground-muted transition-colors hover:bg-surface-secondary hover:text-foreground disabled:opacity-50"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-foreground-muted transition-all duration-200 hover:bg-surface-secondary hover:text-foreground disabled:opacity-50 btn-hover"
           >
             <MoreHorizontal size={20} />
           </button>
@@ -251,7 +249,7 @@ const HabitCard = ({
                   <button
                     type="button"
                     onClick={() => handleAction(onEdit, habit)}
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-foreground-secondary hover:bg-surface-secondary"
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-foreground-secondary hover:bg-surface-secondary transition-colors cursor-pointer"
                   >
                     <Pencil size={15} />
                     Edit habit
@@ -262,7 +260,7 @@ const HabitCard = ({
                   <button
                     type="button"
                     onClick={() => handleAction(onViewHistory, habit)}
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-foreground-secondary hover:bg-surface-secondary"
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-foreground-secondary hover:bg-surface-secondary transition-colors cursor-pointer"
                   >
                     <CalendarDays size={15} />
                     View history
@@ -275,7 +273,7 @@ const HabitCard = ({
                     onClick={() =>
                       handleAction(onArchive, habit, !isArchived)
                     }
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-foreground-secondary hover:bg-surface-secondary"
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-foreground-secondary hover:bg-surface-secondary transition-colors cursor-pointer"
                   >
                     <Archive size={15} />
                     {isArchived ? "Restore habit" : "Archive habit"}
@@ -286,7 +284,7 @@ const HabitCard = ({
                   <button
                     type="button"
                     onClick={() => handleAction(onDelete, habit)}
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-500/10"
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-500/10 transition-colors cursor-pointer"
                   >
                     <Trash2 size={15} />
                     Delete habit

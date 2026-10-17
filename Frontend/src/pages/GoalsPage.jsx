@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 
 import toast from "react-hot-toast";
-import { Trash2, Loader2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
+import Spinner from "../components/UI/Spinner";
 
 import GoalsHeader from "../components/Goals/GoalsHeader";
 import GoalsStats from "../components/Goals/GoalsStats";
@@ -318,7 +319,7 @@ const GoalsPage = () => {
             >
               {deletingGoal ? (
                 <>
-                  <Loader2 size={15} className="animate-spin" />
+                  <Spinner size={15} label="Deleting goal" />
                   Deleting...
                 </>
               ) : (
@@ -378,7 +379,7 @@ const GoalsPage = () => {
             >
               {deletingCompletedGoals ? (
                 <>
-                  <Loader2 size={15} className="animate-spin" />
+                  <Spinner size={15} label="Updating goal" />
                   Deleting...
                 </>
               ) : (

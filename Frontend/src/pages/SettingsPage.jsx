@@ -1,4 +1,5 @@
 
+import { createElement } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 
@@ -67,7 +68,7 @@ const SettingsPage = () => {
                   />
 
                   <span className="mt-0.5 rounded-lg bg-surface-secondary p-2">
-                    <Icon size={20} aria-hidden="true" />
+                    {createElement(Icon, { size: 20, "aria-hidden": true })}
                   </span>
 
                   <span className="min-w-0 flex-1">

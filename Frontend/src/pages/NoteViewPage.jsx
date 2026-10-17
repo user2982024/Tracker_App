@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Spinner from "../components/UI/Spinner";
 import {
   getNoteById,
   deleteNote,
@@ -86,11 +87,7 @@ const NoteViewPage = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center h-full text-foreground-muted">
-        Loading note...
-      </div>
-    );
+    return <Spinner fullPage size={40} />;
   }
 
   if (!note) {

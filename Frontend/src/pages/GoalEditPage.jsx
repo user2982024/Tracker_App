@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import Spinner from "../components/UI/Spinner";
 
 import GoalForm from "../components/Goals/GoalForm";
 
@@ -38,7 +39,7 @@ const GoalEditPage = () => {
 
   // Loading state
   if (loading) {
-    return <div className="p-6 text-foreground-muted">Loading...</div>;
+    return <Spinner fullPage size={40} />;
   }
 
   // Safety check

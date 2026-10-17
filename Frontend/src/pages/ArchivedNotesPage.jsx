@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useDebounce from "../hooks/useDebounce";
+import Spinner from "../components/UI/Spinner";
 import {
   getArchivedNotes,
   deleteNote,
@@ -124,9 +125,7 @@ const ArchivedNotesPage = () => {
       </div>
 
       {/* Loading */}
-      {loading && notes.length === 0 && (
-        <p className="text-foreground-muted">Loading archived notes...</p>
-      )}
+      {loading && <Spinner fullPage size={40} label="Loading archived notes" />}
 
       {/* Empty */}
       {!loading && notes.length === 0 && (
