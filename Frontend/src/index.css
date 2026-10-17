@@ -1,1 +1,131 @@
+
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --surface-secondary: #f1f5f9;
+
+  --foreground: #0f172a;
+  --foreground-secondary: #475569;
+  --foreground-muted: #64748b;
+
+  --border: #e2e8f0;
+  --input: #ffffff;
+
+  --primary: #2563eb;
+  --primary-foreground: #ffffff;
+
+  --danger: #dc2626;
+  --success: #15803d;
+}
+
+:root.dark {
+  color-scheme: dark;
+
+  --background: #0b1220;
+  --surface: #151f30;
+  --surface-secondary: #1e2b3e;
+
+  --foreground: #f1f5f9;
+  --foreground-secondary: #cbd5e1;
+  --foreground-muted: #94a3b8;
+
+  --border: #2b3a50;
+  --input: #111b2b;
+
+  --primary: #60a5fa;
+  --primary-foreground: #0b1220;
+
+  --danger: #f87171;
+  --success: #4ade80;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-secondary: var(--surface-secondary);
+
+  --color-foreground: var(--foreground);
+  --color-foreground-secondary: var(--foreground-secondary);
+  --color-foreground-muted: var(--foreground-muted);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+.app-bg {
+  background-color: var(--background);
+}
+
+.app-surface {
+  background-color: var(--surface);
+}
+
+.app-surface-secondary {
+  background-color: var(--surface-secondary);
+}
+
+.app-text {
+  color: var(--foreground);
+}
+
+.app-text-secondary {
+  color: var(--foreground-secondary);
+}
+
+.app-text-muted {
+  color: var(--foreground-muted);
+}
+
+.app-border {
+  border-color: var(--border);
+}
+
+.app-input {
+  background-color: var(--input);
+  color: var(--foreground);
+  border: 1px solid var(--border);
+}
+
+.app-input::placeholder {
+  color: var(--foreground-muted);
+}
+
+.app-input:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

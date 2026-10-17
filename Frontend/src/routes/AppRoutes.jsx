@@ -24,6 +24,7 @@ import GoalEditPage from "../pages/GoalEditPage";
 import GoalViewPage from "../pages/GoalViewPage";
 import GoalProgressHistoryPage from "../pages/GoalProgressHistoryPage";
 import HabitHistory from "../components/Habits/HabitHistory";
+import SettingsPage from "../pages/SettingsPage";
 
 // Forms
 import AuthForm from "../components/Auth/AuthForm";
@@ -84,6 +85,9 @@ const AppRoutes = () => {
           {/* Habits */}
           <Route path="habits" element={<Habits />} />
           <Route path="habits/:habitId/history" element={<HabitHistory />} />
+
+          {/* Settings */}
+          <Route path="settings" element={<SettingsPage />} />
         </Route>
       </Route>
     </Routes>

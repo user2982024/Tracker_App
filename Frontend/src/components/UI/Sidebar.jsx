@@ -1,3 +1,5 @@
+
+import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
@@ -10,14 +12,11 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
-import { useState } from "react";
 import Modal from "../UI/Modal";
 
 const Sidebar = ({ closeSidebar }) => {
   const navigate = useNavigate();
   const { logout } = useAuth();
-
-  // ✅ Modal state
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const navItems = [
@@ -29,70 +28,60 @@ const Sidebar = ({ closeSidebar }) => {
     { name: "Settings", path: "/app/settings", icon: <Settings size={18} /> },
   ];
 
-  // ✅ Confirm logout
   const handleConfirmLogout = async () => {
     try {
       await logout();
+      setShowLogoutModal(false);
+      if (closeSidebar) closeSidebar();
       navigate("/", { replace: true });
       toast.success("Logged out successfully");
-
-      setShowLogoutModal(false);
-
-      if (closeSidebar) closeSidebar();
     } catch (error) {
       toast.error(error.message || "Failed to logout");
     }
   };
 
   return (
-    <div className="h-full md:h-screen w-64 sm:w-72 bg-linear-to-b from-blue-600 to-blue-900 text-white flex flex-col p-4 sm:p-5 shadow-lg">
-      
+    <aside className="flex h-full w-64 flex-col bg-linear-to-b from-blue-600 to-blue-900 p-4 text-white shadow-lg sm:w-72 sm:p-5 md:h-screen">
       {/* Logo */}
-      <h1 className="text-xl sm:text-2xl font-bold mb-6 sm:mb-8">
+      <h1 className="mb-6 text-xl font-bold sm:mb-8 sm:text-2xl">
         TaskFlow
       </h1>
 
       {/* Navigation */}
-      <nav className="flex flex-col gap-1 sm:gap-2">
+      <nav aria-label="Main navigation" className="flex flex-col gap-1 sm:gap-2">
         {navItems.map((item) => (
           <NavLink
             key={item.name}
             to={item.path}
             end={item.path === "/app"}
-            onClick={() => closeSidebar && closeSidebar()}
+            onClick={() => closeSidebar?.()}
             className={({ isActive }) =>
-              `
-              flex items-center gap-3
-              px-3 sm:px-4 py-2.5
-              rounded-lg
-              text-sm sm:text-base
-              transition-all duration-200
-              ${
+              [
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200 sm:px-4 sm:text-base",
                 isActive
-                  ? "bg-white text-blue-700 font-semibold shadow"
-                  : "hover:bg-blue-700/60"
-              }
-              `
+                  ? "bg-white font-semibold text-blue-700 shadow"
+                  : "text-white hover:bg-blue-700/60",
+              ].join(" ")
             }
           >
             {item.icon}
-            {item.name}
+            <span>{item.name}</span>
           </NavLink>
         ))}
       </nav>
 
       {/* Logout */}
-      <div className="mt-auto pt-4 border-t border-blue-400/40">
+      <div className="mt-auto border-t border-blue-400/40 pt-4">
         <button
+          type="button"
           onClick={() => setShowLogoutModal(true)}
-          className="w-full flex items-center gap-3 px-3 sm:px-4 py-2.5 rounded-lg text-sm sm:text-base hover:bg-red-500 transition cursor-pointer"
+          className="flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition hover:bg-red-500 sm:px-4 sm:text-base"
         >
           <LogOut size={18} />
           Sign Out
         </button>
       </div>
 
-      {/* ✅ LOGOUT MODAL */}
       <Modal
         isOpen={showLogoutModal}
         onClose={() => setShowLogoutModal(false)}
@@ -100,15 +89,17 @@ const Sidebar = ({ closeSidebar }) => {
         actions={
           <>
             <button
+              type="button"
               onClick={() => setShowLogoutModal(false)}
-              className="px-4 py-2 border rounded-lg hover:bg-gray-100 transition"
+              className="app-border app-text rounded-lg border px-4 py-2 transition hover:bg-surface-secondary"
             >
               Cancel
             </button>
 
             <button
+              type="button"
               onClick={handleConfirmLogout}
-              className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
+              className="rounded-lg bg-red-500 px-4 py-2 text-white transition hover:bg-red-600"
             >
               Sign Out
             </button>
@@ -118,7 +109,7 @@ const Sidebar = ({ closeSidebar }) => {
         Are you sure you want to{" "}
         <span className="font-semibold text-red-500">sign out</span>?
       </Modal>
-    </div>
+    </aside>
   );
 };
 
