@@ -50,32 +50,32 @@ const navigate = useNavigate();
     green: {
       border: "border-green-500",
       badge: "bg-green-500",
-      text: "text-green-600",
+      text: "text-green-600 dark:text-green-300",
     },
     red: {
       border: "border-red-500",
       badge: "bg-red-500",
-      text: "text-red-600",
+      text: "text-red-600 dark:text-red-300",
     },
     yellow: {
       border: "border-yellow-500",
       badge: "bg-yellow-500",
-      text: "text-yellow-600",
+      text: "text-yellow-600 dark:text-yellow-300",
     },
     gray: {
       border: "border-transparent",
       badge: "bg-gray-400",
-      text: "text-gray-500",
+      text: "text-foreground-muted",
     },
   };
 
   const statusBg = completed
-    ? "bg-green-50 hover:bg-green-100"
+    ? "bg-green-50 hover:bg-green-100 dark:bg-green-500/10 dark:hover:bg-green-500/20"
     : isOverdue
-    ? "bg-red-50 hover:bg-red-100"
+    ? "bg-red-50 hover:bg-red-100 dark:bg-red-500/10 dark:hover:bg-red-500/20"
     : isPending
-    ? "bg-yellow-50 hover:bg-yellow-100"
-    : "bg-white hover:bg-gray-50";
+    ? "bg-yellow-50 hover:bg-yellow-100 dark:bg-yellow-500/10 dark:hover:bg-yellow-500/20"
+    : "bg-surface hover:bg-surface-secondary";
 
   const handleToggle = async () => {
     try {
@@ -101,7 +101,7 @@ const navigate = useNavigate();
       className={`relative grid grid-cols-[auto_1fr_150px_120px_120px] items-center gap-4 rounded-lg shadow-sm p-4 transition-all duration-200
       ${statusBg}
       border-l-4 ${colorMap[statusColor].border}
-      ${pinned ? "ring-1 ring-gray-200 shadow-md" : ""}
+      ${pinned ? "ring-1 ring-border shadow-md" : ""}
     `}
     >
       {/* Pin badge */}
@@ -118,7 +118,7 @@ const navigate = useNavigate();
       <div
         onClick={handleToggle}
         className={`w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer ${
-          completed ? "bg-green-500 border-green-500" : "border-gray-400"
+          completed ? "bg-green-500 border-green-500" : "border-border-strong"
         }`}
       >
         {completed && <Check size={14} className="text-white" />}
@@ -128,21 +128,21 @@ const navigate = useNavigate();
       <div className="flex flex-col min-w-0">
         <h3
           className={`text-sm font-medium truncate ${
-            completed ? "line-through text-gray-400" : "text-gray-800"
+            completed ? "line-through text-foreground-muted" : "text-foreground"
           }`}
         >
           {title}
         </h3>
 
         {description && (
-          <span className="text-xs text-gray-500 truncate">
+          <span className="text-xs text-foreground-muted truncate">
             {description}
           </span>
         )}
       </div>
 
       {/* Date */}
-      <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+      <div className="flex items-center justify-center gap-2 text-sm text-foreground-muted">
         <CalendarDays size={14} />
         {formattedDate}
       </div>
@@ -160,7 +160,7 @@ const navigate = useNavigate();
         {/* Focus mode */}
         <button
         onClick={handleView}
-          className="text-gray-400 hover:text-purple-500 transition hover:scale-110 hover:cursor-pointer"
+          className="text-foreground-muted hover:text-purple-500 transition hover:scale-110 hover:cursor-pointer dark:hover:text-purple-400"
         >
           <Eye size={17} />
         </button>
@@ -170,8 +170,8 @@ const navigate = useNavigate();
           onClick={handlePinToggle}
           className={`transition-all duration-200 hover:scale-110 hover:cursor-pointer ${
             pinned
-              ? "text-yellow-500"
-              : "text-gray-400 hover:text-yellow-500"
+              ? "text-yellow-500 dark:text-yellow-400"
+              : "text-foreground-muted hover:text-yellow-500 dark:hover:text-yellow-400"
           }`}
         >
           <Pin size={17} className={pinned ? "rotate-45" : ""} />
@@ -180,7 +180,7 @@ const navigate = useNavigate();
         {/* Edit */}
         <button
           onClick={() => onEdit(todo)}
-          className="text-gray-400 hover:text-blue-500 transition hover:scale-110 hover:cursor-pointer"
+          className="text-foreground-muted hover:text-blue-500 transition hover:scale-110 hover:cursor-pointer dark:hover:text-blue-400"
         >
           <Pencil size={17} />
         </button>
@@ -188,7 +188,7 @@ const navigate = useNavigate();
         {/* Delete */}
         <button
           onClick={() => onDelete(_id)}
-          className="text-gray-400 hover:text-red-500 transition hover:scale-110 hover:cursor-pointer"
+          className="text-foreground-muted hover:text-red-500 transition hover:scale-110 hover:cursor-pointer dark:hover:text-red-400"
         >
           <Trash2 size={17} />
         </button>

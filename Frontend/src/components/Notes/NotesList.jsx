@@ -3,7 +3,7 @@ import NoteCard from "./NotesCard";
 const NotesList = ({ notes = [], onEdit, onDelete, onArchive, onUnarchive, onPin, onUnpin, mode }) => {
   if (notes.length === 0) {
     return (
-      <p className="text-gray-500 text-sm sm:text-base mt-4">
+      <p className="text-foreground-muted text-sm sm:text-base mt-4">
         No notes yet. Start by creating one!
       </p>
     );

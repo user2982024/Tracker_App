@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { HashLink } from "react-router-hash-link";
 import { useEffect, useState } from "react";
+import ThemeToggle from "../UI/ThemeToggle";
 
 const Navbar = () => {
   const [activeSection, setActiveSection] = useState("home");
@@ -34,12 +35,12 @@ const Navbar = () => {
   const navLinkClass = (section) =>
     `relative pb-1 transition-all duration-300 ${
       activeSection === section
-        ? "text-blue-600 font-semibold"
-        : "text-gray-600 hover:text-black"
+        ? "text-primary font-semibold"
+        : "text-foreground-muted hover:text-foreground"
     }`;
 
   return (
-    <nav className="w-full bg-white border-b sticky top-0 z-50">
+    <nav className="w-full bg-surface border-b border-border sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         
         {/* Logo */}
@@ -47,7 +48,7 @@ const Navbar = () => {
           <div className="w-8 h-8 bg-blue-600 text-white flex items-center justify-center rounded-md font-bold">
             T
           </div>
-          <span className="text-2xl font-bold text-gray-900">
+          <span className="text-2xl font-bold text-foreground">
             TaskFlow
           </span>
         </Link>
@@ -66,7 +67,7 @@ const Navbar = () => {
 
               {/* Underline */}
               <span
-                className={`absolute left-0 -bottom-1 h-0.5 bg-blue-600 transition-all duration-300 ${
+                className={`absolute left-0 -bottom-1 h-0.5 bg-primary transition-all duration-300 ${
                   activeSection === section ? "w-full" : "w-0"
                 }`}
               ></span>
@@ -77,7 +78,9 @@ const Navbar = () => {
 
         {/* Auth */}
         <div className="flex items-center gap-4">
-          <Link to="/signin" className="text-gray-600 hover:text-black">
+          <ThemeToggle />
+
+          <Link to="/signin" className="text-foreground-muted hover:text-foreground">
             Log in
           </Link>
 

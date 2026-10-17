@@ -28,17 +28,17 @@ const FeaturesSection = () => {
   return (
     <section
       id="features"
-      className="w-full bg-gray-50 py-20 scroll-mt-24"
+      className="w-full bg-surface-secondary py-20 scroll-mt-24"
     >
       <div className="max-w-7xl mx-auto px-6 text-center">
 
         {/* Heading */}
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground">
           Boost Your Productivity Today
         </h2>
 
         {/* Subtext */}
-        <p className="mt-4 text-gray-600 max-w-2xl mx-auto">
+        <p className="mt-4 text-foreground-muted max-w-2xl mx-auto">
           Everything you need to stay organized and achieve your goals
         </p>
 
@@ -48,20 +48,20 @@ const FeaturesSection = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition"
+              className="bg-surface border border-border p-6 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition"
             >
               {/* Icon */}
-              <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-gray-100 mx-auto">
+              <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-surface-secondary mx-auto">
                 {feature.icon}
               </div>
 
               {/* Title */}
-              <h3 className="mt-4 text-lg font-semibold text-gray-900">
+              <h3 className="mt-4 text-lg font-semibold text-foreground">
                 {feature.title}
               </h3>
 
               {/* Description */}
-              <p className="mt-2 text-gray-600 text-sm">
+              <p className="mt-2 text-foreground-muted text-sm">
                 {feature.description}
               </p>
             </div>

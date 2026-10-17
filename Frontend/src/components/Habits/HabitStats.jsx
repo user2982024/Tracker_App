@@ -37,14 +37,14 @@ const HabitStats = ({ stats = {} }) => {
       value: totalActiveHabits,
       description: "Your current routines",
       icon: ListChecks,
-      iconStyle: "bg-blue-50 text-blue-600",
+      iconStyle: "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400",
     },
     {
       label: "Scheduled Today",
       value: scheduledToday,
       description: "Habits planned for today",
       icon: Activity,
-      iconStyle: "bg-violet-50 text-violet-600",
+      iconStyle: "bg-violet-50 text-violet-600 dark:bg-violet-500/10 dark:text-violet-400",
     },
     {
       label: "Completed Today",
@@ -54,14 +54,14 @@ const HabitStats = ({ stats = {} }) => {
           ? "All scheduled habits completed"
           : `${remainingToday} remaining today`,
       icon: CheckCircle2,
-      iconStyle: "bg-emerald-50 text-emerald-600",
+      iconStyle: "bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400",
     },
     {
       label: "Today's Progress",
       value: `${Math.round(completionPercentage)}%`,
       description: `${completedToday} of ${scheduledToday} completed`,
       icon: TrendingUp,
-      iconStyle: "bg-amber-50 text-amber-600",
+      iconStyle: "bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400",
       progress: completionPercentage,
     },
   ];
@@ -77,15 +77,15 @@ const HabitStats = ({ stats = {} }) => {
         return (
           <article
             key={card.label}
-            className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md"
+            className="rounded-2xl border border-border bg-surface p-5 shadow-sm transition-shadow duration-200 hover:shadow-md"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-sm font-medium text-gray-500">
+                <p className="text-sm font-medium text-foreground-muted">
                   {card.label}
                 </p>
 
-                <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900">
+                <p className="mt-2 text-3xl font-bold tracking-tight text-foreground">
                   {card.value}
                 </p>
               </div>
@@ -97,14 +97,14 @@ const HabitStats = ({ stats = {} }) => {
               </div>
             </div>
 
-            <p className="mt-3 text-xs text-gray-500">
+            <p className="mt-3 text-xs text-foreground-muted">
               {card.description}
             </p>
 
             {card.progress !== undefined && (
               <div className="mt-4">
                 <div
-                  className="h-2 overflow-hidden rounded-full bg-gray-100"
+                  className="h-2 overflow-hidden rounded-full bg-surface-secondary"
                   role="progressbar"
                   aria-label="Today's habit completion"
                   aria-valuemin={0}

@@ -15,10 +15,10 @@ const GoalsProgress = ({ stats }) => {
       : 0;
 
   return (
-    <div className="bg-white p-5 shadow-sm border border-gray-100 rounded-2xl">
+    <div className="bg-surface p-5 shadow-sm border border-border rounded-2xl">
 
       {/* Title */}
-      <p className="text-sm text-gray-500 mb-2">
+      <p className="text-sm text-foreground-muted mb-2">
         Overall Progress
       </p>
 
@@ -29,11 +29,11 @@ const GoalsProgress = ({ stats }) => {
         <div className="flex-1">
 
           {/* Summary */}
-          <h2 className="text-lg font-semibold text-gray-800 mb-3">
+          <h2 className="text-lg font-semibold text-foreground mb-3">
 
             You've completed{" "}
 
-            <span className="text-blue-600">
+            <span className="text-blue-600 dark:text-blue-400">
               {completedGoals} out of {totalGoals}
             </span>{" "}
 
@@ -42,10 +42,10 @@ const GoalsProgress = ({ stats }) => {
           </h2>
 
           {/* Progress Bar */}
-          <div className="w-full bg-gray-200 h-2 rounded-full overflow-hidden">
+          <div className="w-full bg-border h-2 rounded-full overflow-hidden">
 
             <div
-              className="bg-blue-600 h-full transition-all duration-300"
+              className="bg-blue-600 dark:bg-blue-500 h-full transition-all duration-300"
               style={{
                 width: `${progressPercentage}%`,
               }}
@@ -64,15 +64,15 @@ const GoalsProgress = ({ stats }) => {
             <span className="w-2 h-2 rounded-full bg-green-500"></span>
 
             <div>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-foreground-muted">
                 Completed
               </p>
 
-              <p className="font-semibold text-gray-800">
+              <p className="font-semibold text-foreground">
                 {completedGoals}
               </p>
 
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-foreground-muted">
                 {progressPercentage}%
               </p>
             </div>
@@ -85,15 +85,15 @@ const GoalsProgress = ({ stats }) => {
             <span className="w-2 h-2 rounded-full bg-blue-500"></span>
 
             <div>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-foreground-muted">
                 Remaining
               </p>
 
-              <p className="font-semibold text-gray-800">
+              <p className="font-semibold text-foreground">
                 {remainingGoals}
               </p>
 
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-foreground-muted">
                 {100 - progressPercentage}%
               </p>
             </div>

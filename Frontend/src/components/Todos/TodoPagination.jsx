@@ -42,10 +42,10 @@ const TodosPagination = ({ currentPage, totalPages, onPageChange }) => {
       <button
         onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
-        className={`px-3 py-1 rounded-md border border-gray-400 text-sm flex items-center gap-1 cursor-pointer ${
+        className={`px-3 py-1 rounded-md border border-border-strong text-sm flex items-center gap-1 cursor-pointer ${
           currentPage === 1
             ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-gray-100"
+            : "hover:bg-surface-secondary"
         }`}
       >
         <ChevronLeft size={16} />
@@ -56,7 +56,7 @@ const TodosPagination = ({ currentPage, totalPages, onPageChange }) => {
       {pages.map((page, index) => {
         if (page === "...") {
           return (
-            <span key={`dots-${index}`} className="px-2 text-gray-500">
+            <span key={`dots-${index}`} className="px-2 text-foreground-muted">
               ...
             </span>
           );
@@ -66,10 +66,10 @@ const TodosPagination = ({ currentPage, totalPages, onPageChange }) => {
           <button
             key={`page-${page}`}
             onClick={() => onPageChange(page)}
-            className={`px-3 py-1 rounded-md border border-gray-400 text-sm cursor-pointer ${
+            className={`px-3 py-1 rounded-md border border-border-strong text-sm cursor-pointer ${
               currentPage === page
                 ? "bg-blue-600 text-white"
-                : "hover:bg-blue-100"
+                : "hover:bg-blue-100 dark:hover:bg-blue-500/20"
             }`}
           >
             {page}
@@ -83,10 +83,10 @@ const TodosPagination = ({ currentPage, totalPages, onPageChange }) => {
           currentPage < totalPages && onPageChange(currentPage + 1)
         }
         disabled={currentPage === totalPages}
-        className={`px-3 py-1 rounded-md border border-gray-400 text-sm flex items-center gap-1 cursor-pointer ${
+        className={`px-3 py-1 rounded-md border border-border-strong text-sm flex items-center gap-1 cursor-pointer ${
           currentPage === totalPages
             ? "opacity-50 cursor-not-allowed"
-            : "hover:bg-gray-100"
+            : "hover:bg-surface-secondary"
         }`}
       >
         Next

@@ -6,7 +6,7 @@ import Footer from "../components/landing/Footer";
 
 const LandingPage = () => {
   return (
-    <div className="bg-white text-gray-900">
+    <div className="bg-background text-foreground">
       {/* Navbar */}
       <Navbar />
 

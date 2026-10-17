@@ -229,7 +229,7 @@ const NotesPage = () => {
         <div className="flex justify-end mt-4">
           <button
             onClick={() => navigate("/app/notes/archive")}
-            className="px-4 py-2 bg-blue-100 mb-4 text-blue-600 rounded-3xl shadow hover:bg-blue-200 transition cursor-pointer"
+            className="px-4 py-2 bg-blue-100 dark:bg-blue-500/15 mb-4 text-blue-600 dark:text-blue-300 rounded-3xl shadow hover:bg-blue-200 dark:hover:bg-blue-500/25 transition cursor-pointer"
           >
             Archived Notes
           </button>
@@ -252,7 +252,7 @@ const NotesPage = () => {
                   setIsEditMode(false);
                   setSelectedNote(null);
                 }}
-                className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500 transition cursor-pointer"
+                className="px-6 py-2 bg-surface-secondary text-foreground rounded-lg hover:bg-surface-hover transition cursor-pointer"
               >
                 Cancel
               </button>
@@ -262,7 +262,7 @@ const NotesPage = () => {
       ) : (
         <>
           {loading ? (
-            <p className="text-gray-500 mt-4">Loading notes...</p>
+            <p className="text-foreground-muted mt-4">Loading notes...</p>
           ) : (
             <NotesList
               notes={notes}
@@ -284,7 +284,7 @@ const NotesPage = () => {
                 className={`px-3 py-1 rounded cursor-pointer ${
                   currentPage === i + 1
                     ? "bg-blue-600 text-white"
-                    : "bg-gray-200"
+                    : "bg-border"
                 }`}
               >
                 {i + 1}
@@ -311,7 +311,7 @@ const NotesPage = () => {
                 setShowDeleteModal(false);
                 setNoteToDelete(null);
               }}
-              className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+              className="px-4 py-2 border border-border rounded-lg hover:bg-surface-secondary"
             >
               Cancel
             </button>
@@ -339,7 +339,7 @@ const NotesPage = () => {
           <>
             <button
               onClick={() => setShowDeleteAllModal(false)}
-              className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+              className="px-4 py-2 border border-border rounded-lg hover:bg-surface-secondary"
             >
               Cancel
             </button>

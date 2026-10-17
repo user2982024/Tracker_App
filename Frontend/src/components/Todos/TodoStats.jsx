@@ -6,8 +6,8 @@ const TodosStats = ({ stats }) => {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {/* Total */}
       <StatCard
-        icon={<ClipboardList className="text-blue-500" size={20} />}
-        bg="bg-blue-100"
+        icon={<ClipboardList className="text-blue-500 dark:text-blue-300" size={20} />}
+        bg="bg-blue-100 dark:bg-blue-500/15"
         value={stats?.total || 0}
         label="Total"
         subLabel="All todos"
@@ -15,8 +15,8 @@ const TodosStats = ({ stats }) => {
 
       {/* Completed */}
       <StatCard
-        icon={<CheckCircle2 className="text-green-600" size={20} />}
-        bg="bg-green-100"
+        icon={<CheckCircle2 className="text-green-600 dark:text-green-300" size={20} />}
+        bg="bg-green-100 dark:bg-green-500/15"
         value={stats?.completed || 0}
         label="Completed"
         subLabel="Done"
@@ -24,8 +24,8 @@ const TodosStats = ({ stats }) => {
 
       {/* Pending */}
       <StatCard
-        icon={<Clock className="text-orange-500" size={20} />}
-        bg="bg-orange-100"
+        icon={<Clock className="text-orange-500 dark:text-orange-300" size={20} />}
+        bg="bg-orange-100 dark:bg-orange-500/15"
         value={stats?.pending || 0}
         label="Pending"
         subLabel="To be done"
@@ -33,8 +33,8 @@ const TodosStats = ({ stats }) => {
 
       {/* Overdue */}
       <StatCard
-        icon={<AlertCircle className="text-red-500" size={20} />}
-        bg="bg-red-100"
+        icon={<AlertCircle className="text-red-500 dark:text-red-300" size={20} />}
+        bg="bg-red-100 dark:bg-red-500/15"
         value={stats?.overdue || 0}
         label="Overdue"
         subLabel="Take action"
@@ -46,15 +46,15 @@ const TodosStats = ({ stats }) => {
 //  Reusable Stat Card
 const StatCard = ({ icon, bg, value, label, subLabel }) => {
   return (
-    <div className="bg-white rounded-xl border border-gray-300 p-4 flex items-center gap-4">
+    <div className="bg-surface rounded-xl border border-border p-4 flex items-center gap-4">
       {/* Icon */}
       <div className={`p-3 rounded-full ${bg}`}>{icon}</div>
 
       {/* Text */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-800">{value}</h2>
-        <p className="text-sm font-medium text-gray-600">{label}</p>
-        <p className="text-xs text-gray-400">{subLabel}</p>
+        <h2 className="text-xl font-semibold text-foreground">{value}</h2>
+        <p className="text-sm font-medium text-foreground-muted">{label}</p>
+        <p className="text-xs text-foreground-muted">{subLabel}</p>
       </div>
     </div>
   );

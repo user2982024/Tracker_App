@@ -274,25 +274,25 @@ const HabitHistory = () => {
       <button
         type="button"
         onClick={handleBack}
-        className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-4 py-2.5 text-sm font-medium text-foreground-secondary shadow-sm transition hover:bg-surface-secondary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
         <ArrowLeft size={17} aria-hidden="true" />
         Back to Habits
       </button>
 
-      <header className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-7">
+      <header className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-7">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
           <div className="flex items-start gap-4">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
               <ClipboardList size={24} aria-hidden="true" />
             </div>
 
             <div className="min-w-0">
-              <p className="text-sm font-medium text-blue-600">Daily Habits</p>
-              <h1 className="mt-1 break-words text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+              <p className="text-sm font-medium text-blue-600 dark:text-blue-400">Daily Habits</p>
+              <h1 className="mt-1 break-words text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
                 Completion History
               </h1>
-              <p className="mt-2 text-sm leading-6 text-gray-500">
+              <p className="mt-2 text-sm leading-6 text-foreground-muted">
                 Review your past completions and track your consistency over
                 time.
               </p>
@@ -300,15 +300,15 @@ const HabitHistory = () => {
           </div>
 
           {habit && (
-            <div className="shrink-0 rounded-xl border border-gray-100 bg-gray-50 px-4 py-3 sm:min-w-48">
-              <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
+            <div className="shrink-0 rounded-xl border border-border bg-surface-secondary px-4 py-3 sm:min-w-48">
+              <p className="text-xs font-medium uppercase tracking-wide text-foreground-muted">
                 Selected habit
               </p>
-              <p className="mt-1 break-words font-semibold text-gray-900">
+              <p className="mt-1 break-words font-semibold text-foreground">
                 {habit.title || habit.name || "Untitled habit"}
               </p>
               {habit.category && (
-                <p className="mt-1 text-sm text-gray-500">{habit.category}</p>
+                <p className="mt-1 text-sm text-foreground-muted">{habit.category}</p>
               )}
             </div>
           )}
@@ -318,17 +318,17 @@ const HabitHistory = () => {
       {error ? (
         <section
           role="alert"
-          className="rounded-2xl border border-red-200 bg-red-50 p-6 sm:p-8"
+          className="rounded-2xl border border-red-200 bg-red-50 p-6 dark:border-red-500/25 dark:bg-red-500/10 sm:p-8"
         >
           <div className="mx-auto max-w-lg text-center">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-300">
               <RefreshCw size={22} aria-hidden="true" />
             </div>
 
-            <h2 className="mt-4 text-lg font-semibold text-red-900">
+            <h2 className="mt-4 text-lg font-semibold text-red-900 dark:text-red-200">
               Unable to load history
             </h2>
-            <p className="mt-2 text-sm leading-6 text-red-700">{error}</p>
+            <p className="mt-2 text-sm leading-6 text-red-700 dark:text-red-300">{error}</p>
 
             <div className="mt-5 flex flex-wrap justify-center gap-3">
               <button
@@ -343,7 +343,7 @@ const HabitHistory = () => {
               <button
                 type="button"
                 onClick={handleBack}
-                className="rounded-xl border border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 transition hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                className="rounded-xl border border-red-200 bg-surface px-4 py-2.5 text-sm font-semibold text-foreground-secondary transition hover:bg-red-50 dark:border-red-500/25 dark:hover:bg-red-500/10 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
               >
                 Back to Habits
               </button>
@@ -353,44 +353,44 @@ const HabitHistory = () => {
       ) : (
         <>
           <section className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+            <div className="flex items-center gap-4 rounded-2xl border border-border bg-surface p-5 shadow-sm">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400">
                 <TrendingUp size={21} aria-hidden="true" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Total completions</p>
-                <p className="mt-1 text-2xl font-bold tabular-nums text-gray-900">
+                <p className="text-sm text-foreground-muted">Total completions</p>
+                <p className="mt-1 text-2xl font-bold tabular-nums text-foreground">
                   {loadingHistory ? "—" : totalRecords}
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-green-50 text-green-600">
+            <div className="flex items-center gap-4 rounded-2xl border border-border bg-surface p-5 shadow-sm">
+              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-green-50 text-green-600 dark:bg-green-500/10 dark:text-green-400">
                 <CalendarDays size={21} aria-hidden="true" />
               </div>
               <div>
-                <p className="text-sm text-gray-500">Records on this page</p>
-                <p className="mt-1 text-2xl font-bold tabular-nums text-gray-900">
+                <p className="text-sm text-foreground-muted">Records on this page</p>
+                <p className="mt-1 text-2xl font-bold tabular-nums text-foreground">
                   {loadingHistory ? "—" : history.length}
                 </p>
               </div>
             </div>
           </section>
 
-          <section className="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
-            <div className="flex flex-col gap-2 border-b border-gray-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <section className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
+            <div className="flex flex-col gap-2 border-b border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
               <div>
-                <h2 className="font-semibold text-gray-900">
+                <h2 className="font-semibold text-foreground">
                   Your completion records
                 </h2>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-foreground-muted">
                   Showing up to {PAGE_SIZE} records per page.
                 </p>
               </div>
 
               {!loadingHistory && totalRecords > 0 && (
-                <p className="text-sm tabular-nums text-gray-500">
+                <p className="text-sm tabular-nums text-foreground-muted">
                   {firstRecordNumber}–{lastRecordNumber} of {totalRecords}
                 </p>
               )}
@@ -404,25 +404,25 @@ const HabitHistory = () => {
               >
                 <LoaderCircle
                   size={30}
-                  className="animate-spin text-blue-600"
+                  className="animate-spin text-blue-600 dark:text-blue-400"
                   aria-hidden="true"
                 />
-                <p className="mt-4 text-sm font-medium text-gray-700">
+                <p className="mt-4 text-sm font-medium text-foreground-secondary">
                   Loading completion history…
                 </p>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-foreground-muted">
                   Please wait while we retrieve your records.
                 </p>
               </div>
             ) : history.length === 0 ? (
               <div className="px-6 py-14 text-center">
-                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-100 text-gray-500">
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-secondary text-foreground-muted">
                   <CalendarDays size={25} aria-hidden="true" />
                 </div>
-                <h3 className="mt-4 text-lg font-semibold text-gray-900">
+                <h3 className="mt-4 text-lg font-semibold text-foreground">
                   No completion history yet
                 </h3>
-                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-gray-500">
+                <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-foreground-muted">
                   Once you complete this habit, your records will appear here.
                   Keep building your routine one day at a time.
                 </p>
@@ -437,7 +437,7 @@ const HabitHistory = () => {
               </div>
             ) : (
               <>
-                <div className="divide-y divide-gray-100">
+                <div className="divide-y divide-border">
                   {history.map((item, index) => {
                     const createdAt = formatDateTime(item.createdAt);
                     const valueIsAvailable =
@@ -448,27 +448,27 @@ const HabitHistory = () => {
                     return (
                       <article
                         key={getRecordKey(item, index)}
-                        className="flex gap-3 px-5 py-5 transition hover:bg-gray-50/70 sm:gap-4 sm:px-6"
+                        className="flex gap-3 px-5 py-5 transition hover:bg-surface-secondary/70 sm:gap-4 sm:px-6"
                       >
-                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-50 text-green-600">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-green-50 text-green-600 dark:bg-green-500/10 dark:text-green-400">
                           <CheckCircle2 size={21} aria-hidden="true" />
                         </div>
 
                         <div className="min-w-0 flex-1">
                           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                             <div className="min-w-0">
-                              <h3 className="font-semibold text-gray-900">
+                              <h3 className="font-semibold text-foreground">
                                 {formatDate(getRecordDate(item))}
                               </h3>
 
                               {item.note && (
-                                <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-gray-600">
+                                <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-foreground-muted">
                                   {item.note}
                                 </p>
                               )}
 
                               {createdAt && (
-                                <p className="mt-2 flex flex-wrap items-center gap-1.5 text-xs text-gray-400">
+                                <p className="mt-2 flex flex-wrap items-center gap-1.5 text-xs text-foreground-muted">
                                   <Clock3 size={13} aria-hidden="true" />
                                   Recorded {createdAt}
                                 </p>
@@ -476,7 +476,7 @@ const HabitHistory = () => {
                             </div>
 
                             {valueIsAvailable && (
-                              <span className="inline-flex w-fit shrink-0 items-center rounded-full bg-blue-50 px-3 py-1.5 text-sm font-semibold text-blue-700">
+                              <span className="inline-flex w-fit shrink-0 items-center rounded-full bg-blue-50 px-3 py-1.5 text-sm font-semibold text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">
                                 {item.value}
                                 {habit?.unit ? ` ${habit.unit}` : ""}
                               </span>
@@ -484,7 +484,7 @@ const HabitHistory = () => {
                           </div>
 
                           {item.description && !item.note && (
-                            <p className="mt-2 break-words text-sm leading-6 text-gray-600">
+                            <p className="mt-2 break-words text-sm leading-6 text-foreground-muted">
                               {item.description}
                             </p>
                           )}
@@ -496,13 +496,13 @@ const HabitHistory = () => {
 
                 <nav
                   aria-label="Habit history pagination"
-                  className="flex flex-col gap-4 border-t border-gray-100 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+                  className="flex flex-col gap-4 border-t border-border px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6"
                 >
-                  <p className="text-center text-sm text-gray-500 sm:text-left">
+                  <p className="text-center text-sm text-foreground-muted sm:text-left">
                     Page{" "}
-                    <span className="font-semibold text-gray-800">{page}</span>{" "}
+                    <span className="font-semibold text-foreground">{page}</span>{" "}
                     of{" "}
-                    <span className="font-semibold text-gray-800">
+                    <span className="font-semibold text-foreground">
                       {totalPages}
                     </span>
                   </p>
@@ -513,7 +513,7 @@ const HabitHistory = () => {
                       onClick={() => goToPage(page - 1)}
                       disabled={page <= 1 || loadingHistory}
                       aria-label="Go to previous page"
-                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-sm font-medium text-foreground-secondary transition hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
                       <ChevronLeft size={17} aria-hidden="true" />
                       Previous
@@ -524,7 +524,7 @@ const HabitHistory = () => {
                       onClick={() => goToPage(page + 1)}
                       disabled={page >= totalPages || loadingHistory}
                       aria-label="Go to next page"
-                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                      className="inline-flex items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-sm font-medium text-foreground-secondary transition hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-40 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                     >
                       Next
                       <ChevronRight size={17} aria-hidden="true" />

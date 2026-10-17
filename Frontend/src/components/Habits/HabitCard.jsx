@@ -27,17 +27,17 @@ const WEEKDAYS = [
 ];
 
 const PRIORITY_STYLES = {
-  low: "bg-gray-100 text-gray-600",
-  medium: "bg-amber-50 text-amber-700",
-  high: "bg-rose-50 text-rose-700",
+  low: "bg-gray-100 text-gray-600 dark:bg-surface-secondary dark:text-foreground-muted",
+  medium: "bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300",
+  high: "bg-rose-50 text-rose-700 dark:bg-rose-500/10 dark:text-rose-300",
 };
 
 const CATEGORY_STYLES = {
-  health: "bg-emerald-50 text-emerald-700",
-  career: "bg-blue-50 text-blue-700",
-  learning: "bg-violet-50 text-violet-700",
-  finance: "bg-amber-50 text-amber-700",
-  personal: "bg-pink-50 text-pink-700",
+  health: "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300",
+  career: "bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300",
+  learning: "bg-violet-50 text-violet-700 dark:bg-violet-500/10 dark:text-violet-300",
+  finance: "bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-300",
+  personal: "bg-pink-50 text-pink-700 dark:bg-pink-500/10 dark:text-pink-300",
 };
 
 const formatLabel = (value = "") =>
@@ -103,10 +103,10 @@ const HabitCard = ({
 
   return (
     <article
-      className={`rounded-2xl border bg-white p-5 shadow-sm transition-all duration-200 hover:shadow-md ${
+      className={`rounded-2xl border bg-surface p-5 shadow-sm transition-all duration-200 hover:shadow-md ${
         completed
-          ? "border-emerald-100"
-          : "border-gray-100"
+          ? "border-emerald-100 dark:border-emerald-500/25"
+          : "border-border"
       } ${isArchived ? "opacity-70" : ""}`}
     >
       <div className="flex items-start gap-3">
@@ -123,7 +123,7 @@ const HabitCard = ({
           className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${
             completed
               ? "border-emerald-500 bg-emerald-500 text-white"
-              : "border-gray-300 text-transparent hover:border-emerald-500 hover:text-emerald-500"
+              : "border-border-strong text-transparent hover:border-emerald-500 hover:text-emerald-500"
           }`}
         >
           {loading ? (
@@ -143,8 +143,8 @@ const HabitCard = ({
             <h3
               className={`break-words text-base font-semibold ${
                 completed
-                  ? "text-gray-500 line-through"
-                  : "text-gray-900"
+                  ? "text-foreground-muted line-through"
+                  : "text-foreground"
               }`}
             >
               {title}
@@ -159,7 +159,7 @@ const HabitCard = ({
             )}
 
             {completed && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700">
+              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">
                 <CheckCircle2 size={12} />
                 Completed
               </span>
@@ -167,7 +167,7 @@ const HabitCard = ({
           </div>
 
           {description && (
-            <p className="mt-1 whitespace-pre-line break-words text-sm leading-5 text-gray-500">
+            <p className="mt-1 whitespace-pre-line break-words text-sm leading-5 text-foreground-muted">
               {description}
             </p>
           )}
@@ -186,12 +186,12 @@ const HabitCard = ({
             </span>
 
             {frequency === "daily" ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-gray-50 px-2.5 py-1 text-xs text-gray-600">
+              <span className="inline-flex items-center gap-1 rounded-full bg-surface-secondary px-2.5 py-1 text-xs text-foreground-muted">
                 <CalendarDays size={12} />
                 Every day
               </span>
             ) : (
-              <span className="inline-flex items-center gap-1 rounded-full bg-gray-50 px-2.5 py-1 text-xs text-gray-600">
+              <span className="inline-flex items-center gap-1 rounded-full bg-surface-secondary px-2.5 py-1 text-xs text-foreground-muted">
                 <CalendarDays size={12} />
                 {scheduledDays.length > 0
                   ? scheduledDays.map((day) => day.label).join(", ")
@@ -200,7 +200,7 @@ const HabitCard = ({
             )}
           </div>
 
-          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-gray-500">
+          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-foreground-muted">
             {targetValue !== undefined && targetValue !== null && (
               <span className="inline-flex items-center gap-1.5">
                 <Target size={14} />
@@ -232,7 +232,7 @@ const HabitCard = ({
             disabled={loading}
             aria-label={`Actions for ${title}`}
             aria-expanded={menuOpen}
-            className="flex h-9 w-9 items-center justify-center rounded-xl text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800 disabled:opacity-50"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-foreground-muted transition-colors hover:bg-surface-secondary hover:text-foreground disabled:opacity-50"
           >
             <MoreHorizontal size={20} />
           </button>
@@ -246,12 +246,12 @@ const HabitCard = ({
                 onClick={() => setMenuOpen(false)}
               />
 
-              <div className="absolute right-0 top-10 z-20 w-48 rounded-xl border border-gray-100 bg-white p-1.5 shadow-lg">
+              <div className="absolute right-0 top-10 z-20 w-48 rounded-xl border border-border bg-surface p-1.5 shadow-lg">
                 {onEdit && (
                   <button
                     type="button"
                     onClick={() => handleAction(onEdit, habit)}
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50"
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-foreground-secondary hover:bg-surface-secondary"
                   >
                     <Pencil size={15} />
                     Edit habit
@@ -262,7 +262,7 @@ const HabitCard = ({
                   <button
                     type="button"
                     onClick={() => handleAction(onViewHistory, habit)}
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50"
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-foreground-secondary hover:bg-surface-secondary"
                   >
                     <CalendarDays size={15} />
                     View history
@@ -275,7 +275,7 @@ const HabitCard = ({
                     onClick={() =>
                       handleAction(onArchive, habit, !isArchived)
                     }
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50"
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-foreground-secondary hover:bg-surface-secondary"
                   >
                     <Archive size={15} />
                     {isArchived ? "Restore habit" : "Archive habit"}
@@ -286,7 +286,7 @@ const HabitCard = ({
                   <button
                     type="button"
                     onClick={() => handleAction(onDelete, habit)}
-                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-rose-600 hover:bg-rose-50"
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-500/10"
                   >
                     <Trash2 size={15} />
                     Delete habit

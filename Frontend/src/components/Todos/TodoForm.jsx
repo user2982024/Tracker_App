@@ -84,7 +84,7 @@ const TodoForm = ({ todoToEdit, onTodoCreated, onCancel }) => {
   };
 
   return (
-    <div className="bg-white border rounded-xl p-6 max-w-xl mx-auto">
+    <div className="bg-surface border border-border rounded-xl p-6 max-w-xl mx-auto">
       <h2 className="text-lg font-semibold mb-4">
         {isEditMode ? "Edit Todo" : "Create Todo"}
       </h2>
@@ -99,7 +99,7 @@ const TodoForm = ({ todoToEdit, onTodoCreated, onCancel }) => {
             value={formData.title}
             onChange={handleChange}
             placeholder="Enter todo title"
-            className="w-full border rounded-lg px-3 py-2 text-sm"
+            className="w-full border border-border bg-input text-foreground rounded-lg px-3 py-2 text-sm placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
 
@@ -111,7 +111,7 @@ const TodoForm = ({ todoToEdit, onTodoCreated, onCancel }) => {
             value={formData.description}
             onChange={handleChange}
             placeholder="Enter description"
-            className="w-full border rounded-lg px-3 py-2 text-sm"
+            className="w-full border border-border bg-input text-foreground rounded-lg px-3 py-2 text-sm placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
             rows={3}
           />
         </div>
@@ -124,7 +124,7 @@ const TodoForm = ({ todoToEdit, onTodoCreated, onCancel }) => {
             name="dueDate"
             value={formData.dueDate}
             onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2 text-sm"
+            className="w-full border border-border bg-input text-foreground rounded-lg px-3 py-2 text-sm placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         </div>
 
@@ -135,7 +135,7 @@ const TodoForm = ({ todoToEdit, onTodoCreated, onCancel }) => {
             name="priority"
             value={formData.priority}
             onChange={handleChange}
-            className="w-full border rounded-lg px-3 py-2 text-sm"
+            className="w-full border border-border bg-input text-foreground rounded-lg px-3 py-2 text-sm placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
           >
             <option value="low">Low</option>
             <option value="medium">Medium</option>
@@ -148,7 +148,7 @@ const TodoForm = ({ todoToEdit, onTodoCreated, onCancel }) => {
           <button
             type="button"
             onClick={onCancel}
-            className="w-1/2 border border-gray-300 text-gray-700 py-2 rounded-lg hover:bg-gray-100 transition hover:cursor-pointer"
+            className="w-1/2 border border-border text-foreground-secondary py-2 rounded-lg hover:bg-surface-secondary transition hover:cursor-pointer"
           >
             Cancel
           </button>

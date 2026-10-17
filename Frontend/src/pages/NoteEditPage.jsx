@@ -53,7 +53,7 @@ const NoteEditPage = () => {
       {/* Back */}
       <button
         onClick={() => navigate(-1)}
-        className="mb-4 text-sm text-blue-600 hover:underline"
+        className="mb-4 text-sm text-blue-600 dark:text-blue-300 hover:underline"
       >
         ← Back
       </button>

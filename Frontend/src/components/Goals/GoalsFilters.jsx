@@ -36,7 +36,7 @@ const GoalsFilters = ({
   ];
 
   return (
-    <div className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+    <div className="bg-surface p-4 rounded-2xl shadow-sm border border-border flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
 
       {/* Status Filters */}
       <div className="flex items-center gap-2 flex-wrap">
@@ -51,8 +51,8 @@ const GoalsFilters = ({
               onClick={() => setStatus(filter.value)}
               className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium border transition-all duration-200 ${
                 status === filter.value
-                  ? "bg-blue-600 text-white border-blue-600 shadow-sm"
-                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                  ? "bg-blue-600 text-white border-blue-600 dark:bg-blue-500 dark:border-blue-500 shadow-sm"
+                  : "bg-surface text-foreground-muted border-border hover:bg-surface-secondary"
               }`}
             >
 
@@ -72,7 +72,7 @@ const GoalsFilters = ({
         <select 
         value={sortBy}
         onChange={(e) => setSortBy(e.target.value)}
-        className="px-4 py-2 rounded-xl border border-gray-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
+        className="px-4 py-2 rounded-xl bg-input text-foreground border border-border text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30">
 
           <option value="default">
             Sort by: Default

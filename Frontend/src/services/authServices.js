@@ -1,5 +1,5 @@
 // Base URL
-const BASE_URL = "http://localhost:5000/api/auth";
+const BASE_URL = "/api/auth";
 
 // Helper to extract error safely (VERY IMPORTANT)
 const extractErrorMessage = (result) => {

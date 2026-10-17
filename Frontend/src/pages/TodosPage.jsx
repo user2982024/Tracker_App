@@ -249,7 +249,7 @@ const TodosPage = () => {
                 setIsDeleteModalOpen(false);
                 setTodoToDelete(null);
               }}
-              className="px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-100 hover:cursor-pointer"
+              className="px-4 py-2 rounded-lg border border-border text-foreground-muted hover:bg-surface-secondary hover:cursor-pointer"
             >
               Cancel
             </button>
@@ -275,7 +275,7 @@ const TodosPage = () => {
           <>
             <button
               onClick={() => setIsBulkDeleteModalOpen(false)}
-              className="px-4 py-2 rounded-lg border text-gray-600 hover:bg-gray-100 hover:cursor-pointer"
+              className="px-4 py-2 rounded-lg border border-border text-foreground-muted hover:bg-surface-secondary hover:cursor-pointer"
             >
               Cancel
             </button>

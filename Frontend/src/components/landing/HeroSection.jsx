@@ -5,19 +5,19 @@ const HeroSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section id="home" className="w-full bg-linear-to-r from-white-50 to-blue-200 pt-16 pb-20">
+    <section id="home" className="w-full bg-linear-to-r from-surface to-blue-200 dark:from-background dark:to-surface pt-16 pb-20">
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
 
         {/* LEFT CONTENT */}
         <div>
           {/* Heading */}
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground leading-tight">
             Organize your work. <br />
             <span className="text-blue-600">Stay focused.</span>
           </h1>
 
           {/* Subtext */}
-          <p className="mt-6 text-lg text-gray-600 max-w-lg">
+          <p className="mt-6 text-lg text-foreground-muted max-w-lg">
             All-in-one productivity app to manage your tasks, goals, notes, and habits — all in one place.
           </p>
 
@@ -27,13 +27,13 @@ const HeroSection = () => {
               Get Started
             </button>
 
-            <button className="flex items-center gap-2 px-6 py-3 border rounded-lg text-gray-700 hover:bg-gray-100 transition">
+            <button className="flex items-center gap-2 px-6 py-3 border border-border rounded-lg text-foreground-secondary hover:bg-surface-secondary transition">
               ▶ Watch Demo
             </button>
           </div>
 
           {/* Trust Indicators */}
-          <div className="mt-6 flex flex-wrap items-center gap-6 text-sm text-gray-500">
+          <div className="mt-6 flex flex-wrap items-center gap-6 text-sm text-foreground-muted">
             <span>✔ No credit card required</span>
             <span>✔ Free forever</span>
             <span>✔ Works on all devices</span>

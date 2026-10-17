@@ -53,15 +53,15 @@ const HabitFormModal = ({
         role="dialog"
         aria-modal="true"
         aria-label="Habit form"
-        className="relative z-10 flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl"
+        className="relative z-10 flex max-h-[92vh] w-full max-w-2xl flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-2xl"
       >
         {/* Modal header */}
-        <div className="flex shrink-0 items-center justify-between border-b border-gray-100 px-5 py-4 sm:px-7">
+        <div className="flex shrink-0 items-center justify-between border-b border-border px-5 py-4 sm:px-7">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600">
+            <p className="text-xs font-semibold uppercase tracking-wider text-blue-600 dark:text-blue-400">
               Habit management
             </p>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-foreground-muted">
               Create or update your routine
             </p>
           </div>
@@ -71,7 +71,7 @@ const HabitFormModal = ({
             onClick={onClose}
             disabled={loading}
             aria-label="Close habit form"
-            className="flex h-9 w-9 items-center justify-center rounded-xl text-gray-500 transition hover:bg-gray-100 hover:text-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-9 w-9 items-center justify-center rounded-xl text-foreground-muted transition hover:bg-surface-secondary hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
           >
             <X size={20} />
           </button>

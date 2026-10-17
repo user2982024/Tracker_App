@@ -18,8 +18,8 @@ const NoteCard = ({
     <div
       className={`p-4 rounded-xl border-2 transition ${
         note.isPinned
-          ? "bg-yellow-50 border-yellow-300 shadow-sm shadow-yellow-200 hover:shadow-md"
-          : "bg-blue-50 border-blue-200 shadow-sm hover:shadow-md hover:shadow-blue-300"
+          ? "bg-yellow-50 border-yellow-300 shadow-sm shadow-yellow-200 hover:shadow-md dark:bg-yellow-500/10 dark:border-yellow-500/30 dark:shadow-yellow-900/20"
+          : "bg-blue-50 border-blue-200 shadow-sm hover:shadow-md hover:shadow-blue-300 dark:bg-blue-500/10 dark:border-blue-500/30 dark:hover:shadow-blue-900/30"
       }`}
     >
       {/* Title */}
@@ -27,17 +27,17 @@ const NoteCard = ({
         <h3 className="text-lg font-semibold">{note.title}</h3>
 
         {note.isPinned && (
-          <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-yellow-200 text-yellow-800 rounded-full">
+          <span className="ml-2 px-2 py-0.5 text-xs font-medium bg-yellow-200 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-300 rounded-full">
             Pinned
           </span>
         )}
       </div>
 
       {/* Content */}
-      <p className="text-gray-700 line-clamp-3">{note.content}</p>
+      <p className="text-foreground-secondary line-clamp-3">{note.content}</p>
 
       {/* Footer */}
-      <div className="mt-4 flex justify-between items-center text-sm text-gray-400">
+      <div className="mt-4 flex justify-between items-center text-sm text-foreground-muted">
         {/* Left Side (Date + Pin) */}
         <div className="flex items-center gap-2">
           <span>{new Date(note.createdAt).toLocaleDateString()}</span>
@@ -52,7 +52,7 @@ const NoteCard = ({
           {/* View icon */}
           <button
             onClick={() => navigate(`/app/notes/${note._id}`)}
-            className="text-gray-500 hover:text-indigo-600 transition hover:cursor-pointer hover:scale-125"
+            className="text-foreground-muted hover:text-indigo-600 dark:hover:text-indigo-400 transition hover:cursor-pointer hover:scale-125"
             title="View Note"
           >
             <Eye size={14} />
@@ -66,7 +66,7 @@ const NoteCard = ({
               className={`transition hover:cursor-pointer ${
                 note.isPinned
                   ? "text-yellow-500 hover:scale-125"
-                  : "text-gray-500 hover:text-yellow-600 hover:scale-125"
+                  : "text-foreground-muted hover:text-yellow-600 dark:hover:text-yellow-400 hover:scale-125"
               }`}
               title={note.isPinned ? "Unpin Note" : "Pin Note"}
             >
@@ -78,7 +78,7 @@ const NoteCard = ({
           {mode === "archived" ? (
             <button
               onClick={() => onUnarchive(note._id)}
-              className="text-gray-500 hover:text-green-600 transition hover:cursor-pointer hover:scale-125"
+              className="text-foreground-muted hover:text-green-600 dark:hover:text-green-400 transition hover:cursor-pointer hover:scale-125"
               title="Unarchive Note"
             >
               <ArchiveRestore size={14} />
@@ -87,7 +87,7 @@ const NoteCard = ({
             // If not archived, show the archive icon
             <button
               onClick={() => onArchive(note._id)}
-              className="text-gray-500 hover:text-yellow-600 transition hover:cursor-pointer hover:scale-125"
+              className="text-foreground-muted hover:text-yellow-600 dark:hover:text-yellow-400 transition hover:cursor-pointer hover:scale-125"
               title="Archive Note"
             >
               <Archive size={14} />
@@ -98,7 +98,7 @@ const NoteCard = ({
           {mode !== "archived" && (
             <button
               onClick={() => onEdit(note)}
-              className="text-gray-500 hover:text-blue-600 transition hover:cursor-pointer hover:scale-125"
+              className="text-foreground-muted hover:text-blue-600 dark:hover:text-blue-400 transition hover:cursor-pointer hover:scale-125"
               title="Edit Note"
             >
               <Pencil size={14} />
@@ -108,7 +108,7 @@ const NoteCard = ({
           {/* Delete icon */}
           <button
             onClick={() => onDelete(note)}
-            className="text-gray-500 hover:text-red-600 transition hover:cursor-pointer hover:scale-125"
+            className="text-foreground-muted hover:text-red-600 dark:hover:text-red-400 transition hover:cursor-pointer hover:scale-125"
             title="Delete Note"
           >
             <Trash2 size={14} />

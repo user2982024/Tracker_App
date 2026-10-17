@@ -85,13 +85,13 @@ const HabitCalendar = ({
     : null;
 
   return (
-    <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm dark:border-gray-700 dark:bg-gray-800">
+    <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm">
       <div className="mb-5 flex items-center justify-between gap-3">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+          <h3 className="text-lg font-semibold text-foreground">
             Habit Calendar
           </h3>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-1 text-sm text-foreground-muted">
             Review your daily completion history
           </p>
         </div>
@@ -101,12 +101,12 @@ const HabitCalendar = ({
             type="button"
             onClick={() => changeMonth(-1)}
             aria-label="Previous month"
-            className="rounded-lg border border-gray-200 p-2 text-gray-600 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+            className="rounded-lg border border-border p-2 text-foreground-muted hover:bg-surface-secondary"
           >
             <ChevronLeft size={18} />
           </button>
 
-          <span className="min-w-32 text-center text-sm font-medium text-gray-800 dark:text-gray-200">
+          <span className="min-w-32 text-center text-sm font-medium text-foreground">
             {monthLabel}
           </span>
 
@@ -114,7 +114,7 @@ const HabitCalendar = ({
             type="button"
             onClick={() => changeMonth(1)}
             aria-label="Next month"
-            className="rounded-lg border border-gray-200 p-2 text-gray-600 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+            className="rounded-lg border border-border p-2 text-foreground-muted hover:bg-surface-secondary"
           >
             <ChevronRight size={18} />
           </button>
@@ -125,7 +125,7 @@ const HabitCalendar = ({
         {WEEKDAYS.map((day) => (
           <div
             key={day}
-            className="py-2 text-center text-xs font-semibold text-gray-500 dark:text-gray-400"
+            className="py-2 text-center text-xs font-semibold text-foreground-muted"
           >
             {day}
           </div>
@@ -158,8 +158,8 @@ const HabitCalendar = ({
               className={`relative flex min-h-11 flex-col items-center justify-center rounded-lg border text-sm transition
                 ${
                   completion
-                    ? "border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-900/30 dark:text-green-300"
-                    : "border-transparent text-gray-700 hover:border-gray-200 hover:bg-gray-50 dark:text-gray-200 dark:hover:border-gray-600 dark:hover:bg-gray-700"
+                    ? "border-green-200 bg-green-50 text-green-700 dark:border-green-500/25 dark:bg-green-500/10 dark:text-green-300"
+                    : "border-transparent text-foreground-secondary hover:border-border hover:bg-surface-secondary"
                 }
                 ${isToday ? "ring-2 ring-blue-500 ring-offset-1 dark:ring-offset-gray-800" : ""}
                 ${isSelected ? "border-blue-500 bg-blue-50 dark:bg-blue-900/40" : ""}
@@ -180,9 +180,9 @@ const HabitCalendar = ({
         })}
       </div>
 
-      <div className="mt-5 flex flex-wrap items-center gap-4 text-xs text-gray-500 dark:text-gray-400">
+      <div className="mt-5 flex flex-wrap items-center gap-4 text-xs text-foreground-muted">
         <span className="flex items-center gap-1.5">
-          <CheckCircle2 size={14} className="text-green-600" />
+          <CheckCircle2 size={14} className="text-green-600 dark:text-green-400" />
           Completed
         </span>
         <span className="flex items-center gap-1.5">
@@ -192,7 +192,7 @@ const HabitCalendar = ({
       </div>
 
       {loading && (
-        <p className="mt-3 text-center text-sm text-gray-500 dark:text-gray-400">
+        <p className="mt-3 text-center text-sm text-foreground-muted">
           Loading history…
         </p>
       )}

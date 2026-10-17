@@ -3,65 +3,121 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ==========================================================================
+   TaskFlow Design Tokens
+   Light  : clean white surfaces with a blue brand accent
+   Dark   : deep navy blend with soft blue highlights
+   ========================================================================== */
+
 :root {
   color-scheme: light;
 
-  --background: #f8fafc;
+  /* Surfaces */
+  --background: #f4f7fd;
   --surface: #ffffff;
-  --surface-secondary: #f1f5f9;
+  --surface-secondary: #eef3fb;
+  --surface-elevated: #ffffff;
+  --surface-hover: #e6eefb;
 
+  /* Text */
   --foreground: #0f172a;
   --foreground-secondary: #475569;
   --foreground-muted: #64748b;
 
+  /* Borders & inputs */
   --border: #e2e8f0;
+  --border-strong: #cbd5e1;
   --input: #ffffff;
 
+  /* Brand */
   --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --primary-soft: #e0ebff;
   --primary-foreground: #ffffff;
 
+  /* Feedback */
   --danger: #dc2626;
+  --danger-hover: #b91c1c;
+  --danger-soft: #fee2e2;
   --success: #15803d;
+  --success-soft: #dcfce7;
+  --warning: #b45309;
+  --warning-soft: #fef3c7;
+  --info: #1d4ed8;
+  --info-soft: #dbeafe;
+
+  --ring: #2563eb;
 }
 
 :root.dark {
   color-scheme: dark;
 
-  --background: #0b1220;
-  --surface: #151f30;
-  --surface-secondary: #1e2b3e;
+  /* Surfaces */
+  --background: #080d19;
+  --surface: #111a2b;
+  --surface-secondary: #182237;
+  --surface-elevated: #162033;
+  --surface-hover: #1f2b42;
 
-  --foreground: #f1f5f9;
-  --foreground-secondary: #cbd5e1;
-  --foreground-muted: #94a3b8;
+  /* Text */
+  --foreground: #e9eef8;
+  --foreground-secondary: #b9c5da;
+  --foreground-muted: #8794ab;
 
-  --border: #2b3a50;
-  --input: #111b2b;
+  /* Borders & inputs */
+  --border: #253149;
+  --border-strong: #35435e;
+  --input: #0d1524;
 
+  /* Brand */
   --primary: #60a5fa;
-  --primary-foreground: #0b1220;
+  --primary-hover: #93c5fd;
+  --primary-soft: #16263f;
+  --primary-foreground: #080d19;
 
+  /* Feedback */
   --danger: #f87171;
+  --danger-hover: #fca5a5;
+  --danger-soft: #33191d;
   --success: #4ade80;
+  --success-soft: #10281f;
+  --warning: #fbbf24;
+  --warning-soft: #2e2410;
+  --info: #93c5fd;
+  --info-soft: #16263f;
+
+  --ring: #60a5fa;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
   --color-surface-secondary: var(--surface-secondary);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-hover: var(--surface-hover);
 
   --color-foreground: var(--foreground);
   --color-foreground-secondary: var(--foreground-secondary);
   --color-foreground-muted: var(--foreground-muted);
 
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
   --color-input: var(--input);
 
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
   --color-primary-foreground: var(--primary-foreground);
 
   --color-danger: var(--danger);
+  --color-danger-hover: var(--danger-hover);
+  --color-danger-soft: var(--danger-soft);
   --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
 }
 
 html,
@@ -76,8 +132,8 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
   transition:
-    background-color 180ms ease,
-    color 180ms ease;
+    background-color 200ms ease,
+    color 200ms ease;
 }
 
 button,
@@ -86,6 +142,46 @@ textarea,
 select {
   font: inherit;
 }
+
+::selection {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+*:focus-visible {
+  outline-color: var(--ring);
+}
+
+/* Scrollbars ------------------------------------------------------------- */
+
+* {
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--border-strong);
+  border-radius: 9999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--foreground-muted);
+  background-clip: content-box;
+}
+
+/* --------------------------------------------------------------------------
+   Legacy helper classes (kept for backwards compatibility)
+   -------------------------------------------------------------------------- */
 
 .app-bg {
   background-color: var(--background);
@@ -128,4 +224,15 @@ select {
 .app-input:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
+}
+
+/* Shared surfaces transition smoothly when the theme is toggled ----------- */
+
+.app-surface,
+.app-surface-secondary,
+.app-input {
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    color 200ms ease;
 }

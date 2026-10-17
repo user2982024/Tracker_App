@@ -32,7 +32,7 @@ const Modal = ({ isOpen, onClose, title, children, actions }) => {
         role="dialog"
         aria-modal="true"
         aria-label={title || "Dialog"}
-        className="relative w-[90%] max-w-md rounded-2xl app-surface app-text p-6 shadow-xl"
+        className="relative w-[90%] max-w-md rounded-2xl bg-surface text-foreground p-6 shadow-xl border border-border"
       >
         {title && (
           <h2 className="mb-3 text-xl font-semibold">
@@ -40,7 +40,7 @@ const Modal = ({ isOpen, onClose, title, children, actions }) => {
           </h2>
         )}
 
-        <div className="mb-6 app-text-secondary">
+        <div className="mb-6 text-foreground-secondary">
           {children}
         </div>
 

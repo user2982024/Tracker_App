@@ -7,7 +7,7 @@ const ProtectedRoute = () => {
   // WAIT FIRST
   if (loading) {
     return (
-      <div className="text-gray-600 text-center mt-[20%]">Loading ...</div>
+      <div className="text-foreground-muted text-center mt-[20%]">Loading ...</div>
     );
   }
 

@@ -26,8 +26,8 @@ const GoalsPagination = ({
         disabled={page === 1}
         className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-200 ${
           page === 1
-            ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
-            : "bg-white text-gray-700 hover:bg-gray-50 border-gray-200"
+            ? "bg-surface-secondary text-foreground-muted cursor-not-allowed border-border"
+            : "bg-surface text-foreground-secondary hover:bg-surface-secondary border-border"
         }`}
       >
         Previous
@@ -40,8 +40,8 @@ const GoalsPagination = ({
           onClick={() => setPage(pageNumber)}
           className={`w-10 h-10 rounded-lg text-sm font-medium transition-all duration-200 ${
             page === pageNumber
-              ? "bg-blue-600 text-white shadow-sm"
-              : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
+              ? "bg-blue-600 text-white dark:bg-blue-500 shadow-sm"
+              : "bg-surface text-foreground-secondary border border-border hover:bg-surface-secondary"
           }`}
         >
           {pageNumber}
@@ -54,8 +54,8 @@ const GoalsPagination = ({
         disabled={page === totalPages}
         className={`px-4 py-2 rounded-lg text-sm font-medium border transition-all duration-200 ${
           page === totalPages
-            ? "bg-gray-100 text-gray-400 cursor-not-allowed border-gray-200"
-            : "bg-white text-gray-700 hover:bg-gray-50 border-gray-200"
+            ? "bg-surface-secondary text-foreground-muted cursor-not-allowed border-border"
+            : "bg-surface text-foreground-secondary hover:bg-surface-secondary border-border"
         }`}
       >
         Next

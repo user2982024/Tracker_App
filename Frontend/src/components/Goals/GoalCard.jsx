@@ -17,9 +17,12 @@ const GoalCard = ({ goal, onDelete }) => {
   // ==========================================
 
   const statusStyles = {
-    active: "bg-emerald-100 text-emerald-700",
-    completed: "bg-blue-100 text-blue-700",
-    paused: "bg-amber-100 text-amber-700",
+    active:
+      "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300",
+    completed:
+      "bg-blue-100 text-blue-700 dark:bg-blue-500/15 dark:text-blue-300",
+    paused:
+      "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-300",
   };
 
   // ==========================================
@@ -27,9 +30,10 @@ const GoalCard = ({ goal, onDelete }) => {
   // ==========================================
 
   const priorityStyles = {
-    low: "bg-gray-100 text-gray-600",
-    medium: "bg-yellow-100 text-yellow-700",
-    high: "bg-red-100 text-red-700",
+    low: "bg-gray-100 text-gray-600 dark:bg-surface-secondary dark:text-foreground-muted",
+    medium:
+      "bg-yellow-100 text-yellow-700 dark:bg-yellow-500/15 dark:text-yellow-300",
+    high: "bg-red-100 text-red-700 dark:bg-red-500/15 dark:text-red-300",
   };
 
   // ==========================================
@@ -99,9 +103,9 @@ const GoalCard = ({ goal, onDelete }) => {
   return (
     <div
       className="
-        group relative bg-white p-5 rounded-3xl
-        border border-gray-100 shadow-sm
-        hover:shadow-xl hover:border-gray-200
+        group relative bg-surface p-5 rounded-3xl
+        border border-border shadow-sm
+        hover:shadow-xl hover:border-border-strong
         space-y-5
       "
     >
@@ -111,7 +115,7 @@ const GoalCard = ({ goal, onDelete }) => {
 
       <div className="space-y-3">
         <div className="flex items-start justify-between gap-3 pr-10">
-          <h3 className="text-[15px] font-semibold text-gray-800 leading-6 wrap-break-word">
+          <h3 className="text-[15px] font-semibold text-foreground leading-6 wrap-break-word">
             {goal.title}
           </h3>
 
@@ -122,7 +126,7 @@ const GoalCard = ({ goal, onDelete }) => {
               font-semibold tracking-wide
               ${
                 statusStyles[goal.status] ||
-                "bg-gray-100 text-gray-600"
+                "bg-gray-100 text-gray-600 dark:bg-surface-secondary dark:text-foreground-muted"
               }
             `}
           >
@@ -133,7 +137,7 @@ const GoalCard = ({ goal, onDelete }) => {
         {goal.description && (
           <p
             className="
-              text-sm text-gray-500
+              text-sm text-foreground-muted
               leading-6 wrap-break-word
               line-clamp-2
             "
@@ -149,17 +153,17 @@ const GoalCard = ({ goal, onDelete }) => {
 
       <div className="space-y-2.5">
         <div className="flex items-center justify-between text-sm">
-          <p className="text-gray-500 font-medium">
+          <p className="text-foreground-muted font-medium">
             {currentValue} / {targetValue} {goal.unit}
           </p>
 
-          <p className="font-semibold text-gray-700">
+          <p className="font-semibold text-foreground-secondary">
             {displayedProgressPercentage}%
           </p>
         </div>
 
         <div
-          className="w-full h-2 bg-gray-100 rounded-full overflow-hidden"
+          className="w-full h-2 bg-surface-secondary rounded-full overflow-hidden"
           role="progressbar"
           aria-valuemin={0}
           aria-valuemax={100}
@@ -168,7 +172,7 @@ const GoalCard = ({ goal, onDelete }) => {
         >
           <div
             className="
-              h-full rounded-full bg-blue-600
+              h-full rounded-full bg-blue-600 dark:bg-blue-500
               transition-[width] duration-500 ease-out
             "
             style={{
@@ -188,8 +192,9 @@ const GoalCard = ({ goal, onDelete }) => {
             className="
               px-3 py-1 rounded-full
               bg-purple-50 text-purple-700
+              dark:bg-purple-500/10 dark:text-purple-300
               text-[11px] font-semibold capitalize
-              border border-purple-100
+              border border-purple-100 dark:border-purple-500/25
             "
           >
             {goal.category}
@@ -202,7 +207,7 @@ const GoalCard = ({ goal, onDelete }) => {
               text-[11px] font-semibold capitalize
               ${
                 priorityStyles[goal.priority] ||
-                "bg-gray-100 text-gray-600"
+                "bg-gray-100 text-gray-600 dark:bg-surface-secondary dark:text-foreground-muted"
               }
             `}
           >
@@ -216,8 +221,9 @@ const GoalCard = ({ goal, onDelete }) => {
                 flex items-center gap-1
                 px-3 py-1 rounded-full
                 bg-gray-50 text-gray-600
+                dark:bg-surface-secondary dark:text-foreground-muted
                 text-[11px] font-medium
-                border border-gray-100
+                border border-gray-100 dark:border-border
               "
             >
               <CalendarDays size={10} />
@@ -240,10 +246,10 @@ const GoalCard = ({ goal, onDelete }) => {
               className="
                 flex items-center gap-1.5
                 px-3 py-1.5 rounded-xl
-                bg-blue-600 text-white
+                bg-blue-600 text-white dark:bg-blue-500
                 text-[11px] font-semibold
                 shadow-sm
-                hover:bg-blue-700
+                hover:bg-blue-700 dark:hover:bg-blue-400
                 hover:scale-[1.02]
                 active:scale-[0.98]
                 transition-all duration-200
@@ -266,10 +272,10 @@ const GoalCard = ({ goal, onDelete }) => {
               className="
                 w-7 h-7 rounded-lg
                 flex items-center justify-center
-                text-gray-400
+                text-foreground-muted
                 hover:cursor-pointer
                 hover:scale-110
-                hover:text-purple-500
+                hover:text-purple-500 dark:hover:text-purple-400
               "
               aria-label="View goal"
               title="View goal"
@@ -283,9 +289,9 @@ const GoalCard = ({ goal, onDelete }) => {
               className="
                 w-7 h-7 rounded-lg
                 flex items-center justify-center
-                text-gray-400
+                text-foreground-muted
                 hover:cursor-pointer
-                hover:text-blue-600
+                hover:text-blue-600 dark:hover:text-blue-400
                 hover:scale-110
               "
               aria-label="Edit goal"
@@ -300,9 +306,9 @@ const GoalCard = ({ goal, onDelete }) => {
               className="
                 w-7 h-7 rounded-lg
                 flex items-center justify-center
-                text-gray-400
+                text-foreground-muted
                 hover:cursor-pointer
-                hover:text-red-600
+                hover:text-red-600 dark:hover:text-red-400
                 hover:scale-110
               "
               aria-label="Delete goal"

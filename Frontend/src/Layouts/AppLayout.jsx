@@ -1,40 +1,14 @@
 
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import { Moon, Sun } from "lucide-react";
 import Sidebar from "../components/UI/Sidebar";
-import { useTheme } from "../context/ThemeContext";
-
-const ThemeToggle = () => {
-  const { theme, setTheme } = useTheme();
-  const isDark = theme === "dark";
-
-  return (
-    <button
-      type="button"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
-      aria-label={`Switch to ${isDark ? "light" : "dark"} theme`}
-      aria-pressed={isDark}
-      title={`Switch to ${isDark ? "light" : "dark"} theme`}
-      className="inline-flex h-10 items-center gap-2 rounded-full border app-border app-surface px-3 app-text shadow-sm transition hover:bg-surface-secondary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-    >
-      {isDark ? (
-        <Sun size={18} aria-hidden="true" />
-      ) : (
-        <Moon size={18} aria-hidden="true" />
-      )}
-      <span className="hidden text-sm font-medium sm:inline">
-        {isDark ? "Dark" : "Light"}
-      </span>
-    </button>
-  );
-};
+import ThemeToggle from "../components/UI/ThemeToggle";
 
 const AppLayout = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="flex h-screen overflow-hidden app-bg app-text">
+    <div className="flex h-screen overflow-hidden bg-background text-foreground">
       {/* Desktop Sidebar */}
       <div className="hidden shrink-0 md:block">
         <Sidebar />
@@ -57,14 +31,14 @@ const AppLayout = () => {
       )}
 
       {/* Main Application Area */}
-      <div className="flex min-w-0 flex-1 flex-col overflow-y-auto app-bg">
+      <div className="flex min-w-0 flex-1 flex-col overflow-y-auto bg-background">
         {/* Global Top Bar */}
-        <header className="sticky top-0 z-30 flex shrink-0 items-center justify-between gap-3 border-b app-border app-surface px-4 py-3 sm:px-6 lg:px-8">
+        <header className="sticky top-0 z-30 flex shrink-0 items-center justify-between gap-3 border-b border-border bg-surface px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setIsOpen(true)}
-              className="rounded-lg p-2 app-text transition hover:bg-surface-secondary md:hidden"
+              className="rounded-lg p-2 text-foreground transition hover:bg-surface-secondary md:hidden"
               aria-label="Open navigation menu"
               aria-expanded={isOpen}
             >
@@ -77,7 +51,7 @@ const AppLayout = () => {
           </div>
 
           <div className="ml-auto">
-            <ThemeToggle />
+            <ThemeToggle showLabel />
           </div>
         </header>
 

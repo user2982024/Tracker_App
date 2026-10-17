@@ -6,7 +6,7 @@ const PublicRoute = () => {
 
   if (loading) {
     return (
-      <div className="text-gray-600">Loading ...</div>
+      <div className="text-foreground-muted">Loading ...</div>
     ); 
   }
 

@@ -41,7 +41,7 @@ const Sidebar = ({ closeSidebar }) => {
   };
 
   return (
-    <aside className="flex h-full w-64 flex-col bg-linear-to-b from-blue-600 to-blue-900 p-4 text-white shadow-lg sm:w-72 sm:p-5 md:h-screen">
+    <aside className="flex h-full w-64 flex-col bg-linear-to-b from-blue-600 to-blue-900 dark:from-slate-900 dark:to-slate-950 p-4 text-white shadow-lg sm:w-72 sm:p-5 md:h-screen">
       {/* Logo */}
       <h1 className="mb-6 text-xl font-bold sm:mb-8 sm:text-2xl">
         TaskFlow
@@ -59,7 +59,7 @@ const Sidebar = ({ closeSidebar }) => {
               [
                 "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200 sm:px-4 sm:text-base",
                 isActive
-                  ? "bg-white font-semibold text-blue-700 shadow"
+                  ? "bg-white font-semibold text-blue-700 shadow dark:bg-white/10 dark:text-blue-200"
                   : "text-white hover:bg-blue-700/60",
               ].join(" ")
             }
@@ -91,7 +91,7 @@ const Sidebar = ({ closeSidebar }) => {
             <button
               type="button"
               onClick={() => setShowLogoutModal(false)}
-              className="app-border app-text rounded-lg border px-4 py-2 transition hover:bg-surface-secondary"
+              className="border-border text-foreground rounded-lg border px-4 py-2 transition hover:bg-surface-secondary"
             >
               Cancel
             </button>

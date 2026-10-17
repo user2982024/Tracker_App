@@ -87,7 +87,7 @@ const NoteViewPage = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-full text-gray-500">
+      <div className="flex justify-center items-center h-full text-foreground-muted">
         Loading note...
       </div>
     );
@@ -95,7 +95,7 @@ const NoteViewPage = () => {
 
   if (!note) {
     return (
-      <div className="text-center text-gray-500 mt-10">Note not found</div>
+      <div className="text-center text-foreground-muted mt-10">Note not found</div>
     );
   }
 
@@ -107,8 +107,8 @@ const NoteViewPage = () => {
         <button
           onClick={() => navigate(-1)}
           className="flex items-center gap-2
-          text-sm font-medium text-gray-500
-          hover:text-gray-800
+          text-sm font-medium text-foreground-muted
+          hover:text-foreground
           transition-colors duration-200
           hover:cursor-pointer"
         >
@@ -125,7 +125,7 @@ const NoteViewPage = () => {
             className={`transition-all duration-200 cursor-pointer hover:scale-110 ${
               note.isPinned
                 ? "text-yellow-500"
-                : "text-gray-500 hover:text-yellow-600"
+                : "text-foreground-muted hover:text-yellow-600 dark:hover:text-yellow-400"
             }`}
             title={note.isPinned ? "Unpin Note" : "Pin Note"}
           >
@@ -136,7 +136,7 @@ const NoteViewPage = () => {
           {note.isArchived ? (
             <button
               onClick={handleArchiveToggle}
-              className="text-gray-500 hover:text-green-600 transition-all duration-200 cursor-pointer hover:scale-110"
+              className="text-foreground-muted hover:text-green-600 dark:hover:text-green-400 transition-all duration-200 cursor-pointer hover:scale-110"
               title="Unarchive Note"
             >
               <ArchiveRestore size={18} />
@@ -144,7 +144,7 @@ const NoteViewPage = () => {
           ) : (
             <button
               onClick={handleArchiveToggle}
-              className="text-gray-500 hover:text-yellow-600 transition-all duration-200 cursor-pointer hover:scale-110"
+              className="text-foreground-muted hover:text-yellow-600 dark:hover:text-yellow-400 transition-all duration-200 cursor-pointer hover:scale-110"
               title="Archive Note"
             >
               <Archive size={18} />
@@ -155,7 +155,7 @@ const NoteViewPage = () => {
           {!note.isArchived && (
             <button
               onClick={handleEdit}
-              className="text-gray-500 hover:text-blue-600 transition-all duration-200 cursor-pointer hover:scale-110"
+              className="text-foreground-muted hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 cursor-pointer hover:scale-110"
               title="Edit Note"
             >
               <Pencil size={18} />
@@ -165,7 +165,7 @@ const NoteViewPage = () => {
           {/* Delete */}
           <button
             onClick={() => setShowDeleteModal(true)}
-            className="text-gray-500 hover:text-red-600 transition-all duration-200 cursor-pointer hover:scale-110"
+            className="text-foreground-muted hover:text-red-600 dark:hover:text-red-400 transition-all duration-200 cursor-pointer hover:scale-110"
             title="Delete Note"
           >
             <Trash2 size={18} />
@@ -177,8 +177,8 @@ const NoteViewPage = () => {
       <div
         className={`rounded-2xl p-6 border shadow transition ${
           note.isPinned
-            ? "bg-yellow-50 border-yellow-300 shadow-yellow-200"
-            : "bg-white"
+            ? "bg-yellow-50 border-yellow-300 shadow-yellow-200 dark:bg-yellow-500/10 dark:border-yellow-500/30 dark:shadow-yellow-900/20"
+            : "bg-surface"
         }`}
       >
         {/* Title */}
@@ -186,19 +186,19 @@ const NoteViewPage = () => {
           <h1 className="text-2xl font-semibold">{note.title}</h1>
 
           {note.isPinned && (
-            <span className="ml-4 px-2 py-0.5 text-xs font-medium bg-yellow-200 text-yellow-800 rounded-full shadow-sm">
+            <span className="ml-4 px-2 py-0.5 text-xs font-medium bg-yellow-200 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-300 rounded-full shadow-sm">
               Pinned
             </span>
           )}
         </div>
 
         {/* Content */}
-        <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
+        <p className="text-foreground-secondary whitespace-pre-wrap leading-relaxed">
           {note.content}
         </p>
 
         {/* Date */}
-        <div className="mt-6 text-sm text-gray-400">
+        <div className="mt-6 text-sm text-foreground-muted">
           Created: {new Date(note.createdAt).toLocaleString()}
         </div>
       </div>
@@ -212,7 +212,7 @@ const NoteViewPage = () => {
           <>
             <button
               onClick={() => setShowDeleteModal(false)}
-              className="px-4 py-2 border rounded-lg hover:bg-gray-100 transition"
+              className="px-4 py-2 border border-border rounded-lg hover:bg-surface-secondary transition"
             >
               Cancel
             </button>

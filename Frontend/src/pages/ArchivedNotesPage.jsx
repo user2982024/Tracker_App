@@ -109,14 +109,14 @@ const ArchivedNotesPage = () => {
                 setSearchTerm(e.target.value);
                 setPage(1);
               }}
-              className="w-full px-4 pr-10 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              className="w-full px-4 pr-10 py-2 bg-input text-foreground border border-border rounded-lg placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
             />
           </div>
 
           {/* Back */}
           <button
             onClick={() => navigate("/app/notes")}
-            className="px-4 py-2 bg-blue-100 text-blue-600 rounded-3xl hover:bg-blue-200 transition cursor-pointer"
+            className="px-4 py-2 bg-blue-100 dark:bg-blue-500/15 text-blue-600 dark:text-blue-300 rounded-3xl hover:bg-blue-200 dark:hover:bg-blue-500/25 transition cursor-pointer"
           >
             ← Back to notes
           </button>
@@ -125,12 +125,12 @@ const ArchivedNotesPage = () => {
 
       {/* Loading */}
       {loading && notes.length === 0 && (
-        <p className="text-gray-500">Loading archived notes...</p>
+        <p className="text-foreground-muted">Loading archived notes...</p>
       )}
 
       {/* Empty */}
       {!loading && notes.length === 0 && (
-        <p className="text-gray-500 text-center mt-10">
+        <p className="text-foreground-muted text-center mt-10">
           {searchTerm
             ? `No results found for "${searchTerm}"`
             : "No archived notes found"}
@@ -158,7 +158,7 @@ const ArchivedNotesPage = () => {
                 className={`px-3 py-1 rounded cursor-pointer ${
                   page === i + 1
                     ? "bg-blue-600 text-white"
-                    : "bg-gray-200"
+                    : "bg-border"
                 }`}
               >
                 {i + 1}
@@ -183,7 +183,7 @@ const ArchivedNotesPage = () => {
                 setShowDeleteModal(false);
                 setNoteToDelete(null);
               }}
-              className="px-4 py-2 border rounded-lg hover:bg-gray-100 transition"
+              className="px-4 py-2 border border-border rounded-lg hover:bg-surface-secondary transition"
             >
               Cancel
             </button>

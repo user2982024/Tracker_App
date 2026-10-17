@@ -24,13 +24,13 @@ const NotesHeader = ({ onAddClick, onDeleteAllClick, onSearch }) => {
           placeholder="Search notes..."
           value={searchQuery}
           onChange={handleSearchChange}
-          className="border rounded-lg px-3 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="bg-input text-foreground border border-border rounded-lg px-3 py-2 w-64 placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
 
         {/* Delete All Button */}
         <button
           onClick={onDeleteAllClick}
-          className="text-red-600 px-3 py-2 rounded-lg text-sm border border-red-200 hover:bg-red-50 transition cursor-pointer"
+          className="text-red-600 dark:text-red-300 px-3 py-2 rounded-lg text-sm border border-red-200 dark:border-red-500/30 hover:bg-red-50 dark:hover:bg-red-500/10 transition cursor-pointer"
         >
           Delete All
         </button>

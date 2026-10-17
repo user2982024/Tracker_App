@@ -6,7 +6,7 @@ const GoalsList = ({ goals, loading, onDelete }) => {
   if (loading) {
     return (
       <div className="flex justify-center py-10">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-foreground-muted">
           Loading goals...
         </p>
       </div>
@@ -18,11 +18,11 @@ const GoalsList = ({ goals, loading, onDelete }) => {
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
 
-        <h2 className="text-lg font-semibold text-gray-700">
+        <h2 className="text-lg font-semibold text-foreground-secondary">
           No goals found
         </h2>
 
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-foreground-muted mt-1">
           Start by creating your first goal 
         </p>
 
@@ -43,10 +43,10 @@ const GoalsList = ({ goals, loading, onDelete }) => {
       ) : (
         // Empty State
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <p className="text-lg font-medium text-gray-700">
+          <p className="text-lg font-medium text-foreground-secondary">
             No goals found
           </p>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-foreground-muted mt-1">
             Start by creating your first goal 
           </p>
         </div>

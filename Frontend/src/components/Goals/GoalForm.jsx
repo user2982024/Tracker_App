@@ -97,10 +97,10 @@ const GoalForm = ({
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border max-w-2xl mx-auto">
+    <div className="bg-surface p-6 rounded-xl shadow-sm border border-border max-w-2xl mx-auto">
 
       {/* Title */}
-      <h2 className="text-lg font-semibold text-gray-800 mb-4">
+      <h2 className="text-lg font-semibold text-foreground mb-4">
         {isEdit ? "Edit Goal" : "Create New Goal"}
       </h2>
 
@@ -111,7 +111,7 @@ const GoalForm = ({
 
         {/* Title */}
         <div>
-          <label className="text-sm text-gray-600">
+          <label className="text-sm text-foreground-muted">
             Title
           </label>
 
@@ -121,13 +121,13 @@ const GoalForm = ({
             value={formData.title}
             onChange={handleChange}
             placeholder="Enter goal title"
-            className="w-full mt-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full mt-1 px-3 py-2 bg-input text-foreground border border-border rounded-lg placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
           />
         </div>
 
         {/* Description */}
         <div>
-          <label className="text-sm text-gray-600">
+          <label className="text-sm text-foreground-muted">
             Description
           </label>
 
@@ -137,7 +137,7 @@ const GoalForm = ({
             value={formData.description}
             onChange={handleChange}
             placeholder="Optional description"
-            className="w-full mt-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full mt-1 px-3 py-2 bg-input text-foreground border border-border rounded-lg placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
           ></textarea>
         </div>
 
@@ -146,7 +146,7 @@ const GoalForm = ({
 
           {/* Target Value */}
           <div>
-            <label className="text-sm text-gray-600">
+            <label className="text-sm text-foreground-muted">
               Target Value
             </label>
 
@@ -156,13 +156,13 @@ const GoalForm = ({
               value={formData.targetValue}
               onChange={handleChange}
               placeholder="e.g. 100"
-              className="w-full mt-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              className="w-full mt-1 px-3 py-2 bg-input text-foreground border border-border rounded-lg placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
             />
           </div>
 
           {/* Unit */}
           <div>
-            <label className="text-sm text-gray-600">
+            <label className="text-sm text-foreground-muted">
               Unit
             </label>
 
@@ -172,14 +172,14 @@ const GoalForm = ({
               value={formData.unit}
               onChange={handleChange}
               placeholder="e.g. problems, hours"
-              className="w-full mt-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              className="w-full mt-1 px-3 py-2 bg-input text-foreground border border-border rounded-lg placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
             />
           </div>
         </div>
 
         {/* Target Date */}
         <div>
-          <label className="text-sm text-gray-600">
+          <label className="text-sm text-foreground-muted">
             Target Date
           </label>
 
@@ -188,7 +188,7 @@ const GoalForm = ({
             name="targetDate"
             value={formData.targetDate}
             onChange={handleChange}
-            className="w-full mt-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full mt-1 px-3 py-2 bg-input text-foreground border border-border rounded-lg placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 text-sm"
           />
         </div>
 
@@ -197,7 +197,7 @@ const GoalForm = ({
 
           {/* Category */}
           <div>
-            <label className="text-sm text-gray-600">
+            <label className="text-sm text-foreground-muted">
               Category
             </label>
 
@@ -205,7 +205,7 @@ const GoalForm = ({
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full mt-1 px-3 py-2 bg-input text-foreground border border-border rounded-lg text-sm placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
             >
               <option value="health">health</option>
               <option value="career">career</option>
@@ -217,7 +217,7 @@ const GoalForm = ({
 
           {/* Priority */}
           <div>
-            <label className="text-sm text-gray-600">
+            <label className="text-sm text-foreground-muted">
               Priority
             </label>
 
@@ -225,7 +225,7 @@ const GoalForm = ({
               name="priority"
               value={formData.priority}
               onChange={handleChange}
-              className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full mt-1 px-3 py-2 bg-input text-foreground border border-border rounded-lg text-sm placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
             >
               <option value="low">low</option>
               <option value="medium">medium</option>
@@ -237,7 +237,7 @@ const GoalForm = ({
         {/* Status (ONLY edit mode) */}
         {isEdit && (
           <div>
-            <label className="text-sm text-gray-600">
+            <label className="text-sm text-foreground-muted">
               Status
             </label>
 
@@ -245,7 +245,7 @@ const GoalForm = ({
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full mt-1 px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full mt-1 px-3 py-2 bg-input text-foreground border border-border rounded-lg text-sm placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
             >
               <option value="active">active</option>
               <option value="paused">paused</option>
@@ -259,7 +259,7 @@ const GoalForm = ({
           <button
             type="button"
             onClick={handleCancel}
-            className="px-4 py-2 rounded-lg border text-sm text-gray-600 hover:bg-gray-100"
+            className="px-4 py-2 rounded-lg border border-border text-sm text-foreground-muted hover:bg-surface-secondary"
           >
             Cancel
           </button>
@@ -267,7 +267,7 @@ const GoalForm = ({
           <button
             type="submit"
             disabled={loading}
-            className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700"
+            className="px-4 py-2 rounded-lg bg-blue-600 text-white dark:bg-blue-500 text-sm hover:bg-blue-700 dark:hover:bg-blue-400"
           >
             {loading
               ? isEdit

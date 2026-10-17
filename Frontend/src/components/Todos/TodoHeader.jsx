@@ -11,8 +11,8 @@ const TodosHeader = ({
     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       {/* Left Side */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-800">Todos</h1>
-        <p className="text-sm text-gray-500 flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-foreground">Todos</h1>
+        <p className="text-sm text-foreground-muted flex items-center gap-2">
           Stay organized and get things done
         </p>
       </div>
@@ -26,17 +26,17 @@ const TodosHeader = ({
             placeholder="Search todos..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="border border-gray-300 rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="border border-border bg-input text-foreground rounded-lg pl-10 pr-4 py-2 text-sm placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
           <Search
             size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground-muted"
           />
 
           {searchQuery && (
             <button
               onClick={() => setSearchQuery("")}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground-secondary"
             >
               <X size={14} />
             </button>
@@ -50,8 +50,8 @@ const TodosHeader = ({
           className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm border transition hover:cursor-pointer
             ${
               hasCompleted
-                ? "text-red-600 border-red-200 hover:bg-red-50"
-                : "text-gray-400 border-gray-200 cursor-not-allowed"
+                ? "text-red-600 border-red-200 hover:bg-red-50 dark:text-red-300 dark:border-red-500/25 dark:hover:bg-red-500/20"
+                : "text-foreground-muted border-border cursor-not-allowed"
             }`}
         >
           <Trash2 size={16} />

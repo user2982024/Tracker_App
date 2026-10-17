@@ -435,15 +435,15 @@ const Habits = () => {
     <main className="space-y-6 p-4 sm:p-6 lg:p-8">
       <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div className="flex items-center gap-2">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-300">
             <ClipboardList size={23} />
           </div>
 
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">
               Daily Habits
             </h1>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-foreground-muted">
               Build consistency, one day at a time.
             </p>
           </div>
@@ -469,12 +469,12 @@ const Habits = () => {
         />
       )}
 
-      <section className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm sm:p-5">
+      <section className="rounded-2xl border border-border bg-surface p-4 shadow-sm sm:p-5">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="relative w-full lg:max-w-md">
             <Search
               size={18}
-              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-foreground-muted"
             />
 
             <input
@@ -483,7 +483,7 @@ const Habits = () => {
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Search your habits..."
               aria-label="Search habits"
-              className="w-full rounded-xl border border-gray-200 bg-gray-50 py-3 pl-10 pr-4 text-sm outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100"
+              className="w-full rounded-xl border border-border bg-input py-3 pl-10 pr-4 text-sm text-foreground outline-none transition placeholder:text-foreground-muted focus:border-primary focus:ring-2 focus:ring-primary/30"
             />
           </div>
 
@@ -493,8 +493,8 @@ const Habits = () => {
               onClick={() => setShowArchived((previous) => !previous)}
               className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition ${
                 showArchived
-                  ? "border-blue-200 bg-blue-50 text-blue-700"
-                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                  ? "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-500/25 dark:bg-blue-500/10 dark:text-blue-300"
+                  : "border-border text-foreground-muted hover:bg-surface-secondary"
               }`}
             >
               <Archive size={16} />
@@ -506,7 +506,7 @@ const Habits = () => {
               onClick={() => fetchHabits({ silent: true })}
               disabled={refreshing || loading}
               aria-label="Refresh habits"
-              className="inline-flex items-center gap-2 rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground-muted transition hover:bg-surface-secondary disabled:opacity-50"
             >
               {refreshing ? (
                 <Loader2 size={16} className="animate-spin" />
@@ -519,13 +519,13 @@ const Habits = () => {
         </div>
 
         {!showArchived && (
-          <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-gray-500">
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-sm text-foreground-muted">
             <span>
               {completedToday} of {scheduledToday} scheduled habits completed
             </span>
 
             {scheduledToday > 0 && (
-              <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700">
+              <span className="rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-500/10 dark:text-emerald-300">
                 {Math.round((completedToday / scheduledToday) * 100)}%
               </span>
             )}
@@ -536,23 +536,23 @@ const Habits = () => {
       {error && (
         <div
           role="alert"
-          className="flex flex-col gap-3 rounded-2xl border border-rose-100 bg-rose-50 p-4 sm:flex-row sm:items-center sm:justify-between"
+          className="flex flex-col gap-3 rounded-2xl border border-rose-100 bg-rose-50 p-4 sm:flex-row sm:items-center sm:justify-between dark:border-rose-500/25 dark:bg-rose-500/10"
         >
           <div className="flex items-start gap-3">
-            <CircleAlert size={20} className="mt-0.5 shrink-0 text-rose-600" />
+            <CircleAlert size={20} className="mt-0.5 shrink-0 text-rose-600 dark:text-rose-300" />
 
             <div>
-              <p className="text-sm font-semibold text-rose-800">
+              <p className="text-sm font-semibold text-rose-800 dark:text-rose-300">
                 Could not load habits
               </p>
-              <p className="mt-1 text-sm text-rose-700">{error}</p>
+              <p className="mt-1 text-sm text-rose-700 dark:text-rose-300">{error}</p>
             </div>
           </div>
 
           <button
             type="button"
             onClick={() => fetchHabits()}
-            className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-rose-200 bg-white px-4 py-2 text-sm font-medium text-rose-700 hover:bg-rose-100 sm:self-auto"
+            className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-rose-200 bg-surface px-4 py-2 text-sm font-medium text-rose-700 hover:bg-rose-100 sm:self-auto dark:border-rose-500/25 dark:text-rose-300 dark:hover:bg-rose-500/20"
           >
             <RefreshCw size={15} />
             Try again
@@ -578,11 +578,11 @@ const Habits = () => {
       <section aria-label={showArchived ? "Archived habits" : "Your habits"}>
         <div className="mb-4 flex items-center justify-between gap-3">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-foreground">
               {showArchived ? "Archived Habits" : "Your Habits"}
             </h2>
 
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-foreground-muted">
               {loading
                 ? "Loading your habits..."
                 : `${habits.length} habit${habits.length === 1 ? "" : "s"} on this page`}
@@ -590,18 +590,18 @@ const Habits = () => {
           </div>
 
           {loading && (
-            <Loader2 size={20} className="animate-spin text-blue-600" />
+            <Loader2 size={20} className="animate-spin text-blue-600 dark:text-blue-400" />
           )}
         </div>
 
         {loading && habits.length === 0 ? (
-          <div className="flex min-h-52 flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white text-gray-500">
-            <Loader2 size={28} className="animate-spin text-blue-600" />
+          <div className="flex min-h-52 flex-col items-center justify-center rounded-2xl border border-border bg-surface text-foreground-muted">
+            <Loader2 size={28} className="animate-spin text-blue-600 dark:text-blue-400" />
             <p className="mt-3 text-sm">Loading your habits...</p>
           </div>
         ) : !error && displayedHabits.length === 0 ? (
-          <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-white px-5 text-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-50 text-gray-400">
+          <div className="flex min-h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-surface px-5 text-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-surface-secondary text-foreground-muted">
               {showArchived ? (
                 <Archive size={26} />
               ) : (
@@ -609,7 +609,7 @@ const Habits = () => {
               )}
             </div>
 
-            <h3 className="mt-4 text-base font-semibold text-gray-900">
+            <h3 className="mt-4 text-base font-semibold text-foreground">
               {showArchived
                 ? "No archived habits"
                 : debouncedSearch
@@ -617,7 +617,7 @@ const Habits = () => {
                   : "Start building your habits"}
             </h3>
 
-            <p className="mt-2 max-w-md text-sm leading-6 text-gray-500">
+            <p className="mt-2 max-w-md text-sm leading-6 text-foreground-muted">
               {showArchived
                 ? "Habits you archive will appear here."
                 : debouncedSearch
@@ -664,8 +664,8 @@ const Habits = () => {
         )}
 
         {!loading && !error && habits.length > 0 && totalPages > 1 && (
-          <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-gray-500">
+          <div className="mt-6 flex flex-col gap-3 rounded-2xl border border-border bg-surface p-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-sm text-foreground-muted">
               Page {currentPage} of {totalPages}
             </p>
 
@@ -676,7 +676,7 @@ const Habits = () => {
                   setPage((previous) => Math.max(1, previous - 1))
                 }
                 disabled={currentPage <= 1}
-                className="inline-flex items-center gap-1 rounded-xl border border-gray-200 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex items-center gap-1 rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground-muted hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-40"
               >
                 <ChevronLeft size={16} />
                 Previous
@@ -688,7 +688,7 @@ const Habits = () => {
                   setPage((previous) => Math.min(totalPages, previous + 1))
                 }
                 disabled={currentPage >= totalPages}
-                className="inline-flex items-center gap-1 rounded-xl border border-gray-200 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                className="inline-flex items-center gap-1 rounded-xl border border-border px-3 py-2 text-sm font-medium text-foreground-muted hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-40"
               >
                 Next
                 <ChevronRight size={16} />
@@ -705,12 +705,12 @@ const Habits = () => {
             role="dialog"
             aria-modal="true"
             aria-labelledby="archive-habit-title"
-            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+            className="w-full max-w-md rounded-2xl bg-surface p-6 shadow-xl"
           >
             <div className="flex items-start justify-between gap-3">
               <h2
                 id="archive-habit-title"
-                className="text-lg font-semibold text-gray-900"
+                className="text-lg font-semibold text-foreground"
               >
                 {habitToArchive.shouldArchive ? "Archive habit?" : "Restore habit?"}
               </h2>
@@ -720,13 +720,13 @@ const Habits = () => {
                 onClick={() => setHabitToArchive(null)}
                 disabled={Boolean(actionId)}
                 aria-label="Close confirmation"
-                className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 disabled:opacity-50"
+                className="rounded-lg p-1.5 text-foreground-muted hover:bg-surface-secondary disabled:opacity-50"
               >
                 <X size={19} />
               </button>
             </div>
 
-            <p className="mt-3 text-sm leading-6 text-gray-600">
+            <p className="mt-3 text-sm leading-6 text-foreground-muted">
               {habitToArchive.shouldArchive
                 ? `Archive "${habitToArchive.habit.title}"? It will be removed from your active habits but can be restored later.`
                 : `Restore "${habitToArchive.habit.title}" to your active habits?`}
@@ -737,7 +737,7 @@ const Habits = () => {
                 type="button"
                 onClick={() => setHabitToArchive(null)}
                 disabled={Boolean(actionId)}
-                className="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -762,17 +762,17 @@ const Habits = () => {
             role="dialog"
             aria-modal="true"
             aria-labelledby="delete-habit-title"
-            className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl"
+            className="w-full max-w-md rounded-2xl bg-surface p-6 shadow-xl"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 text-rose-600">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-300">
                   <Trash2 size={20} />
                 </div>
 
                 <h2
                   id="delete-habit-title"
-                  className="text-lg font-semibold text-gray-900"
+                  className="text-lg font-semibold text-foreground"
                 >
                   Delete habit?
                 </h2>
@@ -783,15 +783,15 @@ const Habits = () => {
                 onClick={() => setHabitToDelete(null)}
                 disabled={Boolean(actionId)}
                 aria-label="Close delete confirmation"
-                className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 disabled:opacity-50"
+                className="rounded-lg p-1.5 text-foreground-muted hover:bg-surface-secondary disabled:opacity-50"
               >
                 <X size={19} />
               </button>
             </div>
 
-            <p className="mt-4 text-sm leading-6 text-gray-600">
+            <p className="mt-4 text-sm leading-6 text-foreground-muted">
               Are you sure you want to delete{" "}
-              <span className="font-semibold text-gray-900">
+              <span className="font-semibold text-foreground">
                 {habitToDelete.title}
               </span>
               ? This action cannot be undone.
@@ -802,7 +802,7 @@ const Habits = () => {
                 type="button"
                 onClick={() => setHabitToDelete(null)}
                 disabled={Boolean(actionId)}
-                className="rounded-xl border border-gray-200 px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+                className="rounded-xl border border-border px-4 py-2.5 text-sm font-medium text-foreground-secondary hover:bg-surface-secondary disabled:opacity-50"
               >
                 Cancel
               </button>

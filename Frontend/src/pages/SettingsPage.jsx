@@ -21,18 +21,18 @@ const SettingsPage = () => {
   const { theme, setTheme } = useTheme();
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 app-text">
+    <div className="mx-auto max-w-4xl space-y-6 text-foreground">
       <header>
         <h1 className="text-2xl font-bold sm:text-3xl">Settings</h1>
-        <p className="mt-2 app-text-secondary">
+        <p className="mt-2 text-foreground-secondary">
           Customize your TaskFlow experience.
         </p>
       </header>
 
-      <section className="rounded-2xl border app-border app-surface p-5 shadow-sm sm:p-6">
+      <section className="rounded-2xl border border-border bg-surface p-5 shadow-sm sm:p-6">
         <div className="mb-5">
           <h2 className="text-lg font-semibold">Appearance</h2>
-          <p className="mt-1 text-sm app-text-secondary">
+          <p className="mt-1 text-sm text-foreground-secondary">
             Choose the appearance used throughout TaskFlow.
           </p>
         </div>
@@ -54,7 +54,7 @@ const SettingsPage = () => {
                     "focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary",
                     isSelected
                       ? "border-primary bg-surface-secondary"
-                      : "app-border hover:bg-surface-secondary",
+                      : "border-border hover:bg-surface-secondary",
                   ].join(" ")}
                 >
                   <input
@@ -80,7 +80,7 @@ const SettingsPage = () => {
                       )}
                     </span>
 
-                    <span className="mt-1 block text-sm app-text-secondary">
+                    <span className="mt-1 block text-sm text-foreground-secondary">
                       {description}
                     </span>
                   </span>

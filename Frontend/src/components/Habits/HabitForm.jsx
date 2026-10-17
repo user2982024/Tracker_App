@@ -200,18 +200,18 @@ const HabitForm = ({
   };
 
   const inputClass = (field) =>
-    `w-full rounded-xl border bg-white px-4 py-3 text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 ${
-      errors[field] ? "border-rose-400" : "border-gray-200"
+    `w-full rounded-xl border bg-input px-4 py-3 text-sm text-foreground outline-none transition placeholder:text-foreground-muted focus:border-primary focus:ring-2 focus:ring-primary/30 ${
+      errors[field] ? "border-rose-400" : "border-border"
     }`;
 
   return (
     <form onSubmit={handleSubmit} noValidate className="space-y-5">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-xl font-semibold text-foreground">
             {isEditing ? "Edit Habit" : "Create a Habit"}
           </h2>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-foreground-muted">
             {isEditing
               ? "Update your habit details and schedule."
               : "Build a routine by setting up a habit."}
@@ -222,7 +222,7 @@ const HabitForm = ({
       <div>
         <label
           htmlFor="habit-title"
-          className="mb-2 block text-sm font-medium text-gray-700"
+          className="mb-2 block text-sm font-medium text-foreground-secondary"
         >
           Habit title <span className="text-rose-500">*</span>
         </label>
@@ -249,7 +249,7 @@ const HabitForm = ({
       <div>
         <label
           htmlFor="habit-description"
-          className="mb-2 block text-sm font-medium text-gray-700"
+          className="mb-2 block text-sm font-medium text-foreground-secondary"
         >
           Description
         </label>
@@ -270,7 +270,7 @@ const HabitForm = ({
           ) : (
             <span />
           )}
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-foreground-muted">
             {form.description.length}/1000
           </span>
         </div>
@@ -280,7 +280,7 @@ const HabitForm = ({
         <div>
           <label
             htmlFor="habit-category"
-            className="mb-2 block text-sm font-medium text-gray-700"
+            className="mb-2 block text-sm font-medium text-foreground-secondary"
           >
             Category
           </label>
@@ -305,7 +305,7 @@ const HabitForm = ({
         <div>
           <label
             htmlFor="habit-priority"
-            className="mb-2 block text-sm font-medium text-gray-700"
+            className="mb-2 block text-sm font-medium text-foreground-secondary"
           >
             Priority
           </label>
@@ -331,7 +331,7 @@ const HabitForm = ({
       <div>
         <label
           htmlFor="habit-frequency"
-          className="mb-2 block text-sm font-medium text-gray-700"
+          className="mb-2 block text-sm font-medium text-foreground-secondary"
         >
           Frequency
         </label>
@@ -348,7 +348,7 @@ const HabitForm = ({
 
         {form.frequency === "specific_days" && (
           <fieldset className="mt-4">
-            <legend className="mb-2 text-sm font-medium text-gray-700">
+            <legend className="mb-2 text-sm font-medium text-foreground-secondary">
               Repeat on
             </legend>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -360,8 +360,8 @@ const HabitForm = ({
                     key={day.value}
                     className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-2.5 text-sm transition ${
                       selected
-                        ? "border-blue-300 bg-blue-50 text-blue-700"
-                        : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                        ? "border-blue-300 bg-blue-50 text-blue-700 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300"
+                        : "border-border text-foreground-secondary hover:bg-surface-secondary"
                     } ${loading ? "cursor-not-allowed opacity-50" : ""}`}
                   >
                     <input
@@ -390,7 +390,7 @@ const HabitForm = ({
         <div>
           <label
             htmlFor="habit-target"
-            className="mb-2 block text-sm font-medium text-gray-700"
+            className="mb-2 block text-sm font-medium text-foreground-secondary"
           >
             Optional target
           </label>
@@ -414,7 +414,7 @@ const HabitForm = ({
         <div>
           <label
             htmlFor="habit-unit"
-            className="mb-2 block text-sm font-medium text-gray-700"
+            className="mb-2 block text-sm font-medium text-foreground-secondary"
           >
             Unit
           </label>
@@ -435,7 +435,7 @@ const HabitForm = ({
         </div>
       </div>
 
-      <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-gray-200 p-4 transition hover:bg-gray-50">
+      <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border p-4 transition hover:bg-surface-secondary">
         <input
           type="checkbox"
           checked={form.isPinned}
@@ -444,23 +444,23 @@ const HabitForm = ({
           className="h-4 w-4 accent-blue-600"
         />
         <span className="flex-1">
-          <span className="flex items-center gap-2 text-sm font-medium text-gray-800">
+          <span className="flex items-center gap-2 text-sm font-medium text-foreground">
             <Pin size={15} />
             Pin this habit
           </span>
-          <span className="mt-1 block text-xs text-gray-500">
+          <span className="mt-1 block text-xs text-foreground-muted">
             Keep important habits easy to find.
           </span>
         </span>
       </label>
 
-      <div className="flex flex-col-reverse gap-3 border-t border-gray-100 pt-5 sm:flex-row sm:justify-end">
+      <div className="flex flex-col-reverse gap-3 border-t border-border pt-5 sm:flex-row sm:justify-end">
         {onCancel && (
           <button
             type="button"
             onClick={onCancel}
             disabled={loading}
-            className="rounded-xl border border-gray-200 px-5 py-3 text-sm font-medium text-gray-700 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded-xl border border-border px-5 py-3 text-sm font-medium text-foreground-secondary transition hover:bg-surface-secondary disabled:cursor-not-allowed disabled:opacity-50"
           >
             Cancel
           </button>
@@ -469,7 +469,7 @@ const HabitForm = ({
         <button
           type="submit"
           disabled={loading}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {loading && <Loader2 size={16} className="animate-spin" />}
           {loading ? "Saving..." : isEditing ? "Save Changes" : "Create Habit"}

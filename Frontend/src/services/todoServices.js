@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000/api/todos";
+const BASE_URL = "/api/todos";
 
 // Create todo
 export const createTodo = async (todoData) => {

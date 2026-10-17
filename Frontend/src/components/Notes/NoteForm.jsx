@@ -48,7 +48,7 @@ const NoteForm = ({ onSubmit, isEditMode, selectedNote }) => {
     <form
       onSubmit={handleSubmit}
       className="
-        bg-white
+        bg-surface
         p-4 sm:p-6
         rounded-2xl
         shadow-md
@@ -58,7 +58,7 @@ const NoteForm = ({ onSubmit, isEditMode, selectedNote }) => {
       "
     >
       {/* Title */}
-      <label className="text-gray-500 font-semibold" htmlFor="title">Title</label>
+      <label className="text-foreground-muted font-semibold" htmlFor="title">Title</label>
       <input
         required
         type="text"
@@ -66,11 +66,11 @@ const NoteForm = ({ onSubmit, isEditMode, selectedNote }) => {
         placeholder="Title..."
         value={formData.title}
         onChange={handleChange}
-        className="w-full mt-2 border rounded-lg px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full mt-2 bg-input text-foreground border border-border rounded-lg px-3 py-2 text-sm sm:text-base placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
       />
 
       {/* Content */}
-      <label className="text-gray-500 font-semibold" htmlFor="content">Content</label>
+      <label className="text-foreground-muted font-semibold" htmlFor="content">Content</label>
       <textarea
         required
         name="content"
@@ -78,7 +78,7 @@ const NoteForm = ({ onSubmit, isEditMode, selectedNote }) => {
         value={formData.content}
         onChange={handleChange}
         rows="4"
-        className="w-full mt-2 border rounded-lg px-3 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="w-full mt-2 bg-input text-foreground border border-border rounded-lg px-3 py-2 text-sm sm:text-base placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
       />
 
       {/* Button */}

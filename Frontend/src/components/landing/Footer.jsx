@@ -71,11 +71,11 @@ const Footer = () => {
             Get productivity tips and updates
           </p>
 
-          <div className="mt-4 flex items-center bg-gray-200 rounded-lg overflow-hidden">
+          <div className="mt-4 flex items-center bg-border rounded-lg overflow-hidden">
             <input
               type="email"
               placeholder="Enter your email"
-              className="w-full px-3 py-2 bg-transparent text-sm outline-none text-white placeholder-gray-800"
+              className="w-full px-3 py-2 bg-transparent text-sm outline-none text-white placeholder-foreground-muted"
             />
             <button className="bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
               →
@@ -85,7 +85,7 @@ const Footer = () => {
       </div>
 
       {/* BOTTOM BAR */}
-      <div className="mt-12 border-t border-gray-800 pt-6 text-center text-sm text-white">
+      <div className="mt-12 border-t border-border pt-6 text-center text-sm text-white">
         © 2025 TaskFlow. All rights reserved.
       </div>
     </footer>

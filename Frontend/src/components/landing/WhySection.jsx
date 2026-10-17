@@ -26,11 +26,11 @@ const benefits = [
 
 const WhySection = () => {
   return (
-    <section id="about" className="w-full bg-linear-to-r from-white-50 to-blue-200 py-20 scroll-mt-24">
+    <section id="about" className="w-full bg-linear-to-r from-surface to-blue-200 dark:from-background dark:to-surface py-20 scroll-mt-24">
       <div className="max-w-7xl mx-auto px-6 text-center">
 
         {/* Heading */}
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground">
           Why Choose Task Flow?
         </h2>
 
@@ -40,20 +40,20 @@ const WhySection = () => {
           {benefits.map((item, index) => (
             <div
               key={index}
-              className="bg-gray-50 p-6 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition"
+              className="bg-surface-secondary border border-border p-6 rounded-2xl shadow-sm hover:shadow-md hover:-translate-y-1 transition"
             >
               {/* Icon */}
-              <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-white mx-auto shadow-sm">
+              <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-surface mx-auto shadow-sm">
                 {item.icon}
               </div>
 
               {/* Title */}
-              <h3 className="mt-4 text-lg font-semibold text-gray-900">
+              <h3 className="mt-4 text-lg font-semibold text-foreground">
                 {item.title}
               </h3>
 
               {/* Description */}
-              <p className="mt-2 text-sm text-gray-600">
+              <p className="mt-2 text-sm text-foreground-muted">
                 {item.description}
               </p>
             </div>

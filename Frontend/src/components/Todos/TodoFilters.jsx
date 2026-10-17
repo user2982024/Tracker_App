@@ -15,7 +15,7 @@ const TodosFilters = ({ currentFilter, onFilterChange, sortBy, onSortChange }) =
   ];
 
   return (
-     <div className="bg-white border border-gray-300 rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+     <div className="bg-surface border border-border rounded-xl p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
       {/* Filter Buttons */}
       <div className="flex items-center gap-2 flex-wrap">
@@ -35,7 +35,7 @@ const TodosFilters = ({ currentFilter, onFilterChange, sortBy, onSortChange }) =
         <select
         value={sortBy}
         onChange={(e) => onSortChange(e.target.value)}
-          className="px-3 py-2 rounded-lg border border-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 hover:cursor-pointer"
+          className="px-3 py-2 rounded-lg border border-border bg-input text-foreground text-sm placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 hover:cursor-pointer"
         >
           <option value="default">Default</option>
           <option value="dueDate">Due Date</option>
@@ -53,8 +53,8 @@ const FilterButton = ({ icon, label, active, onClick }) => {
       className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition hover:cursor-pointer
         ${
           active
-            ? "bg-blue-100 text-blue-600"
-            : "text-gray-600 hover:bg-gray-100"
+            ? "bg-blue-100 text-blue-600 dark:bg-blue-500/15 dark:text-blue-300"
+            : "text-foreground-muted hover:bg-surface-secondary"
         }`}
     >
       {icon}

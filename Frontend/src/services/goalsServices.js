@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000/api/goals";
+const BASE_URL = "/api/goals";
 
 // Create goal
 export const createGoal = async (goalData) => {

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import { signinUser, signupUser } from "../../services/authServices";
+import ThemeToggle from "../UI/ThemeToggle";
 
 const AuthForm = ({ mode = "signup" }) => {
   const { setUser } = useAuth();
@@ -81,11 +82,15 @@ const AuthForm = ({ mode = "signup" }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+    <div className="relative min-h-screen flex items-center justify-center bg-surface-secondary px-4">
+      <div className="absolute right-4 top-4 sm:right-6 sm:top-6">
+        <ThemeToggle />
+      </div>
+
       {/* Card Container */}
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-md p-8">
+      <div className="w-full max-w-md bg-surface border border-border rounded-2xl shadow-md p-8">
         {/* Title */}
-        <h2 className="text-2xl font-semibold text-gray-800 text-center mb-6">
+        <h2 className="text-2xl font-semibold text-foreground text-center mb-6">
           {isSignup ? "Create Account" : "Welcome Back"}
         </h2>
 
@@ -99,7 +104,7 @@ const AuthForm = ({ mode = "signup" }) => {
           {/* Name (Signup Only) */}
           {isSignup && (
             <div>
-              <label className="block text-sm font-medium text-gray-600 mb-1">
+              <label className="block text-sm font-medium text-foreground-muted mb-1">
                 Name
               </label>
               <input
@@ -108,11 +113,11 @@ const AuthForm = ({ mode = "signup" }) => {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter your name"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg 
-                           focus:outline-none focus:ring-2 focus:ring-blue-500 
+                className="w-full px-4 py-2 bg-input text-foreground border border-border rounded-lg placeholder:text-foreground-muted 
+                           focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 
                            transition"
               />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-foreground-muted mt-1">
                 Name must be between 5 and 30 characters
               </p>
             </div>
@@ -120,7 +125,7 @@ const AuthForm = ({ mode = "signup" }) => {
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-sm font-medium text-foreground-muted mb-1">
               Email
             </label>
             <input
@@ -129,15 +134,15 @@ const AuthForm = ({ mode = "signup" }) => {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg 
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 
+              className="w-full px-4 py-2 bg-input text-foreground border border-border rounded-lg placeholder:text-foreground-muted 
+                         focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 
                          transition"
             />
           </div>
 
           {/* Password */}
           <div>
-            <label className="block text-sm font-medium text-gray-600 mb-1">
+            <label className="block text-sm font-medium text-foreground-muted mb-1">
               Password
             </label>
             <input
@@ -146,11 +151,11 @@ const AuthForm = ({ mode = "signup" }) => {
               value={formData.password}
               onChange={handleChange}
               placeholder="Enter your password"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg 
-                         focus:outline-none focus:ring-2 focus:ring-blue-500 
+              className="w-full px-4 py-2 bg-input text-foreground border border-border rounded-lg placeholder:text-foreground-muted 
+                         focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 
                          transition"
             />
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-foreground-muted mt-1">
               Must be at least 6 characters and include uppercase, lowercase,
               and a number
             </p>
@@ -167,7 +172,7 @@ const AuthForm = ({ mode = "signup" }) => {
           </button>
 
           {/* Switch Link */}
-          <p className="text-sm text-center text-gray-500">
+          <p className="text-sm text-center text-foreground-muted">
             {isSignup ? "Already have an account?" : "Don't have an account?"}
             <span className="text-blue-600 ml-1 cursor-pointer hover:underline" onClick={() => navigate(`/${isSignup ? 'signin' : 'signup'}`)}>
               {isSignup ? "Sign In" : "Sign Up"}

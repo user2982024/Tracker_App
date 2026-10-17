@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:5000/api/notes";
+const BASE_URL = "/api/notes";
 
 // Create note
 export const createNote = async (formData) => {

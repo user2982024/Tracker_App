@@ -14,7 +14,7 @@ const TodoList = ({
   // Loading state
   if (loading) {
     return (
-      <div className="bg-white border rounded-xl p-6 text-center text-gray-500">
+      <div className="bg-surface border border-border rounded-xl p-6 text-center text-foreground-muted">
         Loading todos...
       </div>
     );
@@ -30,7 +30,7 @@ const TodoList = ({
     };
 
     return (
-      <div className="text-center text-gray-500 py-10">
+      <div className="text-center text-foreground-muted py-10">
         <p className="text-lg font-medium">
           {messages[currentFilter] || messages.all}
         </p>
@@ -49,7 +49,7 @@ const TodoList = ({
     {/* Pinned Section */}
     {pinnedTodos.length > 0 && (
       <div>
-        <h2 className="text-lg font-semibold mb-4 text-blue-600">
+        <h2 className="text-lg font-semibold mb-4 text-blue-600 dark:text-blue-400">
           Pinned Todos ({pinnedTodos.length})
         </h2>
 
@@ -71,8 +71,8 @@ const TodoList = ({
 
     {/* Normal Todos */}
     {unpinnedTodos.length > 0 && (
-      <div className="border-t pt-6">
-        <h2 className="text-lg font-semibold mb-3 text-gray-700">
+      <div className="border-t border-border pt-6">
+        <h2 className="text-lg font-semibold mb-3 text-foreground-secondary">
           Todos ({unpinnedTodos.length})
         </h2>
 

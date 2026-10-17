@@ -32,7 +32,7 @@ const TodoEditPage = () => {
   }, [id]);
 
   if (loading) {
-    return <div className="p-6 text-gray-500">Loading...</div>;
+    return <div className="p-6 text-foreground-muted">Loading...</div>;
   }
 
   if (!todo) return null;
