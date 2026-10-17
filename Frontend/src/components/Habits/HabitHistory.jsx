@@ -13,6 +13,8 @@ import {
   TrendingUp,
 } from "lucide-react";
 import Spinner from "../UI/Spinner";
+import useDateFormat from "../../hooks/useDateFormat";
+import { formatDate as formatPreferenceDate, formatDateTime as formatPreferenceDateTime } from "../../utils/dateFormatting";
 
 // Correct path for src/components/Habits/HabitHistory.jsx
 import {
@@ -71,39 +73,6 @@ const getHistoryFromResponse = (response) => {
   };
 };
 
-const formatDate = (value) => {
-  if (!value) return "Date not available";
-
-  const isDateOnly =
-    typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value);
-
-  const date = new Date(isDateOnly ? `${value}T12:00:00` : value);
-
-  if (Number.isNaN(date.getTime())) return "Date not available";
-
-  return new Intl.DateTimeFormat(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  }).format(date);
-};
-
-const formatDateTime = (value) => {
-  if (!value) return null;
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) return null;
-
-  return new Intl.DateTimeFormat(undefined, {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(date);
-};
-
 const getRecordDate = (record) =>
   record?.date ?? record?.completedAt ?? record?.createdAt;
 
@@ -114,6 +83,7 @@ const getErrorMessage = (error) =>
   error?.message || "Something went wrong while loading habit history.";
 
 const HabitHistory = () => {
+  const dateFormat = useDateFormat();
   const { id, habitId } = useParams();
   const navigate = useNavigate();
   const currentHabitId = habitId ?? id;
@@ -435,7 +405,7 @@ const HabitHistory = () => {
               <>
                 <div className="divide-y divide-border">
                   {history.map((item, index) => {
-                    const createdAt = formatDateTime(item.createdAt);
+                    const createdAt = formatPreferenceDateTime(item.createdAt, dateFormat);
                     const valueIsAvailable =
                       item.value !== undefined &&
                       item.value !== null &&
@@ -454,7 +424,7 @@ const HabitHistory = () => {
                           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                             <div className="min-w-0">
                               <h3 className="font-semibold text-foreground">
-                                {formatDate(getRecordDate(item))}
+                                {formatPreferenceDate(getRecordDate(item), dateFormat)}
                               </h3>
 
                               {item.note && (

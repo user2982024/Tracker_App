@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Spinner from "../components/UI/Spinner";
+import useDateFormat from "../hooks/useDateFormat";
+import { formatDateTime } from "../utils/dateFormatting";
 import {
   getNoteById,
   deleteNote,
@@ -21,6 +23,7 @@ import {
 import Modal from "../components/UI/Modal";
 
 const NoteViewPage = () => {
+  const dateFormat = useDateFormat();
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -196,7 +199,7 @@ const NoteViewPage = () => {
 
         {/* Date */}
         <div className="mt-6 text-sm text-foreground-muted">
-          Created: {new Date(note.createdAt).toLocaleString()}
+          Created: {formatDateTime(note.createdAt, dateFormat)}
         </div>
       </div>
 

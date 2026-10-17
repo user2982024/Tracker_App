@@ -20,7 +20,7 @@ const Sidebar = ({ closeSidebar }) => {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const navItems = [
-    { name: "Dashboard", path: "/app", icon: <LayoutDashboard size={18} /> },
+    { name: "Dashboard", path: "/app/dashboard", icon: <LayoutDashboard size={18} /> },
     { name: "Notes", path: "/app/notes", icon: <StickyNote size={18} /> },
     { name: "Todos", path: "/app/todos", icon: <CheckSquare size={18} /> },
     { name: "Goals", path: "/app/goals", icon: <Target size={18} /> },
@@ -53,7 +53,7 @@ const Sidebar = ({ closeSidebar }) => {
           <NavLink
             key={item.name}
             to={item.path}
-            end={item.path === "/app"}
+            end={item.path === "/app/dashboard"}
             onClick={() => closeSidebar?.()}
             className={({ isActive }) =>
               [

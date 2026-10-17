@@ -21,10 +21,13 @@ import {
 } from "../services/todoServices";
 
 import { toast } from "react-hot-toast";
+import useDateFormat from "../hooks/useDateFormat";
+import { formatDate } from "../utils/dateFormatting";
 
 const TodoViewPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const dateFormat = useDateFormat();
 
   const [todo, setTodo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -106,7 +109,7 @@ const TodoViewPage = () => {
   const isPending = !completed && !isOverdue;
 
   const formattedDate = dueDate
-    ? new Date(dueDate).toLocaleDateString()
+    ? formatDate(dueDate, dateFormat)
     : "No date";
 
   // Status color logic (same as card)

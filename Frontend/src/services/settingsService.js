@@ -30,3 +30,40 @@ export const changePassword = (data) =>
 
 export const updatePreferences = (data) =>
   request("/preferences", { method: "PATCH", body: JSON.stringify(data) });
+
+const downloadExport = async (path, fallbackName, fallbackMessage) => {
+  const response = await fetch(`${BASE_URL}${path}`, { credentials: "include" });
+  if (!response.ok) {
+    let message = fallbackMessage;
+    try {
+      const result = await response.json();
+      message = result?.message || message;
+    } catch {
+      // Use the fallback message when the server response is not JSON.
+    }
+    throw new Error(message);
+  }
+
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = response.headers.get("Content-Disposition")?.match(/filename="?([^";]+)"?/)?.[1]
+    || fallbackName;
+  document.body.append(link);
+  link.click();
+  link.remove();
+  window.setTimeout(() => URL.revokeObjectURL(url), 0);
+};
+
+export const exportData = () => downloadExport(
+  "/export",
+  `taskflow-backup-${new Date().toISOString().slice(0, 10)}.json`,
+  "Unable to prepare your backup",
+);
+
+export const exportPdfReport = () => downloadExport(
+  "/export/pdf",
+  `taskflow-report-${new Date().toISOString().slice(0, 10)}.pdf`,
+  "Unable to prepare your PDF report",
+);

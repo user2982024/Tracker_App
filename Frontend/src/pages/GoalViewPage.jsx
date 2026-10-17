@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import useDateFormat from "../hooks/useDateFormat";
+import { formatDate as formatPreferenceDate } from "../utils/dateFormatting";
 
 import { useNavigate, useParams } from "react-router-dom";
 
@@ -39,6 +41,7 @@ const HISTORY_PREVIEW_LIMIT = 3;
 // ======================================================
 
 const GoalViewPage = () => {
+  const dateFormat = useDateFormat();
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -414,11 +417,7 @@ const GoalViewPage = () => {
       return "Unknown date";
     }
 
-    return new Date(date).toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+    return formatPreferenceDate(date, dateFormat);
   };
 
   // ====================================================

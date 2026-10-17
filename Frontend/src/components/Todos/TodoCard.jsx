@@ -12,8 +12,11 @@ import {
 
 import { toggleTodoCompletion } from "../../services/todoServices";
 import { toast } from "react-hot-toast";
+import useDateFormat from "../../hooks/useDateFormat";
+import { formatDate } from "../../utils/dateFormatting";
 
 const TodoCard = ({ todo, onRefresh, onEdit, onDelete, onPin, onUnpin }) => {
+  const dateFormat = useDateFormat();
   const {
     _id,
     title,
@@ -34,7 +37,7 @@ const navigate = useNavigate();
   const isPending = !completed && !isOverdue;
 
   const formattedDate = dueDate
-    ? new Date(dueDate).toLocaleDateString()
+    ? formatDate(dueDate, dateFormat)
     : "No date";
 
   // Status color

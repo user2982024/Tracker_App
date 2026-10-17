@@ -1,5 +1,11 @@
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+const Todo = require("../models/Todo");
+const Note = require("../models/Notes");
+const Goal = require("../models/Goal");
+const Habit = require("../models/Habit");
+const HabitCompletion = require("../models/HabitCompletion");
+const GoalProgress = require("../models/GoalProgress");
 
 const createError = (message, statusCode) => {
   const error = new Error(message);
@@ -14,6 +20,8 @@ const getSafeUser = (user) => ({
   preferences: {
     theme: user.preferences?.theme || "light",
     weekStartsOn: user.preferences?.weekStartsOn ?? 0,
+    defaultPage: user.preferences?.defaultPage || "dashboard",
+    dateFormat: user.preferences?.dateFormat || "MM/DD/YYYY",
   },
 });
 
@@ -57,6 +65,12 @@ exports.updatePreferences = async (userId, preferences) => {
   if (preferences.weekStartsOn !== undefined) {
     allowedPreferences["preferences.weekStartsOn"] = preferences.weekStartsOn;
   }
+  if (preferences.defaultPage !== undefined) {
+    allowedPreferences["preferences.defaultPage"] = preferences.defaultPage;
+  }
+  if (preferences.dateFormat !== undefined) {
+    allowedPreferences["preferences.dateFormat"] = preferences.dateFormat;
+  }
 
   const user = await User.findByIdAndUpdate(
     userId,
@@ -65,4 +79,36 @@ exports.updatePreferences = async (userId, preferences) => {
   );
   if (!user) throw createError("User not found", 404);
   return getSafeUser(user);
+};
+
+exports.exportUserData = async (userId) => {
+  const user = await User.findById(userId).select("name email preferences createdAt").lean();
+  if (!user) throw createError("User not found", 404);
+
+  const owner = { user: userId };
+  const [todos, notes, goals, goalProgress, habits, habitCompletions] = await Promise.all([
+    Todo.find(owner).select("-user").lean(),
+    Note.find(owner).select("-user").lean(),
+    Goal.find(owner).select("-user").lean(),
+    GoalProgress.find(owner).select("-user").lean(),
+    Habit.find(owner).select("-user").lean(),
+    HabitCompletion.find(owner).select("-user").lean(),
+  ]);
+
+  return {
+    schemaVersion: 1,
+    exportedAt: new Date().toISOString(),
+    account: {
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt,
+      preferences: {
+        theme: user.preferences?.theme || "light",
+        weekStartsOn: user.preferences?.weekStartsOn ?? 0,
+        defaultPage: user.preferences?.defaultPage || "dashboard",
+        dateFormat: user.preferences?.dateFormat || "MM/DD/YYYY",
+      },
+    },
+    data: { todos, notes, goals, goalProgress, habits, habitCompletions },
+  };
 };

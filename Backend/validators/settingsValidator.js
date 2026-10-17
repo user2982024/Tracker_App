@@ -25,8 +25,16 @@ exports.updatePreferencesValidator = [
     .optional()
     .isInt({ min: 0, max: 1 }).withMessage("Week start must be Sunday (0) or Monday (1)")
     .toInt(),
+  body("defaultPage")
+    .optional()
+    .isIn(["dashboard", "todos", "habits"])
+    .withMessage("Default page must be dashboard, todos, or habits"),
+  body("dateFormat")
+    .optional()
+    .isIn(["MM/DD/YYYY", "DD/MM/YYYY", "YYYY-MM-DD"])
+    .withMessage("Date format is not supported"),
   body().custom((value) => {
-    if (value.theme === undefined && value.weekStartsOn === undefined) {
+    if (!["theme", "weekStartsOn", "defaultPage", "dateFormat"].some((key) => value[key] !== undefined)) {
       throw new Error("At least one preference must be provided");
     }
     return true;

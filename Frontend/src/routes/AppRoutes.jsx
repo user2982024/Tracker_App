@@ -29,6 +29,7 @@ import SettingsPage from "../pages/SettingsPage";
 
 // Forms
 import AuthForm from "../components/Auth/AuthForm";
+import DefaultAppPage from "./DefaultAppPage";
 
 const AppRoutes = () => {
   return (
@@ -59,7 +60,8 @@ const AppRoutes = () => {
       {/* Protected application routes */}
       <Route element={<ProtectedRoutes />}>
         <Route path="/app" element={<AppLayout />}>
-          <Route index element={<Dashboard />} />
+          <Route index element={<DefaultAppPage />} />
+          <Route path="dashboard" element={<Dashboard />} />
 
           {/* Notes */}
           <Route path="notes" element={<NotesPage />} />

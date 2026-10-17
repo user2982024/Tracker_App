@@ -8,9 +8,12 @@ import {
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
+import useDateFormat from "../../hooks/useDateFormat";
+import { formatDate } from "../../utils/dateFormatting";
 
 const GoalCard = ({ goal, onDelete }) => {
   const navigate = useNavigate();
+  const dateFormat = useDateFormat();
 
   // ==========================================
   // Dynamic Status Styles
@@ -65,11 +68,7 @@ const GoalCard = ({ goal, onDelete }) => {
   // ==========================================
 
   const formattedTargetDate = goal.targetDate
-    ? new Date(goal.targetDate).toLocaleDateString("en-US", {
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      })
+    ? formatDate(goal.targetDate, dateFormat)
     : null;
 
   // ==========================================

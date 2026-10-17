@@ -34,6 +34,16 @@ const userSchema = new mongoose.Schema(
         enum: [0, 1],
         default: 0,
       },
+      defaultPage: {
+        type: String,
+        enum: ["dashboard", "todos", "habits"],
+        default: "dashboard",
+      },
+      dateFormat: {
+        type: String,
+        enum: ["MM/DD/YYYY", "DD/MM/YYYY", "YYYY-MM-DD"],
+        default: "MM/DD/YYYY",
+      },
     },
   },
   {

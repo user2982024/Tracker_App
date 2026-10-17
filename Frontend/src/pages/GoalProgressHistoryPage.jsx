@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import useDateFormat from "../hooks/useDateFormat";
+import { formatDate as formatPreferenceDate } from "../utils/dateFormatting";
 
 import { useNavigate, useParams } from "react-router-dom";
 import Spinner from "../components/UI/Spinner";
@@ -20,6 +22,7 @@ import {
 import Modal from "../components/UI/Modal";
 
 const GoalProgressHistoryPage = () => {
+  const dateFormat = useDateFormat();
   const navigate = useNavigate();
 
   const { id } = useParams();
@@ -84,11 +87,7 @@ const GoalProgressHistoryPage = () => {
       return "Unknown date";
     }
 
-    return new Date(date).toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
+    return formatPreferenceDate(date, dateFormat);
   };
 
   // ==================================================

@@ -1,6 +1,8 @@
 import { createElement, useState } from "react";
 import {
   CalendarDays,
+  Download,
+  FileText,
   KeyRound,
   Moon,
   Pencil,
@@ -15,6 +17,8 @@ import FormModal from "../components/UI/FormModal";
 import Spinner from "../components/UI/Spinner";
 import {
   changePassword,
+  exportData,
+  exportPdfReport,
   updatePreferences,
   updateProfile,
 } from "../services/settingsService";
@@ -47,6 +51,8 @@ const SettingsPage = () => {
   const [weekStartsOn, setWeekStartsOn] = useState(
     String(user?.preferences?.weekStartsOn ?? 0),
   );
+  const [defaultPage, setDefaultPage] = useState(user?.preferences?.defaultPage || "dashboard");
+  const [dateFormat, setDateFormat] = useState(user?.preferences?.dateFormat || "MM/DD/YYYY");
   const [passwords, setPasswords] = useState({
     currentPassword: "",
     newPassword: "",
@@ -55,6 +61,7 @@ const SettingsPage = () => {
   const [showProfileForm, setShowProfileForm] = useState(false);
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [showWeekStartForm, setShowWeekStartForm] = useState(false);
+  const [exporting, setExporting] = useState("");
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingTheme, setSavingTheme] = useState(false);
   const [savingWeekStart, setSavingWeekStart] = useState(false);
@@ -94,7 +101,9 @@ const SettingsPage = () => {
     setSavingWeekStart(true);
 
     try {
-      const result = await updatePreferences({ weekStartsOn: Number(weekStartsOn) });
+      const result = await updatePreferences({
+        weekStartsOn: Number(weekStartsOn), defaultPage, dateFormat,
+      });
       setUser(result.user);
       setShowWeekStartForm(false);
       toast.success("Preferences saved");
@@ -102,6 +111,23 @@ const SettingsPage = () => {
       toast.error(error.message || "Unable to save preferences");
     } finally {
       setSavingWeekStart(false);
+    }
+  };
+
+  const handleExport = async (format) => {
+    setExporting(format);
+    try {
+      if (format === "pdf") {
+        await exportPdfReport();
+        toast.success("Your PDF report is ready");
+      } else {
+        await exportData();
+        toast.success("Your full data backup is ready");
+      }
+    } catch (error) {
+      toast.error(error.message || "Unable to export your data");
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -136,6 +162,10 @@ const SettingsPage = () => {
   const weekStartLabel = Number(user?.preferences?.weekStartsOn ?? 0) === 1
     ? "Monday"
     : "Sunday";
+  const defaultPageLabel = { dashboard: "Dashboard", todos: "To-dos", habits: "Habits" }[
+    user?.preferences?.defaultPage || "dashboard"
+  ];
+  const dateFormatLabel = user?.preferences?.dateFormat || "MM/DD/YYYY";
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 text-foreground">
@@ -185,7 +215,7 @@ const SettingsPage = () => {
           <span className="rounded-xl bg-primary-soft p-2 text-primary"><CalendarDays size={20} /></span>
           <div>
             <h2 className="text-lg font-semibold">Preferences</h2>
-            <p className="text-sm text-foreground-secondary">Choose how the app looks and how dates are arranged.</p>
+            <p className="text-sm text-foreground-secondary">Choose your appearance, landing page, and date display.</p>
           </div>
         </div>
 
@@ -224,20 +254,54 @@ const SettingsPage = () => {
 
         <div className="mt-6 flex flex-col gap-3 border-t border-border pt-5 sm:flex-row sm:items-center">
           <div className="flex-1">
-            <p className="text-sm font-medium">Week starts on</p>
-            <p className="mt-1 text-sm text-foreground-secondary">{weekStartLabel}</p>
+            <p className="text-sm font-medium">Display preferences</p>
+            <p className="mt-1 text-sm text-foreground-secondary">Home: {defaultPageLabel} · Dates: {dateFormatLabel} · Week: {weekStartLabel}</p>
           </div>
           <button
             type="button"
             className={secondaryButtonClass}
             onClick={() => {
               setWeekStartsOn(String(user?.preferences?.weekStartsOn ?? 0));
+              setDefaultPage(user?.preferences?.defaultPage || "dashboard");
+              setDateFormat(user?.preferences?.dateFormat || "MM/DD/YYYY");
               setShowWeekStartForm(true);
             }}
           >
-            Change week start
+            Edit preferences
           </button>
         </div>
+      </section>
+
+      <section className={sectionClass}>
+        <div className="mb-5 flex items-center gap-3">
+          <span className="rounded-xl bg-primary-soft p-2 text-primary"><FileText size={20} /></span>
+          <div>
+            <h2 className="text-lg font-semibold">Take your data with you</h2>
+            <p className="text-sm text-foreground-secondary">Save a clear, readable report of your TaskFlow activity.</p>
+          </div>
+        </div>
+        <div className="flex flex-col gap-4 rounded-xl border border-border bg-surface-secondary/50 p-4 sm:flex-row sm:items-center">
+          <div className="flex-1">
+            <p className="font-medium">PDF report</p>
+            <p className="mt-1 text-sm text-foreground-secondary">Easy to read, print, and share. Includes your profile summary, to-dos, notes, goals, and habit history.</p>
+          </div>
+          <button type="button" className={primaryButtonClass} onClick={() => handleExport("pdf")} disabled={Boolean(exporting)}>
+            {exporting === "pdf" ? <Spinner size={16} label="Preparing PDF report" /> : <Download size={16} />}
+            {exporting === "pdf" ? "Preparing PDF…" : "Download PDF report"}
+          </button>
+        </div>
+        <details className="mt-4 rounded-xl border border-border bg-surface-secondary/40 p-4">
+          <summary className="cursor-pointer font-medium text-foreground">Advanced backup options</summary>
+          <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <p className="flex-1 text-sm leading-6 text-foreground-secondary">
+              Full backup (JSON). This file is for restoring or transferring your data with a compatible app. You do not need to open it to read your information; choose the PDF report for that.
+            </p>
+            <button type="button" className={secondaryButtonClass} onClick={() => handleExport("json")} disabled={Boolean(exporting)}>
+              {exporting === "json" ? <Spinner size={16} label="Preparing full backup" /> : <Download size={16} />}
+              {exporting === "json" ? "Preparing backup…" : "Download full backup"}
+            </button>
+          </div>
+        </details>
       </section>
 
       <section className={sectionClass}>
@@ -299,8 +363,8 @@ const SettingsPage = () => {
       <FormModal
         isOpen={showWeekStartForm}
         onClose={() => setShowWeekStartForm(false)}
-        title="Week start"
-        subtitle="This updates the layout of your habit calendar."
+        title="Display preferences"
+        subtitle="Choose where TaskFlow opens and how dates appear across the app."
         loading={savingWeekStart}
       >
         <form className="space-y-5" onSubmit={handleWeekStartSubmit}>
@@ -315,13 +379,29 @@ const SettingsPage = () => {
               <option value="1">Monday</option>
             </select>
           </label>
+          <label className="block text-sm font-medium">
+            Default page after sign in
+            <select className={inputClass} value={defaultPage} onChange={(event) => setDefaultPage(event.target.value)}>
+              <option value="dashboard">Dashboard</option>
+              <option value="todos">To-dos</option>
+              <option value="habits">Habits</option>
+            </select>
+          </label>
+          <label className="block text-sm font-medium">
+            Date format
+            <select className={inputClass} value={dateFormat} onChange={(event) => setDateFormat(event.target.value)}>
+              <option value="MM/DD/YYYY">MM/DD/YYYY (10/17/2026)</option>
+              <option value="DD/MM/YYYY">DD/MM/YYYY (17/10/2026)</option>
+              <option value="YYYY-MM-DD">YYYY-MM-DD (2026-10-17)</option>
+            </select>
+          </label>
           <div className="flex justify-end gap-3">
             <button type="button" className={secondaryButtonClass} onClick={() => setShowWeekStartForm(false)} disabled={savingWeekStart}>
               Cancel
             </button>
             <button className={primaryButtonClass} type="submit" disabled={savingWeekStart}>
               {savingWeekStart && <Spinner size={16} label="Saving preferences" />}
-              {savingWeekStart ? "Saving…" : "Save preference"}
+              {savingWeekStart ? "Saving…" : "Save preferences"}
             </button>
           </div>
         </form>

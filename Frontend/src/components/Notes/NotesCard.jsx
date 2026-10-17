@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import useDateFormat from "../../hooks/useDateFormat";
+import { formatDate } from "../../utils/dateFormatting";
 import { Pencil, Trash2, Archive, ArchiveRestore, Pin, Eye } from "lucide-react";
 
 const NoteCard = ({
@@ -13,6 +15,7 @@ const NoteCard = ({
 }) => {
 
   const navigate = useNavigate();
+  const dateFormat = useDateFormat();
 
   return (
     <div
@@ -40,7 +43,7 @@ const NoteCard = ({
       <div className="mt-4 flex justify-between items-center text-sm text-foreground-muted">
         {/* Left Side (Date + Pin) */}
         <div className="flex items-center gap-2">
-          <span>{new Date(note.createdAt).toLocaleDateString()}</span>
+          <span>{formatDate(note.createdAt, dateFormat)}</span>
 
           {note.isPinned && (
             <Pin size={14} className="text-yellow-500" fill="currentColor" />

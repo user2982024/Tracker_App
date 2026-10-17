@@ -35,6 +35,8 @@ exports.signup = async ({ name, email, password }) => {
       preferences: {
         theme: user.preferences?.theme || "light",
         weekStartsOn: user.preferences?.weekStartsOn ?? 0,
+        defaultPage: user.preferences?.defaultPage || "dashboard",
+        dateFormat: user.preferences?.dateFormat || "MM/DD/YYYY",
       },
     },
     token,
@@ -70,6 +72,8 @@ exports.signin = async ({ email, password }) => {
       preferences: {
         theme: user.preferences?.theme || "light",
         weekStartsOn: user.preferences?.weekStartsOn ?? 0,
+        defaultPage: user.preferences?.defaultPage || "dashboard",
+        dateFormat: user.preferences?.dateFormat || "MM/DD/YYYY",
       },
     },
     token,
