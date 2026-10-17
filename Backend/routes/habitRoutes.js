@@ -5,6 +5,7 @@ const {
   validateCreateHabit,
   validateUpdateHabit,
   validateHabitId,
+  validateHabitParamId,
   validateAddHabitCompletion,
   validateHabitCompletionId,
   validateHabitHistory,
@@ -57,7 +58,7 @@ router.get(
 router.get(
   "/:habitId/streak",
   authMiddleware,
-  validateHabitId,
+  validateHabitParamId,
   validateRequest,
   getHabitStreak,
 );

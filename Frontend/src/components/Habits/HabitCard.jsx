@@ -57,6 +57,8 @@ const HabitCard = ({
   onArchive,
   onDelete,
   onViewHistory,
+  onTogglePin,
+  pinning = false,
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -227,7 +229,7 @@ const HabitCard = ({
           <button
             type="button"
             onClick={() => setMenuOpen((previous) => !previous)}
-            disabled={loading}
+            disabled={loading || pinning}
             aria-label={`Actions for ${title}`}
             aria-expanded={menuOpen}
             className="flex h-9 w-9 items-center justify-center rounded-xl text-foreground-muted transition-all duration-200 hover:bg-surface-secondary hover:text-foreground disabled:opacity-50 btn-hover"
@@ -264,6 +266,23 @@ const HabitCard = ({
                   >
                     <CalendarDays size={15} />
                     View history
+                  </button>
+                )}
+
+                {onTogglePin && (
+                  <button
+                    type="button"
+                    onClick={() => handleAction(onTogglePin, habit)}
+                    disabled={pinning}
+                    aria-label={`${isPinned ? "Unpin" : "Pin"} ${title}`}
+                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-foreground-secondary hover:bg-surface-secondary transition-colors disabled:cursor-wait disabled:opacity-60 cursor-pointer"
+                  >
+                    {pinning ? (
+                      <Spinner size={15} label={`${isPinned ? "Unpinning" : "Pinning"} habit`} />
+                    ) : (
+                      <Pin size={15} className={isPinned ? "rotate-45 text-amber-500" : ""} fill={isPinned ? "currentColor" : "none"} />
+                    )}
+                    {isPinned ? "Unpin habit" : "Pin habit"}
                   </button>
                 )}
 

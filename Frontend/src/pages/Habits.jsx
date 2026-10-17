@@ -81,6 +81,7 @@ const Habits = () => {
   const [refreshing, setRefreshing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [actionId, setActionId] = useState(null);
+  const [pinningId, setPinningId] = useState(null);
   const [error, setError] = useState("");
 
   const [search, setSearch] = useState("");
@@ -345,6 +346,22 @@ const Habits = () => {
       toast.error(err?.message || "Failed to update habit completion.");
     } finally {
       setActionId(null);
+    }
+  };
+
+  const handleTogglePin = async (habit) => {
+    if (!habit?._id || actionId || pinningId) return;
+
+    const nextPinned = !Boolean(habit.isPinned);
+    try {
+      setPinningId(habit._id);
+      await updateHabit(habit._id, { isPinned: nextPinned });
+      toast.success(nextPinned ? "Habit pinned." : "Habit unpinned.");
+      await fetchHabits({ silent: true });
+    } catch (err) {
+      toast.error(err?.message || `Failed to ${nextPinned ? "pin" : "unpin"} habit.`);
+    } finally {
+      setPinningId(null);
     }
   };
 
@@ -661,6 +678,8 @@ const Habits = () => {
                   onArchive={handleArchiveClick}
                   onDelete={setHabitToDelete}
                   onViewHistory={handleViewHistory}
+                  onTogglePin={handleTogglePin}
+                  pinning={pinningId === habit._id}
                 />
               );
             })}

@@ -207,6 +207,13 @@ const validateHabitId = [
     .withMessage("Invalid habit ID"),
 ];
 
+// The streak route uses `:habitId`, unlike the resource routes that use `:id`.
+const validateHabitParamId = [
+  param("habitId")
+    .isMongoId()
+    .withMessage("Invalid habit ID"),
+];
+
 // Validate Add Habit Completion
 // Expected route: POST /:habitId/completions
 // Expected body: { "date": "2026-10-16" }
@@ -331,6 +338,7 @@ module.exports = {
   validateCreateHabit,
   validateUpdateHabit,
   validateHabitId,
+  validateHabitParamId,
   validateAddHabitCompletion,
   validateHabitCompletionId,
   validateHabitHistory,
