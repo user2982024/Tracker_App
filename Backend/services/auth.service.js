@@ -32,6 +32,10 @@ exports.signup = async ({ name, email, password }) => {
       id: user._id,
       name: user.name,
       email: user.email,
+      preferences: {
+        theme: user.preferences?.theme || "light",
+        weekStartsOn: user.preferences?.weekStartsOn ?? 0,
+      },
     },
     token,
   };
@@ -63,6 +67,10 @@ exports.signin = async ({ email, password }) => {
       id: user._id,
       name: user.name,
       email: user.email,
+      preferences: {
+        theme: user.preferences?.theme || "light",
+        weekStartsOn: user.preferences?.weekStartsOn ?? 0,
+      },
     },
     token,
   };

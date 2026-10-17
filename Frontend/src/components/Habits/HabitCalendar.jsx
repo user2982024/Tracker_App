@@ -7,6 +7,7 @@ import {
   Circle,
 } from "lucide-react";
 import Spinner from "../UI/Spinner";
+import { useAuth } from "../../context/AuthContext";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -34,6 +35,11 @@ const HabitCalendar = ({
 
     return new Date(new Date().getFullYear(), new Date().getMonth(), 1);
   });
+  const { user } = useAuth();
+  const weekStartsOn = Number(user?.preferences?.weekStartsOn ?? 0);
+  const weekdays = Array.from({ length: WEEKDAYS.length }, (_, index) =>
+    WEEKDAYS[(weekStartsOn + index) % WEEKDAYS.length],
+  );
 
   const todayKey = getDateKey(new Date());
 
@@ -60,14 +66,15 @@ const HabitCalendar = ({
   const calendarDays = useMemo(() => {
     const year = visibleMonth.getFullYear();
     const month = visibleMonth.getMonth();
-    const firstWeekday = new Date(year, month, 1).getDay();
+    const firstWeekday =
+      (new Date(year, month, 1).getDay() - weekStartsOn + 7) % 7;
     const daysInMonth = new Date(year, month + 1, 0).getDate();
 
     return [
       ...Array.from({ length: firstWeekday }, () => null),
       ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
     ];
-  }, [visibleMonth]);
+  }, [visibleMonth, weekStartsOn]);
 
   const changeMonth = (amount) => {
     setVisibleMonth(
@@ -123,7 +130,7 @@ const HabitCalendar = ({
       </div>
 
       <div className="grid grid-cols-7 gap-1.5">
-        {WEEKDAYS.map((day) => (
+        {weekdays.map((day) => (
           <div
             key={day}
             className="py-2 text-center text-xs font-semibold text-foreground-muted"

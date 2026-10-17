@@ -10,6 +10,7 @@ const notesRoutes = require("./routes/notesRoutes");
 const todoRoutes = require("./routes/todoRoutes");
 const goalRoutes = require("./routes/goalRoutes");
 const habitRoutes = require("./routes/habitRoutes");
+const settingsRoutes = require("./routes/settingsRoutes");
 
 const errorHandler = require("./middlewares/errorMiddleware");
 
@@ -44,6 +45,9 @@ app.use("/api/goals", goalRoutes);
 
 // Habit routes
 app.use("/api/habits", habitRoutes);
+
+// User settings routes
+app.use("/api/settings", settingsRoutes);
 
 // Error handling middleware
 app.use(errorHandler);

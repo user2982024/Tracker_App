@@ -3,9 +3,11 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/UI/Sidebar";
 import ThemeToggle from "../components/UI/ThemeToggle";
+import { useAuth } from "../context/AuthContext";
 
 const AppLayout = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
     <div className="flex h-screen overflow-hidden bg-background text-foreground">
@@ -50,7 +52,10 @@ const AppLayout = () => {
             <span className="font-semibold md:hidden">TaskFlow</span>
           </div>
 
-          <div className="ml-auto">
+          <div className="ml-auto flex items-center gap-3">
+            <p className="hidden text-sm text-foreground-secondary sm:block">
+              Welcome, <span className="font-semibold text-foreground">{user?.name || "there"}</span>
+            </p>
             <ThemeToggle showLabel />
           </div>
         </header>

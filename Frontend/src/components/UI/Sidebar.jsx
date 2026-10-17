@@ -16,7 +16,7 @@ import Modal from "../UI/Modal";
 
 const Sidebar = ({ closeSidebar }) => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   const navItems = [
@@ -70,8 +70,19 @@ const Sidebar = ({ closeSidebar }) => {
         ))}
       </nav>
 
-      {/* Logout */}
+      {/* Signed-in account */}
       <div className="mt-auto border-t border-blue-400/40 pt-4">
+        <div className="mb-4 flex min-w-0 items-center gap-3 rounded-xl bg-white/10 p-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/20 font-semibold" aria-hidden="true">
+            {(user?.name || "U").trim().charAt(0).toUpperCase()}
+          </span>
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold">{user?.name || "TaskFlow user"}</p>
+            <p className="truncate text-xs text-blue-100">{user?.email || ""}</p>
+          </div>
+        </div>
+
+        {/* Logout */}
         <button
           type="button"
           onClick={() => setShowLogoutModal(true)}

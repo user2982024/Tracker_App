@@ -22,6 +22,19 @@ const userSchema = new mongoose.Schema(
       required: true,
       minlength: 6,
     },
+
+    preferences: {
+      theme: {
+        type: String,
+        enum: ["light", "dark"],
+        default: "light",
+      },
+      weekStartsOn: {
+        type: Number,
+        enum: [0, 1],
+        default: 0,
+      },
+    },
   },
   {
     timestamps: true,
