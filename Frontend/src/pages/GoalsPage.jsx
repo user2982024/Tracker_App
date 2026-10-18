@@ -274,7 +274,10 @@ const GoalsPage = () => {
       </FormModal>
 
       {/* Delete Completed Goals Button - Bottom Right */}
-      {!loading && stats?.total > 0 && (
+      {!loading &&
+        ((status === "all" && stats?.completed > 0) ||
+          (status === "completed" &&
+            goals.some((goal) => goal.status === "completed"))) && (
         <div className="flex justify-end pt-2">
           <button
             type="button"

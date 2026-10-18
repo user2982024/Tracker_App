@@ -34,7 +34,7 @@ const getAllNotes = async (req, res, next) => {
     const limit = Math.min(20, parseInt(req.query.limit) || 9);
 
     // Call service
-    const { notes, total } = await notesService.getAllNotes(
+    const { notes, total, allNotesTotal } = await notesService.getAllNotes(
       userId,
       page,
       limit,
@@ -45,6 +45,7 @@ const getAllNotes = async (req, res, next) => {
       message: "Notes fetched successfully",
       notes,
       total,
+      allNotesTotal,
     });
   } catch (error) {
     next(error);
@@ -226,7 +227,7 @@ const searchNotes = async (req, res, next) => {
     const limit = Math.min(20, parseInt(req.query.limit) || 9);
 
     // Call service
-    const { notes, total } = await notesService.searchNotes(
+    const { notes, total, allNotesTotal } = await notesService.searchNotes(
       userId,
       q,
       page,
@@ -238,6 +239,7 @@ const searchNotes = async (req, res, next) => {
       message: "Notes search results",
       notes,
       total,
+      allNotesTotal,
     });
   } catch (error) {
     next(error);

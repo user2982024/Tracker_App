@@ -1,16 +1,7 @@
-import { useState } from "react";
-
-const NotesHeader = ({ onAddClick, onDeleteAllClick, onSearch }) => {
-
-  // State for input
-  const [searchQuery, setSearchQuery] = useState("");
-
+const NotesHeader = ({ onAddClick, onDeleteAllClick, onSearch, searchQuery = "", canDeleteNotes = true }) => {
   // Hndle input change
   const handleSearchChange = (e) => {
     const value = e.target.value;
-    setSearchQuery(value);
-
-    // Send value to parent
     onSearch(value);
   };
 
@@ -27,13 +18,14 @@ const NotesHeader = ({ onAddClick, onDeleteAllClick, onSearch }) => {
           className="bg-input text-foreground border border-border rounded-lg px-3 py-2 w-64 placeholder:text-foreground-muted focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
 
-        {/* Delete All Button */}
-        <button
-          onClick={onDeleteAllClick}
-          className="text-red-600 dark:text-red-300 px-3 py-2 rounded-lg text-sm border border-red-200 dark:border-red-500/30 hover:bg-red-50 dark:hover:bg-red-500/10 transition cursor-pointer"
-        >
-          Delete All
-        </button>
+        {canDeleteNotes && (
+          <button
+            onClick={onDeleteAllClick}
+            className="text-red-600 dark:text-red-300 px-3 py-2 rounded-lg text-sm border border-red-200 dark:border-red-500/30 hover:bg-red-50 dark:hover:bg-red-500/10 transition cursor-pointer"
+          >
+            Delete All
+          </button>
+        )}
 
         {/* Add Note Button */}
         <button

@@ -15,6 +15,7 @@ import { toast } from "react-hot-toast";
 const ArchivedNotesPage = () => {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
   const [total, setTotal] = useState(0);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -36,6 +37,7 @@ const ArchivedNotesPage = () => {
     const currentRequest = ++requestRevision.current;
     try {
       setLoading(true);
+      setLoadError("");
 
       const res =
         query && query.trim()
@@ -47,6 +49,7 @@ const ArchivedNotesPage = () => {
       setTotal(res.total || 0);
     } catch (error) {
       if (currentRequest === requestRevision.current) {
+        setLoadError(error.message || "Failed to load archived notes");
         toast.error(error.message || "Failed to fetch archived notes");
       }
     } finally {
@@ -154,13 +157,37 @@ const ArchivedNotesPage = () => {
       {/* Loading */}
       {loading && <Spinner fullPage size={40} label="Loading archived notes" />}
 
+      {!loading && loadError && (
+        <div className="mt-10 flex flex-col items-center gap-3 text-center" role="alert">
+          <p className="text-foreground-muted">Could not load archived notes. {loadError}</p>
+          <button
+            type="button"
+            onClick={() => fetchArchivedNotes(debouncedSearch, page)}
+            className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition hover:bg-surface-secondary"
+          >
+            Try again
+          </button>
+        </div>
+      )}
+
       {/* Empty */}
-      {!loading && notes.length === 0 && (
-        <p className="text-foreground-muted text-center mt-10">
-          {searchTerm
-            ? `No results found for "${searchTerm}"`
-            : "No archived notes found"}
-        </p>
+      {!loading && !loadError && notes.length === 0 && (
+        <div className="mt-10 flex flex-col items-center gap-3 text-center" role="status">
+          <p className="text-foreground-muted">
+            {debouncedSearch.trim()
+              ? `No archived notes match “${debouncedSearch.trim()}”. Try another search or clear it.`
+              : "No archived notes yet. Notes you archive will appear here."}
+          </p>
+          {debouncedSearch.trim() && (
+            <button
+              type="button"
+              onClick={() => setSearchTerm("")}
+              className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition hover:bg-surface-secondary"
+            >
+              Clear search
+            </button>
+          )}
+        </div>
       )}
 
       {/* List */}

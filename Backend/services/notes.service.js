@@ -16,20 +16,20 @@ const createNote = async ({ title, content, userId }) => {
 const getAllNotes = async (userId, page = 1, limit = 9) => {
   const skip = (page - 1) * limit;
 
-  const notes = await Note.find({
+  const activeNotesFilter = {
     user: userId,
-    isArchived: false, // Exclude archived notes from main listing
-  })
-    .sort({ isPinned: -1, createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
+    isArchived: false,
+  };
+  const [notes, total, allNotesTotal] = await Promise.all([
+    Note.find(activeNotesFilter)
+      .sort({ isPinned: -1, createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+    Note.countDocuments(activeNotesFilter),
+    Note.countDocuments({ user: userId }),
+  ]);
 
-  const total = await Note.countDocuments({
-    user: userId,
-    isArchived: false, // Count only non-archived notes
-  });
-
-  return { notes, total };
+  return { notes, total, allNotesTotal };
 };
 
 // Update note service
@@ -246,16 +246,16 @@ const searchNotes = async (userId, query, page = 1, limit = 9) => {
     ...searchFilter,
   };
 
-  // Fetch notes
-  const notes = await Note.find(finalFilter)
-    .sort({ isPinned: -1, createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
+  const [notes, total, allNotesTotal] = await Promise.all([
+    Note.find(finalFilter)
+      .sort({ isPinned: -1, createdAt: -1 })
+      .skip(skip)
+      .limit(limit),
+    Note.countDocuments(finalFilter),
+    Note.countDocuments({ user: userId }),
+  ]);
 
-    // Total count for pagination
-    const total = await Note.countDocuments(finalFilter);
-
-    return { notes, total };
+  return { notes, total, allNotesTotal };
 };
 
 // Search archived notes service

@@ -1,11 +1,13 @@
 import NoteCard from "./NotesCard";
 
-const NotesList = ({ notes = [], onEdit, onDelete, onArchive, onUnarchive, onPin, onUnpin, mode }) => {
+const NotesList = ({ notes = [], onEdit, onDelete, onArchive, onUnarchive, onPin, onUnpin, mode, emptyState }) => {
   if (notes.length === 0) {
     return (
-      <p className="text-foreground-muted text-sm sm:text-base mt-4">
-        No notes yet. Start by creating one!
-      </p>
+      emptyState || (
+        <p className="mt-4 text-center text-sm text-foreground-muted sm:text-base" role="status">
+          No notes to show.
+        </p>
+      )
     );
   }
 

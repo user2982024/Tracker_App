@@ -235,7 +235,7 @@ const GoalCard = ({ goal, onDelete }) => {
             Action Row
         ====================================== */}
 
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2">
           {/* Add Progress */}
 
           {goal.status === "active" ? (
@@ -243,20 +243,22 @@ const GoalCard = ({ goal, onDelete }) => {
               type="button"
               onClick={handleAddProgress}
               className="
-                flex items-center gap-1.5
-                px-3 py-1.5 rounded-xl
+                inline-flex shrink-0 items-center gap-1
+                whitespace-nowrap rounded-lg
+                px-2.5 py-1.5
                 bg-blue-600 text-white dark:bg-blue-500
-                text-[11px] font-semibold
+                text-xs font-semibold
                 shadow-sm
                 hover:bg-blue-700 dark:hover:bg-blue-400
-                hover:scale-[1.02]
+                hover:shadow-md
                 active:scale-[0.98]
-                transition-all duration-200
+                transition duration-200
                 hover:cursor-pointer
               "
+              aria-label="Add progress to goal"
             >
-              <Plus size={13} />
-              <span>Add Progress</span>
+              <Plus size={14} aria-hidden="true" />
+              <span className="whitespace-nowrap">Add Progress</span>
             </button>
           ) : (
             <div />

@@ -32,13 +32,15 @@ const sortNotes = (notes) =>
 
 const NotesPage = () => {
   const [notes, setNotes] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState("");
 
   const [selectedNote, setSelectedNote] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [totalNotes, setTotalNotes] = useState(0);
+  const [allNotesTotal, setAllNotesTotal] = useState(0);
 
   const [showForm, setShowForm] = useState(false);
 
@@ -64,6 +66,7 @@ const NotesPage = () => {
     const requestId = ++notesRequestId.current;
     try {
       setLoading(true);
+      setLoadError("");
 
       let data;
 
@@ -76,9 +79,17 @@ const NotesPage = () => {
       if (requestId !== notesRequestId.current) return false;
       setNotes(data.notes || []);
       setTotalNotes(data.total || 0);
+      if (query?.trim()) {
+        if (Number.isFinite(data.allNotesTotal)) {
+          setAllNotesTotal(data.allNotesTotal);
+        }
+      } else {
+        setAllNotesTotal(data.allNotesTotal ?? data.total ?? 0);
+      }
       return true;
     } catch (error) {
       if (requestId === notesRequestId.current) {
+        setLoadError(error.message || "Failed to load notes");
         toast.error(error.message || "Failed to fetch notes");
       }
       return false;
@@ -115,6 +126,7 @@ const NotesPage = () => {
         setCurrentPage(1);
         setSearchQuery("");
         if (res?.note) {
+          setAllNotesTotal((previous) => previous + 1);
           invalidateNotesRequests();
           setNotes((previous) => [
             ...sortNotes([
@@ -159,6 +171,7 @@ const NotesPage = () => {
         prev.filter((n) => n._id !== noteToDelete._id)
       );
       setTotalNotes((prev) => Math.max(0, prev - 1));
+      setAllNotesTotal((prev) => Math.max(0, prev - 1));
 
       toast.success(res?.message || "Note deleted successfully");
 
@@ -183,6 +196,7 @@ const NotesPage = () => {
       invalidateNotesRequests();
       setNotes([]);
       setTotalNotes(0);
+      setAllNotesTotal(0);
       setCurrentPage(1);
       setShowDeleteAllModal(false);
       toast.success(res.message);
@@ -278,6 +292,8 @@ const NotesPage = () => {
     <div className="h-full flex flex-col">
       {/* Header */}
       <NotesHeader
+        searchQuery={searchQuery}
+        canDeleteNotes={allNotesTotal > 0}
         onAddClick={() => setShowForm(true)}
         onDeleteAllClick={() => setShowDeleteAllModal(true)}
         onSearch={(value) => {
@@ -300,6 +316,17 @@ const NotesPage = () => {
 
       {loading ? (
         <Spinner fullPage size={40} />
+      ) : loadError ? (
+        <div className="mt-8 flex flex-col items-center gap-3 text-center" role="alert">
+          <p className="text-foreground-muted">Could not load notes. {loadError}</p>
+          <button
+            type="button"
+            onClick={() => fetchNotes()}
+            className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition hover:bg-surface-secondary"
+          >
+            Try again
+          </button>
+        </div>
       ) : (
         <NotesList
           notes={notes}
@@ -309,6 +336,55 @@ const NotesPage = () => {
           onPin={handlePin}
           onUnpin={handleUnpin}
           mode="active"
+          emptyState={
+            debouncedQuery.trim() && allNotesTotal > 0 ? (
+              <div className="mt-8 flex flex-col items-center gap-3 text-center" role="status">
+                <p className="text-foreground-muted">
+                  No notes match “{debouncedQuery.trim()}”. Try another search or clear it.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCurrentPage(1);
+                    setSearchQuery("");
+                  }}
+                  className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition hover:bg-surface-secondary"
+                >
+                  Clear search
+                </button>
+              </div>
+            ) : allNotesTotal === 0 ? (
+              <div className="mt-8 flex flex-col items-center gap-3 text-center" role="status">
+                <p className="text-foreground-muted">
+                  You haven’t created any notes yet. Create your first note to get started.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setShowForm(true)}
+                  className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+                >
+                  Create your first note
+                </button>
+              </div>
+            ) : totalNotes === 0 ? (
+              <div className="mt-8 flex flex-col items-center gap-3 text-center" role="status">
+                <p className="text-foreground-muted">
+                  Your notes are archived. You can find them in your archive.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => navigate("/app/notes/archive")}
+                  className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition hover:bg-surface-secondary"
+                >
+                  View archived notes
+                </button>
+              </div>
+            ) : (
+              <p className="mt-8 text-center text-foreground-muted" role="status">
+                There are no notes on this page.
+              </p>
+            )
+          }
         />
       )}
 
