@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 const NoteForm = ({ onSubmit, onCancel, isEditMode, selectedNote }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState(() => ({
     title: "",
     content: "",
@@ -23,14 +24,19 @@ const NoteForm = ({ onSubmit, onCancel, isEditMode, selectedNote }) => {
   };
 
   // Handle submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.title.trim() || !formData.content.trim()) {
+    if (isSubmitting || !formData.title.trim() || !formData.content.trim()) {
       return;
     }
 
-    onSubmit(formData);
+    setIsSubmitting(true);
+    try {
+      await onSubmit(formData);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -67,15 +73,17 @@ const NoteForm = ({ onSubmit, onCancel, isEditMode, selectedNote }) => {
         <button
           type="button"
           onClick={onCancel}
+          disabled={isSubmitting}
           className="rounded-lg border border-border px-5 py-2 text-foreground-secondary transition hover:bg-surface-secondary"
         >
           Cancel
         </button>
         <button
           type="submit"
-          className="rounded-lg bg-blue-600 px-5 py-2 text-white transition hover:bg-blue-700"
+          disabled={isSubmitting}
+          className="rounded-lg bg-blue-600 px-5 py-2 text-white transition hover:bg-blue-700 disabled:cursor-wait disabled:opacity-60"
         >
-          {isEditMode ? "Update Note" : "Save Note"}
+          {isSubmitting ? "Saving..." : isEditMode ? "Update Note" : "Save Note"}
         </button>
       </div>
     </form>

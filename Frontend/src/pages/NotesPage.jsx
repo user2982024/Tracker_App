@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useDebounce from "../hooks/useDebounce";
 import NotesHeader from "../components/Notes/NotesHeader";
@@ -21,6 +21,14 @@ import {
 } from "../services/notesService";
 
 import { toast } from "react-hot-toast";
+
+const sortNotes = (notes) =>
+  [...notes].sort((a, b) => {
+    if (Boolean(a.isPinned) !== Boolean(b.isPinned)) {
+      return Number(Boolean(b.isPinned)) - Number(Boolean(a.isPinned));
+    }
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
 
 const NotesPage = () => {
   const [notes, setNotes] = useState([]);
@@ -45,31 +53,46 @@ const NotesPage = () => {
 
   const notesPerPage = 9;
   const navigate = useNavigate();
+  const notesRequestId = useRef(0);
 
-  const fetchNotes = async () => {
+  const invalidateNotesRequests = () => {
+    notesRequestId.current += 1;
+    setLoading(false);
+  };
+
+  const fetchNotes = useCallback(async ({ page = currentPage, query = debouncedQuery } = {}) => {
+    const requestId = ++notesRequestId.current;
     try {
       setLoading(true);
 
       let data;
 
-      if (debouncedQuery && debouncedQuery.trim() !== "") {
-        data = await searchNotes(debouncedQuery, currentPage, notesPerPage);
+      if (query && query.trim() !== "") {
+        data = await searchNotes(query, page, notesPerPage);
       } else {
-        data = await getNotes(currentPage, notesPerPage);
+        data = await getNotes(page, notesPerPage);
       }
 
+      if (requestId !== notesRequestId.current) return false;
       setNotes(data.notes || []);
       setTotalNotes(data.total || 0);
+      return true;
     } catch (error) {
-      toast.error(error.message || "Failed to fetch notes");
+      if (requestId === notesRequestId.current) {
+        toast.error(error.message || "Failed to fetch notes");
+      }
+      return false;
     } finally {
-      setLoading(false);
+      if (requestId === notesRequestId.current) setLoading(false);
     }
-  };
+  }, [currentPage, debouncedQuery]);
 
   useEffect(() => {
     fetchNotes();
-  }, [currentPage, debouncedQuery]);
+    return () => {
+      notesRequestId.current += 1;
+    };
+  }, [fetchNotes]);
 
   // ======================
   // CREATE / UPDATE
@@ -78,13 +101,31 @@ const NotesPage = () => {
     try {
       if (isEditMode) {
         const res = await updateNote(selectedNote._id, formData);
+        if (res?.note) {
+          invalidateNotesRequests();
+          setNotes((previous) =>
+            previous.map((note) => note._id === selectedNote._id ? res.note : note),
+          );
+        }
         toast.success(res?.message || "Note updated successfully");
+        await fetchNotes();
       } else {
         const res = await createNote(formData);
         toast.success(res?.message || "Note created successfully");
+        setCurrentPage(1);
+        setSearchQuery("");
+        if (res?.note) {
+          invalidateNotesRequests();
+          setNotes((previous) => [
+            ...sortNotes([
+              ...previous.filter((note) => note._id !== res.note._id),
+              res.note,
+            ]),
+          ].slice(0, notesPerPage));
+          setTotalNotes((previous) => previous + 1);
+        }
+        await fetchNotes({ page: 1, query: "" });
       }
-
-      await fetchNotes();
 
       setShowForm(false);
       setIsEditMode(false);
@@ -112,14 +153,22 @@ const NotesPage = () => {
     try {
       const res = await deleteNote(noteToDelete._id);
 
+      invalidateNotesRequests();
+
       setNotes((prev) =>
         prev.filter((n) => n._id !== noteToDelete._id)
       );
+      setTotalNotes((prev) => Math.max(0, prev - 1));
 
       toast.success(res?.message || "Note deleted successfully");
 
       setShowDeleteModal(false);
       setNoteToDelete(null);
+      if (notes.length === 1 && currentPage > 1) {
+        setCurrentPage((page) => Math.max(1, page - 1));
+      } else {
+        await fetchNotes();
+      }
     } catch (error) {
       toast.error(error.message || "Failed to delete note");
     }
@@ -131,7 +180,10 @@ const NotesPage = () => {
   const handleDeleteAll = async () => {
     try {
       const res = await deleteAllNotes();
+      invalidateNotesRequests();
       setNotes([]);
+      setTotalNotes(0);
+      setCurrentPage(1);
       setShowDeleteAllModal(false);
       toast.success(res.message);
     } catch (error) {
@@ -145,9 +197,15 @@ const NotesPage = () => {
   const handleArchive = async (noteId) => {
     try {
       const res = await archiveNote(noteId);
+      invalidateNotesRequests();
       setNotes((prev) => prev.filter((note) => note._id !== noteId));
-      setTotalNotes((prev) => prev - 1);
+      setTotalNotes((prev) => Math.max(0, prev - 1));
       toast.success(res.message || "Note archived successfully");
+      if (notes.length === 1 && currentPage > 1) {
+        setCurrentPage((page) => Math.max(1, page - 1));
+      } else {
+        await fetchNotes();
+      }
     } catch (error) {
       toast.error(error.message || "Failed to archive note");
     }
@@ -159,6 +217,7 @@ const NotesPage = () => {
   const handlePin = async (noteId) => {
     try {
       const res = await pinNote(noteId);
+      invalidateNotesRequests();
 
       setNotes((prev) => {
         const updated = prev.map((note) =>
@@ -189,6 +248,7 @@ const NotesPage = () => {
   const handleUnpin = async (noteId) => {
     try {
       const res = await unpinNote(noteId);
+      invalidateNotesRequests();
 
       setNotes((prev) => {
         const updated = prev.map((note) =>

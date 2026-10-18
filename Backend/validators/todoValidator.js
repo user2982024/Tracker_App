@@ -16,7 +16,7 @@ const validateCreateTodo = [
     .trim(),
 
   body("dueDate")
-    .optional()
+    .optional({ values: "falsy" })
     .isISO8601()
     .withMessage("Due date must be a valid date"),
 
@@ -46,7 +46,7 @@ const validateUpdateTodo = [
     .trim(),
 
   body("dueDate")
-    .optional()
+    .optional({ values: "falsy" })
     .isISO8601()
     .withMessage("Due date must be a valid date"),
 

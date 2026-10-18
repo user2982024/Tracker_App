@@ -15,23 +15,34 @@ const TodoEditPage = () => {
   const [todo, setTodo] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Fetch todo by ID
-  const fetchTodo = async () => {
-    try {
-      setLoading(true);
-      const data = await getTodo(id);
-      setTodo(data);
-    } catch (error) {
-      toast.error(error.message);
-      navigate("/app/todos");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    let isMounted = true;
+
+    const fetchTodo = async () => {
+      try {
+        setLoading(true);
+        const data = await getTodo(id);
+        if (isMounted) {
+          setTodo(data);
+        }
+      } catch (error) {
+        if (isMounted) {
+          toast.error(error.message);
+          navigate("/app/todos");
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
     fetchTodo();
-  }, [id]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id, navigate]);
 
   if (loading) {
     return <Spinner fullPage size={40} />;

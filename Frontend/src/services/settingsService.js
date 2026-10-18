@@ -1,7 +1,8 @@
+import apiFetch from "./apiFetch.js";
 const BASE_URL = "/api/settings";
 
 const request = async (path = "", options = {}) => {
-  const response = await fetch(`${BASE_URL}${path}`, {
+  const response = await apiFetch(`${BASE_URL}${path}`, {
     ...options,
     credentials: "include",
     headers: {
@@ -32,7 +33,7 @@ export const updatePreferences = (data) =>
   request("/preferences", { method: "PATCH", body: JSON.stringify(data) });
 
 const downloadExport = async (path, fallbackName, fallbackMessage) => {
-  const response = await fetch(`${BASE_URL}${path}`, { credentials: "include" });
+  const response = await apiFetch(`${BASE_URL}${path}`, { credentials: "include" });
   if (!response.ok) {
     let message = fallbackMessage;
     try {

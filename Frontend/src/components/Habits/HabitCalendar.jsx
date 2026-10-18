@@ -7,7 +7,7 @@ import {
   Circle,
 } from "lucide-react";
 import Spinner from "../UI/Spinner";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContextValue";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Spinner from "../components/UI/Spinner";
 
@@ -33,7 +33,7 @@ const TodoViewPage = () => {
   const [loading, setLoading] = useState(true);
 
   // Fetch todo
-  const fetchTodo = async () => {
+  const fetchTodo = useCallback(async () => {
     try {
       setLoading(true);
       const data = await getTodo(id);
@@ -44,11 +44,11 @@ const TodoViewPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id, navigate]);
 
   useEffect(() => {
     fetchTodo();
-  }, [id]);
+  }, [fetchTodo]);
 
   // Handlers
   const handleToggle = async () => {

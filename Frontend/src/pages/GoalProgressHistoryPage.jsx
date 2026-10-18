@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useDateFormat from "../hooks/useDateFormat";
 import { formatDate as formatPreferenceDate } from "../utils/dateFormatting";
 
@@ -49,7 +49,7 @@ const GoalProgressHistoryPage = () => {
   // Fetch Goal + Full History
   // ==================================================
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -68,7 +68,7 @@ const GoalProgressHistoryPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   // ==================================================
   // Initial Fetch
@@ -76,7 +76,7 @@ const GoalProgressHistoryPage = () => {
 
   useEffect(() => {
     fetchData();
-  }, [id]);
+  }, [fetchData]);
 
   // ==================================================
   // Date Formatter

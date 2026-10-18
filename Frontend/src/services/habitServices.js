@@ -1,9 +1,10 @@
+import apiFetch from "./apiFetch.js";
 
 const BASE_URL = "/api/habits";
 
 // Create habit
 export const createHabit = async (habitData) => {
-  const response = await fetch(`${BASE_URL}`, {
+  const response = await apiFetch(`${BASE_URL}`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -24,7 +25,7 @@ export const createHabit = async (habitData) => {
 // Get all habits with optional query parameters
 // Example: getHabits("?page=1&limit=10&category=health")
 export const getHabits = async (queryParams = "") => {
-  const response = await fetch(`${BASE_URL}${queryParams}`, {
+  const response = await apiFetch(`${BASE_URL}${queryParams}`, {
     method: "GET",
     credentials: "include",
   });
@@ -32,7 +33,9 @@ export const getHabits = async (queryParams = "") => {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message || "Failed to fetch habits");
+    const error = new Error(data.message || "Failed to fetch habits");
+    error.status = response.status;
+    throw error;
   }
 
   return data;
@@ -40,7 +43,7 @@ export const getHabits = async (queryParams = "") => {
 
 // Get a single habit
 export const getHabit = async (habitId) => {
-  const response = await fetch(`${BASE_URL}/${habitId}`, {
+  const response = await apiFetch(`${BASE_URL}/${habitId}`, {
     method: "GET",
     credentials: "include",
   });
@@ -56,7 +59,7 @@ export const getHabit = async (habitId) => {
 
 // Update habit
 export const updateHabit = async (habitId, habitData) => {
-  const response = await fetch(`${BASE_URL}/${habitId}`, {
+  const response = await apiFetch(`${BASE_URL}/${habitId}`, {
     method: "PATCH",
     credentials: "include",
     headers: {
@@ -76,7 +79,7 @@ export const updateHabit = async (habitId, habitData) => {
 
 // Archive or restore habit
 export const archiveHabit = async (habitId, isArchived = true) => {
-  const response = await fetch(`${BASE_URL}/${habitId}/archive`, {
+  const response = await apiFetch(`${BASE_URL}/${habitId}/archive`, {
     method: "PATCH",
     credentials: "include",
     headers: {
@@ -101,7 +104,7 @@ export const archiveHabit = async (habitId, isArchived = true) => {
 
 // Delete a single habit
 export const deleteHabit = async (habitId) => {
-  const response = await fetch(`${BASE_URL}/${habitId}`, {
+  const response = await apiFetch(`${BASE_URL}/${habitId}`, {
     method: "DELETE",
     credentials: "include",
   });
@@ -130,7 +133,7 @@ export const completeHabit = async (
     completionData.note = note;
   }
 
-  const response = await fetch(
+  const response = await apiFetch(
     `${BASE_URL}/${habitId}/completions`,
     {
       method: "POST",
@@ -155,7 +158,7 @@ export const completeHabit = async (
 
 // Undo a habit completion
 export const undoHabitCompletion = async (completionId) => {
-  const response = await fetch(
+  const response = await apiFetch(
     `${BASE_URL}/completions/${completionId}`,
     {
       method: "DELETE",
@@ -178,7 +181,7 @@ export const getHabitHistory = async (
   habitId,
   queryParams = "",
 ) => {
-  const response = await fetch(
+  const response = await apiFetch(
     `${BASE_URL}/${habitId}/history${queryParams}`,
     {
       method: "GET",
@@ -197,7 +200,7 @@ export const getHabitHistory = async (
 
 // Get current streak for a habit
 export const getHabitStreak = async (habitId) => {
-  const response = await fetch(`${BASE_URL}/${habitId}/streak`, {
+  const response = await apiFetch(`${BASE_URL}/${habitId}/streak`, {
     method: "GET",
     credentials: "include",
   });

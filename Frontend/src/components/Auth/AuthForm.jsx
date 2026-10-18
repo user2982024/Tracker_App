@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContextValue";
 import { signinUser, signupUser } from "../../services/authServices";
 import ThemeToggle from "../UI/ThemeToggle";
 import Spinner from "../UI/Spinner";

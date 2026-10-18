@@ -1,5 +1,5 @@
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import {
@@ -30,7 +30,6 @@ import {
   deleteHabit,
   completeHabit,
   undoHabitCompletion,
-  getHabitHistory,
   getHabitStreak,
 } from "../services/habitServices";
 
@@ -97,8 +96,13 @@ const Habits = () => {
 
   const [completionByHabit, setCompletionByHabit] = useState({});
   const [streakByHabit, setStreakByHabit] = useState({});
+  const completionRevision = useRef(0);
+  const habitListRevision = useRef(0);
 
   const today = useMemo(() => getToday(), []);
+  // The backend's UTC calendar date is authoritative for habit schedules and
+  // completion statistics. Fall back to the browser date before stats load.
+  const completionDateToday = stats?.date || today;
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -114,6 +118,8 @@ const Habits = () => {
 
   const fetchHabits = useCallback(
     async ({ silent = false } = {}) => {
+      const requestRevision = ++habitListRevision.current;
+      const completionRevisionAtStart = completionRevision.current;
       try {
         if (silent) {
           setRefreshing(true);
@@ -136,19 +142,52 @@ const Habits = () => {
         const response = await getHabits(`?${params.toString()}`);
         const result = getResponseData(response);
 
+        if (requestRevision !== habitListRevision.current) return null;
+
         const nextHabits = Array.isArray(result.habits)
           ? result.habits
           : [];
 
         setHabits(nextHabits);
-        setStats(result.stats ?? null);
+        const completionChangedDuringRequest =
+          completionRevisionAtStart !== completionRevision.current;
+        setStats((previous) => {
+          if (!completionChangedDuringRequest || !previous || !result.stats) {
+            return result.stats ?? null;
+          }
+
+          const scheduledToday = Number(result.stats.scheduledToday) || 0;
+          const completedToday = Math.max(
+            0,
+            Math.min(scheduledToday, Number(previous.completedToday) || 0),
+          );
+
+          return {
+            ...result.stats,
+            completedToday,
+            remainingToday: Math.max(0, scheduledToday - completedToday),
+            completionPercentage: scheduledToday
+              ? Math.round((completedToday / scheduledToday) * 100)
+              : 0,
+          };
+        });
         setPagination(result.pagination ?? null);
 
         const habitIds = new Set(nextHabits.map((habit) => habit._id));
 
         setCompletionByHabit((previous) =>
           Object.fromEntries(
-            Object.entries(previous).filter(([id]) => habitIds.has(id)),
+            nextHabits.map((habit) => {
+              const hasNewerValue =
+                completionChangedDuringRequest &&
+                Object.prototype.hasOwnProperty.call(previous, habit._id);
+              return [
+                habit._id,
+                hasNewerValue
+                  ? previous[habit._id]
+                  : result.todayCompletions?.[habit._id] ?? null,
+              ];
+            }),
           ),
         );
 
@@ -157,11 +196,18 @@ const Habits = () => {
             Object.entries(previous).filter(([id]) => habitIds.has(id)),
           ),
         );
+
+        return true;
       } catch (err) {
-        setError(err?.message || "Failed to load habits.");
+        if (requestRevision === habitListRevision.current) {
+          setError(err?.message || "Failed to load habits.");
+        }
+        return false;
       } finally {
-        setLoading(false);
-        setRefreshing(false);
+        if (requestRevision === habitListRevision.current) {
+          setLoading(false);
+          setRefreshing(false);
+        }
       }
     },
     [page, showArchived, debouncedSearch],
@@ -174,6 +220,7 @@ const Habits = () => {
   // Load today's completion and current streak for each visible habit.
   useEffect(() => {
     let cancelled = false;
+    const requestRevision = completionRevision.current;
 
     const loadHabitDetails = async () => {
       if (!habits.length || showArchived) {
@@ -185,33 +232,8 @@ const Habits = () => {
       const results = await Promise.all(
         habits.map(async (habit) => {
           try {
-            const [historyResponse, streakResponse] = await Promise.all([
-              getHabitHistory(
-                habit._id,
-                `?startDate=${today}&endDate=${today}&page=1&limit=1`,
-              ),
-              getHabitStreak(habit._id),
-            ]);
-
-            const historyData = getResponseData(historyResponse);
+            const streakResponse = await getHabitStreak(habit._id);
             const streakData = getResponseData(streakResponse);
-
-            const records = Array.isArray(historyData.history)
-              ? historyData.history
-              : Array.isArray(historyData.completions)
-                ? historyData.completions
-                : Array.isArray(historyData.data?.history)
-                  ? historyData.data.history
-                  : Array.isArray(historyData.data?.completions)
-                    ? historyData.data.completions
-                    : Array.isArray(historyData)
-                      ? historyData
-                      : [];
-
-            const completion =
-              records.find(
-                (record) => getCompletionDate(record) === today,
-              ) ?? null;
 
             const streak =
               Number(
@@ -224,26 +246,26 @@ const Habits = () => {
 
             return {
               id: habit._id,
-              completion,
               streak,
             };
           } catch {
             return {
               id: habit._id,
-              completion: null,
-              streak: 0,
+              // Network failures mean the current streak is unknown. Keep the
+              // last known streak instead of displaying a false zero.
+              streak: undefined,
             };
           }
         }),
       );
 
-      if (cancelled) return;
+      if (cancelled || requestRevision !== completionRevision.current) return;
 
       setCompletionByHabit((previous) => {
         const next = { ...previous };
 
         results.forEach(({ id, completion }) => {
-          next[id] = completion;
+          if (completion !== undefined) next[id] = completion;
         });
 
         return next;
@@ -253,7 +275,7 @@ const Habits = () => {
         const next = { ...previous };
 
         results.forEach(({ id, streak }) => {
-          next[id] = streak;
+          if (streak !== undefined) next[id] = streak;
         });
 
         return next;
@@ -265,7 +287,7 @@ const Habits = () => {
     return () => {
       cancelled = true;
     };
-  }, [habits, today, showArchived]);
+  }, [habits, completionDateToday, showArchived]);
 
   // Open the modal for creating a habit.
   const handleCreateClick = () => {
@@ -323,6 +345,27 @@ const Habits = () => {
   ) => {
     if (!habit?._id || actionId) return;
 
+    const adjustCompletionStats = (change) => {
+      setStats((current) => {
+        if (!current) return current;
+
+        const scheduled = Number(current.scheduledToday) || 0;
+        const completedCount = Math.min(
+          scheduled,
+          Math.max(0, (Number(current.completedToday) || 0) + change),
+        );
+
+        return {
+          ...current,
+          completedToday: completedCount,
+          remainingToday: Math.max(0, scheduled - completedCount),
+          completionPercentage: scheduled
+            ? Math.round((completedCount / scheduled) * 100)
+            : 0,
+        };
+      });
+    };
+
     try {
       setActionId(habit._id);
 
@@ -335,13 +378,29 @@ const Habits = () => {
         }
 
         await undoHabitCompletion(completion._id);
+        completionRevision.current += 1;
+        setCompletionByHabit((previous) => {
+          const next = { ...previous };
+          delete next[habit._id];
+          return next;
+        });
+        adjustCompletionStats(-1);
+        setError("");
         toast.success("Habit completion undone.");
       } else {
-        await completeHabit(habit._id, { date: today });
+        const response = await completeHabit(habit._id, { date: completionDateToday });
+        completionRevision.current += 1;
+        const savedCompletion = response?.data?.data ?? response?.data ?? null;
+        if (savedCompletion?._id) {
+          setCompletionByHabit((previous) => ({
+            ...previous,
+            [habit._id]: savedCompletion,
+          }));
+        }
+        if (!response?.alreadyCompleted) adjustCompletionStats(1);
+        setError("");
         toast.success("Habit completed. Great work!");
       }
-
-      await fetchHabits({ silent: true });
     } catch (err) {
       toast.error(err?.message || "Failed to update habit completion.");
     } finally {
@@ -352,7 +411,7 @@ const Habits = () => {
   const handleTogglePin = async (habit) => {
     if (!habit?._id || actionId || pinningId) return;
 
-    const nextPinned = !Boolean(habit.isPinned);
+    const nextPinned = !habit.isPinned;
     try {
       setPinningId(habit._id);
       await updateHabit(habit._id, { isPinned: nextPinned });
@@ -386,7 +445,15 @@ const Habits = () => {
       );
 
       setHabitToArchive(null);
-      await fetchHabits({ silent: true });
+      setHabits((previous) => previous.filter((item) => item._id !== habit._id));
+      setError("");
+
+      const refreshed = await fetchHabits({ silent: true });
+      if (refreshed === false) {
+        setError(
+          `Habit ${shouldArchive ? "archived" : "restored"}, but the list could not refresh. Use Refresh to reload it.`,
+        );
+      }
     } catch (err) {
       toast.error(err?.message || "Failed to update habit archive status.");
     } finally {
@@ -564,9 +631,12 @@ const Habits = () => {
 
             <div>
               <p className="text-sm font-semibold text-rose-800 dark:text-rose-300">
-                Could not load habits
+                {habits.length > 0 ? "Could not refresh habits" : "Could not load habits"}
               </p>
-              <p className="mt-1 text-sm text-rose-700 dark:text-rose-300">{error}</p>
+              <p className="mt-1 text-sm text-rose-700 dark:text-rose-300">
+                {habits.length > 0 && "Your last loaded habits are still shown. "}
+                {error}
+              </p>
             </div>
           </div>
 
@@ -663,7 +733,7 @@ const Habits = () => {
               const completion = completionByHabit[habit._id] ?? null;
               const completed =
                 Boolean(completion) &&
-                getCompletionDate(completion) === today;
+                getCompletionDate(completion) === completionDateToday;
 
               return (
                 <HabitCard

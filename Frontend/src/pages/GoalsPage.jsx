@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useState, useEffect } from "react";
 
 import toast from "react-hot-toast";
 import { Trash2 } from "lucide-react";
@@ -63,7 +63,7 @@ const GoalsPage = () => {
   }, [debouncedSearch, status, sortBy]);
 
   // Fetch goals
-  const fetchGoals = async () => {
+  const fetchGoals = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -98,7 +98,7 @@ const GoalsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [debouncedSearch, page, sortBy, status]);
 
   // Open individual goal deletion modal
   const handleDeleteClick = (goalId) => {
@@ -197,12 +197,11 @@ const GoalsPage = () => {
     }
   };
 
-  // Refresh goals when query settings change
   useEffect(() => {
     fetchGoals().catch(() => {
       // fetchGoals already updates the page error state.
     });
-  }, [debouncedSearch, page, status, sortBy]);
+  }, [fetchGoals]);
 
   return (
     <div className="p-6 space-y-6">

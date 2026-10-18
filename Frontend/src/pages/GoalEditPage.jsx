@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Spinner from "../components/UI/Spinner";
-import FormModal from "../components/UI/FormModal";
 
 import GoalForm from "../components/Goals/GoalForm";
 
@@ -18,43 +16,47 @@ const GoalEditPage = () => {
 
   const [loading, setLoading] = useState(true);
 
-  // Fetch goal by ID
-  const fetchGoal = async () => {
-    try {
-      setLoading(true);
-
-      const data = await getGoal(id);
-
-      setGoal(data);
-    } catch (error) {
-      toast.error(error.message);
-      navigate("/app/goals");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
+    let isMounted = true;
+
+    const fetchGoal = async () => {
+      try {
+        setLoading(true);
+        const data = await getGoal(id);
+        if (isMounted) {
+          setGoal(data);
+        }
+      } catch (error) {
+        if (isMounted) {
+          toast.error(error.message);
+          navigate("/app/goals");
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
     fetchGoal();
-  }, [id]);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [id, navigate]);
 
   // Loading state
   if (loading) {
-    return <Spinner fullPage size={40} />;
+    return <div className="p-6 text-foreground-muted">Loading...</div>;
   }
 
   // Safety check
   if (!goal) return null;
 
   return (
-    <FormModal
-      isOpen
-      title="Edit Goal"
-      subtitle="Update the details of this goal"
-      onClose={() => navigate(-1)}
-    >
+    <div className="p-6">
       <GoalForm mode="edit" initialData={goal} goalId={goal._id} />
-    </FormModal>
+    </div>
   );
 };
 

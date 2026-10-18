@@ -1,8 +1,9 @@
+import apiFetch from "./apiFetch.js";
 const BASE_URL = "/api/todos";
 
 // Create todo
 export const createTodo = async (todoData) => {
-  const response = await fetch(BASE_URL, {
+  const response = await apiFetch(BASE_URL, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -40,7 +41,7 @@ export const getAllTodos = async ({
     params.append("search", search.trim());
   }
 
-  const res = await fetch(`${BASE_URL}?${params.toString()}`, {
+  const res = await apiFetch(`${BASE_URL}?${params.toString()}`, {
     method: "GET",
     credentials: "include",
   });
@@ -48,7 +49,9 @@ export const getAllTodos = async ({
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.message || "Failed to fetch todos");
+    const error = new Error(data.message || "Failed to fetch todos");
+    error.status = res.status;
+    throw error;
   }
 
   return data;
@@ -56,7 +59,7 @@ export const getAllTodos = async ({
 
 // Toggle todo completion
 export const toggleTodoCompletion = async (todoId) => {
-  const response = await fetch(`${BASE_URL}/${todoId}/toggle`, {
+  const response = await apiFetch(`${BASE_URL}/${todoId}/toggle`, {
     method: "PATCH",
     credentials: "include",
   });
@@ -72,7 +75,7 @@ export const toggleTodoCompletion = async (todoId) => {
 
 // Update todo
 export const updateTodo = async (id, formData) => {
-  const response = await fetch(`${BASE_URL}/${id}`, {
+  const response = await apiFetch(`${BASE_URL}/${id}`, {
     method: "PUT",
     credentials: "include",
     headers: {
@@ -92,7 +95,7 @@ export const updateTodo = async (id, formData) => {
 
 // Delete a single todo
 export const deleteTodo = async (id) => {
-  const response = await fetch(`${BASE_URL}/${id}`, {
+  const response = await apiFetch(`${BASE_URL}/${id}`, {
     method: "DELETE",
     credentials: "include",
   });
@@ -108,7 +111,7 @@ export const deleteTodo = async (id) => {
 
 // Pin a todo
 export const pinTodo = async (id) => {
-  const response = await fetch(`${BASE_URL}/${id}/pin`, {
+  const response = await apiFetch(`${BASE_URL}/${id}/pin`, {
     method: "PATCH",
     credentials: "include",
   });
@@ -124,7 +127,7 @@ export const pinTodo = async (id) => {
 
 // Unpin a todo
 export const unpinTodo = async (id) => {
-  const response = await fetch(`${BASE_URL}/${id}/unpin`, {
+  const response = await apiFetch(`${BASE_URL}/${id}/unpin`, {
     method: "PATCH",
     credentials: "include",
   });
@@ -140,7 +143,7 @@ export const unpinTodo = async (id) => {
 
 // Get a single todo by ID
 export const getTodo = async (id) => {
-  const response = await fetch(`${BASE_URL}/${id}`, {
+  const response = await apiFetch(`${BASE_URL}/${id}`, {
     method: "GET",
     credentials: "include",
   });
@@ -156,7 +159,7 @@ export const getTodo = async (id) => {
 
 // Delete all completed todos
 export const deleteAllCompletedTodos = async () => {
-  const response = await fetch(`${BASE_URL}/completed`, {
+  const response = await apiFetch(`${BASE_URL}/completed`, {
     method: "DELETE",
     credentials: "include",
   });

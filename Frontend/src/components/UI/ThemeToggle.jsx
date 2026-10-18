@@ -15,16 +15,16 @@ const ThemeToggle = ({ className = "", showLabel = false }) => {
       aria-pressed={isDark}
       title={label}
       className={[
-        "inline-flex h-10 items-center justify-center gap-2 rounded-full border border-border bg-surface px-3 text-foreground shadow-sm transition-all duration-200",
-        "hover:bg-surface-secondary hover:text-primary",
+        "group inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-full border border-border bg-surface px-3 text-foreground shadow-sm transition-all duration-200",
+        "hover:-translate-y-0.5 hover:scale-105 hover:bg-surface-secondary hover:text-primary hover:shadow-md hover:ring-2 hover:ring-primary/20 active:translate-y-0 active:scale-95",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
         className,
       ].join(" ")}
     >
       {isDark ? (
-        <Sun size={18} aria-hidden="true" />
+        <Sun size={18} className="transition-transform duration-200 group-hover:rotate-12" aria-hidden="true" />
       ) : (
-        <Moon size={18} aria-hidden="true" />
+        <Moon size={18} className="transition-transform duration-200 group-hover:-rotate-12" aria-hidden="true" />
       )}
 
       {showLabel && (

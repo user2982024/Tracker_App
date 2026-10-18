@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Pin, X } from "lucide-react";
+import { Loader2, Pin, X } from "lucide-react";
 import Spinner from "../UI/Spinner";
 
 const WEEKDAYS = [
@@ -51,7 +51,8 @@ const getFormValues = (initialData) => {
       ? initialData.daysOfWeek
       : [],
     targetValue:
-      initialData.targetValue === undefined || initialData.targetValue === null
+      initialData.targetValue === undefined ||
+      initialData.targetValue === null
         ? ""
         : String(initialData.targetValue),
     unit: initialData.unit ?? "",
@@ -465,7 +466,7 @@ const HabitForm = ({
           disabled={loading}
           className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white transition hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {loading && <Spinner size={16} label="Saving habit" />}
+          {loading && <Loader2 size={16} className="animate-spin" />}
           {loading ? "Saving..." : isEditing ? "Save Changes" : "Create Habit"}
         </button>
       </div>

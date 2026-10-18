@@ -11,7 +11,7 @@ import {
   UserRound,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContextValue";
 import { useTheme } from "../context/ThemeContext";
 import FormModal from "../components/UI/FormModal";
 import Spinner from "../components/UI/Spinner";

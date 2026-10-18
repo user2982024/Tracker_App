@@ -7,7 +7,7 @@ import {
   useState,
 } from "react";
 import toast from "react-hot-toast";
-import { useAuth } from "./AuthContext";
+import { useAuth } from "./AuthContextValue";
 import { updatePreferences } from "../services/settingsService";
 
 const ThemeContext = createContext(null);

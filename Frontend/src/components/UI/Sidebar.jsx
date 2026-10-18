@@ -11,7 +11,7 @@ import {
   LogOut,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContextValue";
 import Modal from "../UI/Modal";
 
 const Sidebar = ({ closeSidebar }) => {

@@ -1,8 +1,9 @@
+import apiFetch from "./apiFetch.js";
 const BASE_URL = "/api/notes";
 
 // Create note
 export const createNote = async (formData) => {
-  const response = await fetch(`${BASE_URL}`, {
+  const response = await apiFetch(`${BASE_URL}`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -22,7 +23,7 @@ export const createNote = async (formData) => {
 
 // Get all notes (with pagination)
 export const getNotes = async (page = 1, limit = 9) => {
-  const response = await fetch(`${BASE_URL}?page=${page}&limit=${limit}`, {
+  const response = await apiFetch(`${BASE_URL}?page=${page}&limit=${limit}`, {
     method: "GET",
     credentials: "include",
   });
@@ -30,7 +31,9 @@ export const getNotes = async (page = 1, limit = 9) => {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message || "Failed to fetch notes");
+    const error = new Error(data.message || "Failed to fetch notes");
+    error.status = response.status;
+    throw error;
   }
 
   return data;
@@ -38,7 +41,7 @@ export const getNotes = async (page = 1, limit = 9) => {
 
 // Update note
 export const updateNote = async (id, formData) => {
-  const response = await fetch(`${BASE_URL}/${id}`, {
+  const response = await apiFetch(`${BASE_URL}/${id}`, {
     method: "PUT",
     credentials: "include",
     headers: {
@@ -58,7 +61,7 @@ export const updateNote = async (id, formData) => {
 
 // Delete a single note
 export const deleteNote = async (noteId) => {
-    const response = await fetch(`${BASE_URL}/${noteId}`, {
+    const response = await apiFetch(`${BASE_URL}/${noteId}`, {
       method: "DELETE",
       credentials: "include",
     });
@@ -74,7 +77,7 @@ export const deleteNote = async (noteId) => {
 
 // Dlete all notes
 export const deleteAllNotes = async () => {
-    const response = await fetch(`${BASE_URL}`, {
+    const response = await apiFetch(`${BASE_URL}`, {
       method: "DELETE",
       credentials: "include",
     });
@@ -90,7 +93,7 @@ export const deleteAllNotes = async () => {
 
 // Archive a note
 export const archiveNote = async (id) => {
-  const response = await fetch(`${BASE_URL}/${id}/archive`, {
+  const response = await apiFetch(`${BASE_URL}/${id}/archive`, {
     method: "PATCH",
     credentials: "include",
   });
@@ -106,7 +109,7 @@ export const archiveNote = async (id) => {
 
 // Get all archived notes
 export const getArchivedNotes = async(page = 1, limit = 9) => {
-  const response = await fetch(`${BASE_URL}/archived?page=${page}&limit=${limit}`, {
+  const response = await apiFetch(`${BASE_URL}/archived?page=${page}&limit=${limit}`, {
     method: "GET",
     credentials: "include",
   });
@@ -122,7 +125,7 @@ export const getArchivedNotes = async(page = 1, limit = 9) => {
 
 // Unarchive a note
 export const unarchiveNote = async (id) => {
-  const response = await fetch(`${BASE_URL}/${id}/unarchive`, {
+  const response = await apiFetch(`${BASE_URL}/${id}/unarchive`, {
     method: "PATCH",
     credentials: "include",
   });
@@ -138,7 +141,7 @@ export const unarchiveNote = async (id) => {
 
 // Pin a note
 export const pinNote = async (id) => {
-  const response = await fetch(`${BASE_URL}/${id}/pin`, {
+  const response = await apiFetch(`${BASE_URL}/${id}/pin`, {
     method: "PATCH",
     credentials: "include",
   });
@@ -154,7 +157,7 @@ export const pinNote = async (id) => {
 
 // Unpin a note
 export const unpinNote = async (id) => {
-  const response = await fetch(`${BASE_URL}/${id}/unpin`, {
+  const response = await apiFetch(`${BASE_URL}/${id}/unpin`, {
     method: "PATCH",
     credentials: "include",
   });
@@ -178,7 +181,7 @@ export const searchNotes = async (query = "", page = 1, limit = 9) => {
   }
 
   // Call API
-  const response = await fetch(url, {
+  const response = await apiFetch(url, {
     method: "GET",
     credentials: "include",
   });
@@ -201,7 +204,7 @@ export const searchArchivedNotes = async (query = "", page = 1, limit = 9) => {
     url += `&query=${encodeURIComponent(query.trim())}`;
   }
 
-  const response = await fetch(url, {
+  const response = await apiFetch(url, {
     method: "GET",
     credentials: "include",
   });
@@ -217,7 +220,7 @@ export const searchArchivedNotes = async (query = "", page = 1, limit = 9) => {
 
 // Get note by id
 export const getNoteById = async (id) => {
-  const response = await fetch (`${BASE_URL}/${id}`, {
+  const response = await apiFetch(`${BASE_URL}/${id}`, {
     method: "GET",
     credentials: "include",
   });

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useDateFormat from "../hooks/useDateFormat";
 import { formatDate as formatPreferenceDate } from "../utils/dateFormatting";
 
@@ -104,7 +104,7 @@ const GoalViewPage = () => {
   // Fetch Goal
   // ====================================================
 
-  const fetchGoal = async () => {
+  const fetchGoal = useCallback(async () => {
     try {
       setLoading(true);
 
@@ -118,13 +118,13 @@ const GoalViewPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   // ====================================================
   // Fetch Progress History
   // ====================================================
 
-  const fetchProgressHistory = async () => {
+  const fetchProgressHistory = useCallback(async () => {
     try {
       setProgressLoading(true);
 
@@ -138,7 +138,7 @@ const GoalViewPage = () => {
     } finally {
       setProgressLoading(false);
     }
-  };
+  }, [id]);
 
   // ====================================================
   // Initial Data Fetch
@@ -148,7 +148,25 @@ const GoalViewPage = () => {
     fetchGoal();
 
     fetchProgressHistory();
-  }, [id]);
+  }, [fetchGoal, fetchProgressHistory]);
+
+  // ====================================================
+  // Close Progress Form
+  // ====================================================
+
+  const handleCloseProgressForm = useCallback(() => {
+    if (addingProgress) {
+      return;
+    }
+
+    setProgressValue("");
+
+    setProgressNote("");
+
+    setProgressError(null);
+
+    setShowProgressForm(false);
+  }, [addingProgress]);
 
   // ====================================================
   // Progress Modal Lifecycle
@@ -176,7 +194,7 @@ const GoalViewPage = () => {
 
       document.removeEventListener("keydown", handleEscape);
     };
-  }, [showProgressForm, addingProgress]);
+  }, [showProgressForm, addingProgress, handleCloseProgressForm]);
 
   // ====================================================
   // Open Progress Form
@@ -186,24 +204,6 @@ const GoalViewPage = () => {
     setProgressError(null);
 
     setShowProgressForm(true);
-  };
-
-  // ====================================================
-  // Close Progress Form
-  // ====================================================
-
-  const handleCloseProgressForm = () => {
-    if (addingProgress) {
-      return;
-    }
-
-    setProgressValue("");
-
-    setProgressNote("");
-
-    setProgressError(null);
-
-    setShowProgressForm(false);
   };
 
   // ====================================================

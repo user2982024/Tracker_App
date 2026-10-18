@@ -144,14 +144,6 @@ const validateTarget = (targetValue, unit) => {
   }
 };
 
-const handleDuplicateCompletion = (error) => {
-  if (error && error.code === 11000) {
-    throw new Error("This habit is already marked complete for that date");
-  }
-
-  throw error;
-};
-
 // Create Habit Service
 
 const createHabitService = async ({
@@ -326,18 +318,26 @@ const getAllHabitsService = async ({
 
   const scheduledHabitIds = scheduledToday.map((habit) => habit._id);
 
-  const completedToday = scheduledHabitIds.length
-    ? await HabitCompletion.countDocuments({
+  const todayCompletionRecords = scheduledHabitIds.length
+    ? await HabitCompletion.find({
         user: userId,
         habit: { $in: scheduledHabitIds },
         date: today,
-      })
-    : 0;
+      }).lean()
+    : [];
+  const todayCompletions = Object.fromEntries(
+    todayCompletionRecords.map((completion) => [
+      String(completion.habit),
+      completion,
+    ]),
+  );
+  const completedToday = Object.keys(todayCompletions).length;
 
   const totalPages = Math.ceil(totalHabits / limit);
 
   return {
     habits,
+    todayCompletions,
     pagination: {
       totalHabits,
       currentPage: page,
@@ -646,8 +646,21 @@ const addHabitCompletionService = async ({
     throw new Error("Completion value cannot exceed the habit target");
   }
 
+  const completionQuery = {
+    habit: habit._id,
+    user: userId,
+    date: completionDate,
+  };
+
+  // Treat repeat clicks/retries as success. The unique index below still
+  // protects against two requests arriving at the same time.
+  const existingCompletion = await HabitCompletion.findOne(completionQuery);
+  if (existingCompletion) {
+    return { completion: existingCompletion, alreadyCompleted: true };
+  }
+
   try {
-    return await HabitCompletion.create({
+    const [completion] = await HabitCompletion.create([{
       habit: habit._id,
       user: userId,
       date: completionDate,
@@ -655,9 +668,17 @@ const addHabitCompletionService = async ({
         ? { value: Number(value) }
         : {}),
       ...(note !== undefined ? { note: note.trim() } : {}),
-    });
+    }]);
+    return { completion, alreadyCompleted: false };
   } catch (error) {
-    handleDuplicateCompletion(error);
+    // Another request may have created this day's record after our lookup.
+    if (error?.code === 11000) {
+      const racedCompletion = await HabitCompletion.findOne(completionQuery);
+      if (racedCompletion) {
+        return { completion: racedCompletion, alreadyCompleted: true };
+      }
+    }
+    throw error;
   }
 };
 

@@ -1,17 +1,20 @@
-import { useState, useEffect, createContext, useContext } from "react";
+import { useState, useEffect, useRef } from "react";
 import { signoutUser, getAuthenticatedUser } from "../services/authServices";
-
-const AuthContext = createContext();
+import { AuthContext } from "./AuthContextValue";
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const useAuth = () => useContext(AuthContext);
+export { useAuth } from "./AuthContextValue";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const authCheckStarted = useRef(false);
 
   // Check auth on app load
   useEffect(() => {
+    if (authCheckStarted.current) return;
+    authCheckStarted.current = true;
+
     const checkAuth = async () => {
       try {
         const data = await getAuthenticatedUser();
@@ -24,6 +27,18 @@ export const AuthProvider = ({ children }) => {
     };
 
     checkAuth();
+  }, []);
+
+  useEffect(() => {
+    const handleExpiredSession = () => {
+      setUser(null);
+      setLoading(false);
+    };
+
+    window.addEventListener("taskflow:session-expired", handleExpiredSession);
+    return () => {
+      window.removeEventListener("taskflow:session-expired", handleExpiredSession);
+    };
   }, []);
 
   // Logout

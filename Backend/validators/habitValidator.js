@@ -98,7 +98,7 @@ const validateCreateHabit = [
 
   // Start date
   body("startDate")
-    .optional()
+    .optional({ values: "falsy" })
     .isISO8601()
     .withMessage("Start date must be a valid date"),
 ];
@@ -177,7 +177,7 @@ const validateUpdateHabit = [
     .withMessage("isPinned must be a boolean"),
 
   body("startDate")
-    .optional()
+    .optional({ values: "falsy" })
     .isISO8601()
     .withMessage("Start date must be a valid date"),
 

@@ -36,12 +36,12 @@ const validateCreateGoal = [
 
   // Dates
   body("startDate")
-    .optional()
+    .optional({ values: "falsy" })
     .isISO8601()
     .withMessage("Start date must be a valid date"),
 
   body("targetDate")
-    .optional()
+    .optional({ values: "falsy" })
     .isISO8601()
     .withMessage("Target date must be a valid date"),
 
@@ -94,12 +94,12 @@ const validateUpdateGoal = [
     .trim(),
 
   body("startDate")
-    .optional()
+    .optional({ values: "falsy" })
     .isISO8601()
     .withMessage("Start date must be a valid date"),
 
   body("targetDate")
-    .optional()
+    .optional({ values: "falsy" })
     .isISO8601()
     .withMessage("Target date must be a valid date"),
 

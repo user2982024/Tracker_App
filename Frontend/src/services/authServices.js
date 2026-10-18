@@ -1,3 +1,4 @@
+import apiFetch from "./apiFetch.js";
 // Base URL
 const BASE_URL = "/api/auth";
 
@@ -14,7 +15,7 @@ const extractErrorMessage = (result) => {
 // Signup API
 export const signupUser = async (data) => {
   try {
-    const res = await fetch(`${BASE_URL}/signup`, {
+    const res = await apiFetch(`${BASE_URL}/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,7 +41,7 @@ export const signupUser = async (data) => {
 // Signin API
 export const signinUser = async (data) => {
   try {
-    const res = await fetch(`${BASE_URL}/signin`, {
+    const res = await apiFetch(`${BASE_URL}/signin`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -66,7 +67,7 @@ export const signinUser = async (data) => {
 // Get current authenticated user API
 export const getAuthenticatedUser = async () => {
   try {
-    const res = await fetch(`${BASE_URL}/me`, {
+    const res = await apiFetch(`${BASE_URL}/me`, {
       method: "GET",
       credentials: "include",
     });
@@ -86,7 +87,7 @@ export const getAuthenticatedUser = async () => {
 // Signout API 
 export const signoutUser = async () => {
   try {
-    const res = await fetch(`${BASE_URL}/signout`, {
+    const res = await apiFetch(`${BASE_URL}/signout`, {
       method: "POST",
       credentials: "include",
     });

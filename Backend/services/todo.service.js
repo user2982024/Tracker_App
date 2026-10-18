@@ -35,17 +35,23 @@ const createTodoService = async (
   return todo;
 };
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 // Build query
 const buildQuery = ({ userId, filter, search }) => {
   const query = { user: userId };
   const now = new Date();
+  const conditions = [];
 
   // Search
   if (search && search.trim() !== "") {
-    query.$or = [
-      { title: { $regex: search.trim(), $options: "i" } },
-      { description: { $regex: search.trim(), $options: "i" } },
-    ];
+    const escaped = escapeRegex(search.trim());
+    conditions.push({
+      $or: [
+        { title: { $regex: escaped, $options: "i" } },
+        { description: { $regex: escaped, $options: "i" } },
+      ],
+    });
   }
 
   // Filter
@@ -56,7 +62,9 @@ const buildQuery = ({ userId, filter, search }) => {
 
     case "pending":
       query.completed = false;
-      query.$or = [{ dueDate: { $gte: now } }, { dueDate: null }];
+      conditions.push({
+        $or: [{ dueDate: { $gte: now } }, { dueDate: null }],
+      });
       break;
 
     case "overdue":
@@ -67,6 +75,12 @@ const buildQuery = ({ userId, filter, search }) => {
     case "all":
     default:
       break;
+  }
+
+  if (conditions.length === 1) {
+    Object.assign(query, conditions[0]);
+  } else if (conditions.length > 1) {
+    query.$and = conditions;
   }
 
   return query;
@@ -252,7 +266,7 @@ const updateTodo = async (
   }
 
   if (dueDate !== undefined) {
-    todo.dueDate = dueDate;
+    todo.dueDate = dueDate ? dueDate : null;
   }
 
   if (priority !== undefined) {

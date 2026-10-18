@@ -196,7 +196,7 @@ const addHabitCompletion = async (req, res, next) => {
 
     const { date, value, note } = req.body;
 
-    const completion =
+    const { completion, alreadyCompleted } =
       await habitService.addHabitCompletionService({
         habitId,
         userId,
@@ -205,9 +205,12 @@ const addHabitCompletion = async (req, res, next) => {
         note,
       });
 
-    return res.status(201).json({
+    return res.status(alreadyCompleted ? 200 : 201).json({
       success: true,
-      message: "Habit marked as completed successfully",
+      message: alreadyCompleted
+        ? "Habit was already completed for this date"
+        : "Habit marked as completed successfully",
+      alreadyCompleted,
       data: completion,
     });
   } catch (error) {

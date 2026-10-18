@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../components/UI/Sidebar";
 import ThemeToggle from "../components/UI/ThemeToggle";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/AuthContextValue";
 
 const AppLayout = () => {
   const [isOpen, setIsOpen] = useState(false);

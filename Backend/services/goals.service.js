@@ -166,12 +166,14 @@ const getAllGoalsService = async ({
 
   // Statistics across all of the user's goals
   const allGoals = await Goal.find({ user: userId })
-    .select("status targetDate")
+    .select("status targetDate currentValue targetValue")
     .lean();
 
   let active = 0;
+  let activeGoals = 0;
   let completed = 0;
   let overdue = 0;
+  let activeProgressTotal = 0;
 
   const now = new Date();
 
@@ -185,11 +187,24 @@ const getAllGoalsService = async ({
         overdue++;
       }
     }
+
+    if (goal.status === "active") {
+      activeGoals++;
+      const target = Number(goal.targetValue) || 0;
+      if (target > 0) {
+        const progress = (Number(goal.currentValue) || 0) / target;
+        activeProgressTotal += Math.max(0, Math.min(1, progress)) * 100;
+      }
+    }
   });
 
   const stats = {
     total: allGoals.length,
     active,
+    activeGoals,
+    averageProgress: activeGoals
+      ? Math.round(activeProgressTotal / activeGoals)
+      : 0,
     completed,
     overdue,
   };
@@ -293,7 +308,7 @@ const editGoalService = async ({
   }
 
   if (targetDate !== undefined) {
-    updates.targetDate = targetDate;
+    updates.targetDate = targetDate ? targetDate : null;
   }
 
   if (priority !== undefined) {

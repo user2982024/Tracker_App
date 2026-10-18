@@ -1,8 +1,9 @@
+import apiFetch from "./apiFetch.js";
 const BASE_URL = "/api/goals";
 
 // Create goal
 export const createGoal = async (goalData) => {
-  const response = await fetch(`${BASE_URL}`, {
+  const response = await apiFetch(`${BASE_URL}`, {
     method: "POST",
     credentials: "include",
     headers: {
@@ -22,7 +23,7 @@ export const createGoal = async (goalData) => {
 
 // Get all goals
 export const getGoals = async (queryParams = "") => {
-  const response = await fetch(`${BASE_URL}${queryParams}`, {
+  const response = await apiFetch(`${BASE_URL}${queryParams}`, {
     method: "GET",
     credentials: "include",
   });
@@ -30,7 +31,9 @@ export const getGoals = async (queryParams = "") => {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(data.message || "Failed to fetch goals");
+    const error = new Error(data.message || "Failed to fetch goals");
+    error.status = response.status;
+    throw error;
   }
 
   return data;
@@ -38,7 +41,7 @@ export const getGoals = async (queryParams = "") => {
 
 // Update goal
 export const updateGoal = async (goalId, goalData) => {
-  const response = await fetch(`${BASE_URL}/${goalId}`, {
+  const response = await apiFetch(`${BASE_URL}/${goalId}`, {
     method: "PATCH",
     credentials: "include",
     headers: {
@@ -58,7 +61,7 @@ export const updateGoal = async (goalId, goalData) => {
 
 // Get a single goal
 export const getGoal = async (goalId) => {
-  const response = await fetch(
+  const response = await apiFetch(
     `${BASE_URL}/${goalId}`,
     {
       method: "GET",
@@ -79,7 +82,7 @@ export const getGoal = async (goalId) => {
 
 // Delete a single goal
 export const deleteGoal = async (goalId) => {
-  const response = await fetch(`${BASE_URL}/${goalId}`, {
+  const response = await apiFetch(`${BASE_URL}/${goalId}`, {
     method: "DELETE",
     credentials: "include",
   });
@@ -95,7 +98,7 @@ export const deleteGoal = async (goalId) => {
 
 // Delete all completed goals
 export const deleteCompletedGoals = async () => {
-  const response = await fetch(`${BASE_URL}/completed`, {
+  const response = await apiFetch(`${BASE_URL}/completed`, {
     method: "DELETE",
     credentials: "include",
   });

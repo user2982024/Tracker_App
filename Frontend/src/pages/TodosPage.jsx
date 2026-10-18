@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 
 import TodoHeader from "../components/Todos/TodoHeader";
 import TodoStats from "../components/Todos/TodoStats";
@@ -43,6 +43,7 @@ const TodosPage = () => {
 
   // Bulk delete state
   const [isBulkDeleteModalOpen, setIsBulkDeleteModalOpen] = useState(false);
+  const todosRequestId = useRef(0);
 
   // Debounce effect
   useEffect(() => {
@@ -55,7 +56,8 @@ const TodosPage = () => {
   }, [searchQuery]);
 
   // Fetch todos
-  const fetchTodos = async () => {
+  const fetchTodos = useCallback(async () => {
+    const requestId = ++todosRequestId.current;
     try {
       setLoading(true);
 
@@ -66,22 +68,26 @@ const TodosPage = () => {
         sortBy,
       });
 
+      if (requestId !== todosRequestId.current) return;
       const { todos, stats, pagination } = res.data;
 
       setTodos(todos);
       setStats(stats);
       setPagination(pagination);
     } catch (error) {
-      toast.error(error.message);
+      if (requestId === todosRequestId.current) toast.error(error.message);
     } finally {
-      setLoading(false);
+      if (requestId === todosRequestId.current) setLoading(false);
     }
-  };
+  }, [debouncedSearch, filter, page, sortBy]);
 
   // Effect
   useEffect(() => {
     fetchTodos();
-  }, [page, filter, debouncedSearch, sortBy]);
+    return () => {
+      todosRequestId.current += 1;
+    };
+  }, [fetchTodos]);
 
   // Handle edit todo
   const handleEditTodo = (todo) => {

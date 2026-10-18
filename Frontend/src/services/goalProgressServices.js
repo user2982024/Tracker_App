@@ -1,8 +1,9 @@
+import apiFetch from "./apiFetch.js";
 const BASE_URL = "/api/goals";
 
 // Add progress to a goal
 export const addGoalProgress = async (goalId, progressData) => {
-    const response = await fetch(
+    const response = await apiFetch(
         `${BASE_URL}/${goalId}/progress`,
         {
             method: "POST",
@@ -26,7 +27,7 @@ export const addGoalProgress = async (goalId, progressData) => {
 
 // Get progress history for a goal
 export const getGoalProgress = async (goalId) => {
-  const response = await fetch(
+  const response = await apiFetch(
     `${BASE_URL}/${goalId}/progress`,
     {
       method: "GET",
@@ -47,7 +48,7 @@ export const getGoalProgress = async (goalId) => {
 
 // Delete a progress entry
 export const deleteGoalProgress = async (progressId) => {
-    const response = await fetch (
+    const response = await apiFetch(
         `${BASE_URL}/progress/${progressId}`,
         {
             method: "DELETE",

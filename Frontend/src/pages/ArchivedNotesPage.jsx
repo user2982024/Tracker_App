@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useDebounce from "../hooks/useDebounce";
 import Spinner from "../components/UI/Spinner";
@@ -23,6 +23,8 @@ const ArchivedNotesPage = () => {
   // Modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [noteToDelete, setNoteToDelete] = useState(null);
+  const [actionPending, setActionPending] = useState(false);
+  const requestRevision = useRef(0);
 
   const limit = 9;
 
@@ -30,7 +32,8 @@ const ArchivedNotesPage = () => {
   const debouncedSearch = useDebounce(searchTerm, 300);
 
   // Fetch archived notes
-  const fetchArchivedNotes = async (query = "", pageNum = 1) => {
+  const fetchArchivedNotes = useCallback(async (query = "", pageNum = 1) => {
+    const currentRequest = ++requestRevision.current;
     try {
       setLoading(true);
 
@@ -39,19 +42,25 @@ const ArchivedNotesPage = () => {
           ? await searchArchivedNotes(query, pageNum, limit)
           : await getArchivedNotes(pageNum, limit);
 
+      if (currentRequest !== requestRevision.current) return;
       setNotes(res.notes || []);
       setTotal(res.total || 0);
     } catch (error) {
-      toast.error(error.message || "Failed to fetch archived notes");
+      if (currentRequest === requestRevision.current) {
+        toast.error(error.message || "Failed to fetch archived notes");
+      }
     } finally {
-      setLoading(false);
+      if (currentRequest === requestRevision.current) setLoading(false);
     }
-  };
+  }, []);
 
   // Fetch on search or page change
   useEffect(() => {
     fetchArchivedNotes(debouncedSearch, page);
-  }, [debouncedSearch, page]);
+    return () => {
+      requestRevision.current += 1;
+    };
+  }, [debouncedSearch, fetchArchivedNotes, page]);
 
   const totalPages = Math.ceil(total / limit);
 
@@ -66,30 +75,48 @@ const ArchivedNotesPage = () => {
 
   // Confirm delete
   const handleConfirmDelete = async () => {
+    if (!noteToDelete || actionPending) return;
     try {
+      setActionPending(true);
       const res = await deleteNote(noteToDelete._id);
+      requestRevision.current += 1;
 
       setNotes((prev) =>
         prev.filter((n) => n._id !== noteToDelete._id)
       );
+      setTotal((prev) => Math.max(0, prev - 1));
 
       toast.success(res.message || "Note deleted successfully");
 
       setShowDeleteModal(false);
       setNoteToDelete(null);
+      if (notes.length === 1 && page > 1) {
+        setPage((currentPage) => Math.max(1, currentPage - 1));
+      }
     } catch (error) {
       toast.error(error.message || "Failed to delete note");
+    } finally {
+      setActionPending(false);
     }
   };
 
   // Unarchive
   const handleUnarchive = async (noteId) => {
+    if (actionPending) return;
     try {
+      setActionPending(true);
       const res = await unarchiveNote(noteId);
+      requestRevision.current += 1;
       setNotes((prev) => prev.filter((note) => note._id !== noteId));
+      setTotal((prev) => Math.max(0, prev - 1));
       toast.success(res.message || "Note unarchived successfully");
+      if (notes.length === 1 && page > 1) {
+        setPage((currentPage) => Math.max(1, currentPage - 1));
+      }
     } catch (error) {
       toast.error(error.message || "Failed to unarchive note");
+    } finally {
+      setActionPending(false);
     }
   };
 
@@ -181,9 +208,11 @@ const ArchivedNotesPage = () => {
           <>
             <button
               onClick={() => {
+                if (actionPending) return;
                 setShowDeleteModal(false);
                 setNoteToDelete(null);
               }}
+              disabled={actionPending}
               className="px-4 py-2 border border-border rounded-lg hover:bg-surface-secondary transition"
             >
               Cancel
@@ -191,9 +220,10 @@ const ArchivedNotesPage = () => {
 
             <button
               onClick={handleConfirmDelete}
+              disabled={actionPending}
               className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
             >
-              Delete
+              {actionPending ? "Deleting..." : "Delete"}
             </button>
           </>
         }

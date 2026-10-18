@@ -215,6 +215,8 @@ const unpinNote = async (noteId, userId) => {
   return note;
 };
 
+const escapeRegex = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 // Search notes service
 const searchNotes = async (userId, query, page = 1, limit = 9) => {
   const skip = (page - 1) * limit;
@@ -229,10 +231,11 @@ const searchNotes = async (userId, query, page = 1, limit = 9) => {
   let searchFilter = {};
 
   if (query && query.trim() !== "") {
+    const escaped = escapeRegex(query.trim());
     searchFilter = {
       $or: [
-        { title: { $regex: query.trim(), $options: "i" } },
-        { content: { $regex: query.trim(), $options: "i" } },
+        { title: { $regex: escaped, $options: "i" } },
+        { content: { $regex: escaped, $options: "i" } },
       ],
     };
   }
@@ -269,10 +272,11 @@ const searchArchivedNotes = async (userId, query, page = 1, limit = 9) => {
   let searchFilter = {};
 
   if (query && query.trim() !== "") {
+    const escaped = escapeRegex(query.trim());
     searchFilter = {
       $or: [
-        { title: { $regex: query.trim(), $options: "i" }  },
-        { content: { $regex: query.trim(), $options: "i" } },
+        { title: { $regex: escaped, $options: "i" } },
+        { content: { $regex: escaped, $options: "i" } },
       ],
     };
   }
