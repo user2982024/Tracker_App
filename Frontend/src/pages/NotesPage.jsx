@@ -489,7 +489,7 @@ const NotesPage = () => {
           </>
         }
       >
-        This action
+        {`This action `}
         <span className="text-red-500 font-semibold">
           cannot be undone
         </span>.
