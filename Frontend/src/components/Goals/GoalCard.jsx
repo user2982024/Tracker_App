@@ -5,13 +5,15 @@ import {
   Eye,
   Trash2,
   Plus,
+  CheckCircle2,
+  LoaderCircle,
 } from "lucide-react";
 
 import { useNavigate } from "react-router-dom";
 import useDateFormat from "../../hooks/useDateFormat";
 import { formatDate } from "../../utils/dateFormatting";
 
-const GoalCard = ({ goal, onDelete }) => {
+const GoalCard = ({ goal, onDelete, onCompleteQualitative, isCompleting }) => {
   const navigate = useNavigate();
   const dateFormat = useDateFormat();
 
@@ -45,6 +47,7 @@ const GoalCard = ({ goal, onDelete }) => {
 
   const currentValue = Number(goal.currentValue) || 0;
   const targetValue = Number(goal.targetValue) || 0;
+  const hasNumericTarget = targetValue > 0;
 
   // ==========================================
   // Calculate Goal Progress Percentage
@@ -150,10 +153,11 @@ const GoalCard = ({ goal, onDelete }) => {
           Progress Section
       ====================================== */}
 
+      {hasNumericTarget ? (
       <div className="space-y-2.5">
         <div className="flex items-center justify-between text-sm">
           <p className="text-foreground-muted font-medium">
-            {currentValue} / {targetValue} {goal.unit}
+            {currentValue} / {targetValue}{goal.unit ? ` ${goal.unit}` : ""}
           </p>
 
           <p className="font-semibold text-foreground-secondary">
@@ -180,6 +184,12 @@ const GoalCard = ({ goal, onDelete }) => {
           />
         </div>
       </div>
+      ) : (
+        <div className="rounded-xl border border-dashed border-border bg-surface-secondary/50 px-4 py-3">
+          <p className="text-sm font-semibold text-foreground-secondary">Qualitative goal</p>
+          <p className="mt-1 text-xs text-foreground-muted">No numeric target set</p>
+        </div>
+      )}
 
       {/* ======================================
           Bottom Section
@@ -238,7 +248,7 @@ const GoalCard = ({ goal, onDelete }) => {
         <div className="flex items-center justify-between gap-2">
           {/* Add Progress */}
 
-          {goal.status === "active" ? (
+          {goal.status === "active" && hasNumericTarget ? (
             <button
               type="button"
               onClick={handleAddProgress}
@@ -259,6 +269,21 @@ const GoalCard = ({ goal, onDelete }) => {
             >
               <Plus size={14} aria-hidden="true" />
               <span className="whitespace-nowrap">Add Progress</span>
+            </button>
+          ) : !hasNumericTarget && goal.status !== "completed" ? (
+            <button
+              type="button"
+              onClick={() => onCompleteQualitative?.(goal)}
+              disabled={isCompleting}
+              className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 py-1.5 text-xs font-semibold text-emerald-700 shadow-sm transition hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-emerald-500/25 dark:bg-emerald-500/10 dark:text-emerald-300 dark:hover:bg-emerald-500/20"
+              aria-label={`Mark ${goal.title} as completed`}
+            >
+              {isCompleting ? (
+                <LoaderCircle size={14} className="animate-spin" aria-hidden="true" />
+              ) : (
+                <CheckCircle2 size={14} aria-hidden="true" />
+              )}
+              <span>{isCompleting ? "Completing…" : "Mark complete"}</span>
             </button>
           ) : (
             <div />

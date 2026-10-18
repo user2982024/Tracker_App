@@ -25,19 +25,17 @@ const createGoalService = async (
     throw new Error("User not authenticated");
   }
 
-  // Target validation
+  const hasTarget =
+    targetValue !== undefined && targetValue !== null && targetValue !== "";
   if (
-    targetValue === undefined ||
-    targetValue === null ||
-    !Number.isFinite(Number(targetValue)) ||
-    Number(targetValue) <= 0
+    hasTarget &&
+    (!Number.isFinite(Number(targetValue)) || Number(targetValue) <= 0)
   ) {
     throw new Error("Target value must be greater than zero");
   }
 
-  // Unit validation
-  if (!unit || !unit.trim()) {
-    throw new Error("Unit is required");
+  if (unit !== undefined && typeof unit !== "string") {
+    throw new Error("Unit must be text");
   }
 
   // Current value validation
@@ -52,14 +50,14 @@ const createGoalService = async (
     throw new Error("Current value must be a non-negative number");
   }
 
-  const normalizedTarget = Number(targetValue);
+  const normalizedTarget = hasTarget ? Number(targetValue) : null;
   const normalizedCurrent =
     currentValue === undefined || currentValue === null
       ? 0
       : Number(currentValue);
 
   // Business rule
-  if (normalizedCurrent > normalizedTarget) {
+  if (normalizedTarget !== null && normalizedCurrent > normalizedTarget) {
     throw new Error("Current value cannot exceed target value");
   }
 
@@ -67,7 +65,8 @@ const createGoalService = async (
     title: title.trim(),
     user: userId,
     targetValue: normalizedTarget,
-    unit: unit.trim(),
+    goalType: hasTarget ? "quantitative" : "qualitative",
+    unit: typeof unit === "string" ? unit.trim() : "",
   };
 
   // Optional fields
@@ -173,7 +172,7 @@ const getAllGoalsService = async ({
   let activeGoals = 0;
   let completed = 0;
   let overdue = 0;
-  let activeProgressTotal = 0;
+  let allGoalProgressTotal = 0;
 
   const now = new Date();
 
@@ -188,13 +187,16 @@ const getAllGoalsService = async ({
       }
     }
 
+    const target = Number(goal.targetValue) || 0;
+    if (goal.status === "completed") {
+      allGoalProgressTotal += 100;
+    } else if (target > 0) {
+      const progress = (Number(goal.currentValue) || 0) / target;
+      allGoalProgressTotal += Math.max(0, Math.min(1, progress)) * 100;
+    }
+
     if (goal.status === "active") {
       activeGoals++;
-      const target = Number(goal.targetValue) || 0;
-      if (target > 0) {
-        const progress = (Number(goal.currentValue) || 0) / target;
-        activeProgressTotal += Math.max(0, Math.min(1, progress)) * 100;
-      }
     }
   });
 
@@ -202,8 +204,8 @@ const getAllGoalsService = async ({
     total: allGoals.length,
     active,
     activeGoals,
-    averageProgress: activeGoals
-      ? Math.round(activeProgressTotal / activeGoals)
+    averageProgress: allGoals.length
+      ? Math.round(allGoalProgressTotal / allGoals.length)
       : 0,
     completed,
     overdue,
@@ -251,32 +253,41 @@ const editGoalService = async ({
     throw new Error("Goal not found");
   }
 
-  // Only active and paused statuses may be set manually.
-  // Completion is managed by the progress system.
-  const allowedStatuses = ["active", "paused"];
+  const hasTargetUpdate = targetValue !== undefined;
+  const normalizedTarget =
+    targetValue === null || targetValue === "" ? null : Number(targetValue);
+
+  // Quantitative goals complete by reaching their target. A qualitative goal
+  // can be marked complete manually in the edit form.
+  const allowedStatuses = ["active", "paused", "completed"];
 
   if (status !== undefined && !allowedStatuses.includes(status)) {
     throw new Error("Invalid status update");
   }
 
-  // Validate target value
-  if (targetValue !== undefined) {
-    if (
-      !Number.isFinite(Number(targetValue)) ||
-      Number(targetValue) <= 0
-    ) {
+  if (hasTargetUpdate && normalizedTarget !== null) {
+    if (!Number.isFinite(normalizedTarget) || normalizedTarget <= 0) {
       throw new Error("Target value must be greater than zero");
     }
 
-    if (Number(targetValue) < goal.currentValue) {
+    if (normalizedTarget < goal.currentValue) {
       throw new Error(
         "Target value cannot be less than current progress",
       );
     }
   }
 
-  // Prevent changing a completed goal back to active or paused.
-  if (goal.status === "completed" && status !== undefined) {
+  const resultingTarget = hasTargetUpdate ? normalizedTarget : goal.targetValue;
+  if (
+    status === "completed" &&
+    goal.status !== "completed" &&
+    Number(resultingTarget) > 0
+  ) {
+    throw new Error("Numeric goals are completed by reaching their target");
+  }
+
+  // Prevent reopening a completed goal through editing.
+  if (goal.status === "completed" && status && status !== "completed") {
     throw new Error("A completed goal cannot be reopened through editing");
   }
 
@@ -295,13 +306,14 @@ const editGoalService = async ({
     updates.description = description;
   }
 
-  if (targetValue !== undefined) {
-    updates.targetValue = Number(targetValue);
+  if (hasTargetUpdate) {
+    updates.targetValue = normalizedTarget;
+    updates.goalType = normalizedTarget == null ? "qualitative" : "quantitative";
   }
 
   if (unit !== undefined) {
-    if (typeof unit !== "string" || !unit.trim()) {
-      throw new Error("Unit cannot be empty");
+    if (typeof unit !== "string") {
+      throw new Error("Unit must be text");
     }
 
     updates.unit = unit.trim();
@@ -321,6 +333,8 @@ const editGoalService = async ({
 
   if (status !== undefined) {
     updates.status = status;
+    updates.completedAt =
+      status === "completed" ? goal.completedAt || new Date() : null;
   }
 
   Object.assign(goal, updates);

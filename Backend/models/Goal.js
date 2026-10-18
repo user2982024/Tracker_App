@@ -30,14 +30,14 @@ const goalSchema = new mongoose.Schema(
     // (Future scalable architecture)
     goalType: {
       type: String,
-      enum: ["quantitative"],
+      enum: ["quantitative", "qualitative"],
       default: "quantitative",
     },
 
     // Quantitative goal system
     targetValue: {
       type: Number,
-      required: [true, "Target value is required"],
+      default: null,
       min: [1, "Target value must be at least 1"],
     },
 
@@ -49,7 +49,7 @@ const goalSchema = new mongoose.Schema(
       min: [0, "Current progress cannot be negative"],
       validate: {
         validator: function (value) {
-          return value <= this.targetValue;
+          return this.targetValue == null || value <= this.targetValue;
         },
         message: "Current progress cannot exceed target value",
       },
@@ -60,7 +60,7 @@ const goalSchema = new mongoose.Schema(
     // questions, books, hours, workouts
     unit: {
       type: String,
-      required: [true, "Unit is required"],
+      default: "",
       trim: true,
       maxlength: [50, "Unit cannot exceed 50 characters"],
     },
@@ -143,8 +143,13 @@ const goalSchema = new mongoose.Schema(
 // Pre-save hook
 // Pre-save hook
 goalSchema.pre("save", function () {
-  // Mark goal as completed
-  if (this.currentValue >= this.targetValue) {
+  // Numeric goals complete when their target is reached. Qualitative goals
+  // are completed manually because they do not have a numeric target.
+  if (
+    this.targetValue != null &&
+    this.targetValue > 0 &&
+    this.currentValue >= this.targetValue
+  ) {
     this.status = "completed";
 
     // Set completedAt only once
@@ -166,6 +171,7 @@ goalSchema.virtual("progressPercentage").get(function () {
 
 // Remaining progress
 goalSchema.virtual("remainingValue").get(function () {
+  if (this.targetValue == null) return null;
   return Math.max(this.targetValue - this.currentValue, 0);
 });
 

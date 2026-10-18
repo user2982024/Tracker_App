@@ -16,6 +16,7 @@ import GoalForm from "../components/Goals/GoalForm";
 
 import {
   getGoals,
+  updateGoal,
   deleteGoal,
   deleteCompletedGoals,
 } from "../services/goalsServices";
@@ -40,6 +41,7 @@ const GoalsPage = () => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [goalToDelete, setGoalToDelete] = useState(null);
   const [deletingGoal, setDeletingGoal] = useState(false);
+  const [completingGoalId, setCompletingGoalId] = useState(null);
 
   // Delete completed goals
   const [isDeleteCompletedModalOpen, setIsDeleteCompletedModalOpen] =
@@ -104,6 +106,21 @@ const GoalsPage = () => {
   const handleDeleteClick = (goalId) => {
     setGoalToDelete(goalId);
     setIsDeleteModalOpen(true);
+  };
+
+  const handleCompleteQualitativeGoal = async (goal) => {
+    if (completingGoalId) return;
+
+    setCompletingGoalId(goal._id);
+    try {
+      await updateGoal(goal._id, { status: "completed" });
+      toast.success("Goal marked as completed");
+      await fetchGoals();
+    } catch (error) {
+      toast.error(error.message || "Failed to complete goal");
+    } finally {
+      setCompletingGoalId(null);
+    }
   };
 
   // Close individual goal deletion modal
@@ -213,7 +230,7 @@ const GoalsPage = () => {
       />
 
       {/* Statistics */}
-      <GoalsStats stats={stats} goals={goals} />
+      <GoalsStats stats={stats} />
 
       {/* Overall Progress */}
       <GoalsProgress stats={stats} />
@@ -246,6 +263,8 @@ const GoalsPage = () => {
         goals={goals}
         loading={loading}
         onDelete={handleDeleteClick}
+        onCompleteQualitative={handleCompleteQualitativeGoal}
+        completingGoalId={completingGoalId}
       />
 
       {/* Goals Pagination */}

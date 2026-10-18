@@ -213,6 +213,7 @@ const GoalProgressHistoryPage = () => {
   // ==================================================
 
   const targetValue = Number(goal?.targetValue) || 0;
+  const hasNumericTarget = targetValue > 0;
 
   const currentValue = Number(goal?.currentValue) || 0;
 
@@ -279,6 +280,7 @@ const GoalProgressHistoryPage = () => {
 
         {/* Goal Progress Summary */}
 
+        {hasNumericTarget ? (
         <div className="mt-6 bg-linear-to-r from-blue-50 to-indigo-50 dark:from-blue-500/10 dark:to-indigo-500/10 border border-blue-100 dark:border-blue-500/25 rounded-3xl p-5">
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div>
@@ -287,7 +289,7 @@ const GoalProgressHistoryPage = () => {
               </p>
 
               <p className="text-2xl font-bold text-foreground mt-1">
-                {currentValue} / {targetValue} {goal?.unit}
+                {currentValue} / {targetValue}{goal?.unit ? ` ${goal.unit}` : ""}
               </p>
             </div>
 
@@ -305,6 +307,12 @@ const GoalProgressHistoryPage = () => {
             />
           </div>
         </div>
+        ) : (
+          <div className="mt-6 rounded-2xl border border-dashed border-border bg-surface-secondary/50 p-5">
+            <p className="font-semibold text-foreground-secondary">Qualitative goal</p>
+            <p className="mt-1 text-sm text-foreground-muted">This goal has no numeric target.</p>
+          </div>
+        )}
       </div>
 
       {/* ==================================================
@@ -352,7 +360,9 @@ const GoalProgressHistoryPage = () => {
             </h3>
 
             <p className="text-sm text-foreground-muted mt-1 max-w-md">
-              This goal does not have any progress entries yet.
+              {hasNumericTarget
+                ? "This goal does not have any progress entries yet."
+                : "This qualitative goal does not use numeric progress entries."}
             </p>
           </div>
         ) : (
@@ -372,9 +382,11 @@ const GoalProgressHistoryPage = () => {
                       +{progress.value}
                     </span>
 
-                    <span className="text-[10px] mt-1 font-medium">
-                      {goal?.unit}
-                    </span>
+                    {goal?.unit && (
+                      <span className="text-[10px] mt-1 font-medium">
+                        {goal.unit}
+                      </span>
+                    )}
                   </div>
 
                   {/* Note + Date */}

@@ -17,8 +17,7 @@ const validateCreateGoal = [
 
   // Core goal logic
   body("targetValue")
-    .notEmpty()
-    .withMessage("Target value is required")
+    .optional({ values: "falsy" })
     .isInt({ min: 1 })
     .withMessage("Target value must be at least 1"),
 
@@ -28,8 +27,7 @@ const validateCreateGoal = [
     .withMessage("Current value cannot be negative"),
 
   body("unit")
-    .notEmpty()
-    .withMessage("Unit is required")
+    .optional({ values: "falsy" })
     .isLength({ max: 50 })
     .withMessage("Unit cannot exceed 50 characters")
     .trim(),
@@ -78,7 +76,7 @@ const validateUpdateGoal = [
     .trim(),
 
   body("targetValue")
-    .optional()
+    .optional({ values: "falsy" })
     .isInt({ min: 1 })
     .withMessage("Target value must be at least 1"),
 
@@ -88,7 +86,7 @@ const validateUpdateGoal = [
     .withMessage("Current value cannot be negative"),
 
   body("unit")
-    .optional()
+    .optional({ values: "falsy" })
     .isLength({ max: 50 })
     .withMessage("Unit cannot exceed 50 characters")
     .trim(),

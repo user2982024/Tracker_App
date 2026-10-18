@@ -12,6 +12,10 @@ const addGoalProgressService = async (userId, goalId, value, note) => {
     throw new Error("Goal not found");
   }
 
+  if (goal.targetValue == null || goal.targetValue <= 0) {
+    throw new Error("Add a target value before recording numeric progress");
+  }
+
   // Completed goal cannot recieve additonal progress
   if (goal.status === "completed") {
     throw new Error("Cannot add progress to a completed goal");

@@ -217,6 +217,11 @@ const GoalViewPage = () => {
       return;
     }
 
+    if (goal.targetValue == null || Number(goal.targetValue) <= 0) {
+      setProgressError("Add a numeric target before recording progress.");
+      return;
+    }
+
     const value = Number(progressValue);
 
     // Basic validation
@@ -476,6 +481,7 @@ const GoalViewPage = () => {
   // ====================================================
 
   const targetValue = Number(goal.targetValue) || 0;
+  const hasNumericTarget = targetValue > 0;
 
   const currentValue = Number(goal.currentValue) || 0;
 
@@ -529,7 +535,10 @@ const GoalViewPage = () => {
   // ====================================================
 
   const progressFormDisabled =
-    goal.status === "completed" || goal.status === "paused" || addingProgress;
+    !hasNumericTarget ||
+    goal.status === "completed" ||
+    goal.status === "paused" ||
+    addingProgress;
 
   // ====================================================
   // Three Most Recent Progress Entries
@@ -594,6 +603,7 @@ const GoalViewPage = () => {
 
           {/* Progress Card */}
 
+          {hasNumericTarget ? (
           <div className="bg-linear-to-r from-blue-50 to-indigo-50 dark:from-blue-500/10 dark:to-indigo-500/10 border border-blue-100 dark:border-blue-500/25 rounded-3xl p-6 space-y-5">
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="space-y-1">
@@ -610,7 +620,7 @@ const GoalViewPage = () => {
                 <TrendingUp size={18} className="text-blue-600 dark:text-blue-400" />
 
                 <p className="text-sm font-semibold text-foreground-secondary">
-                  {currentValue} / {targetValue} {goal.unit}
+                  {currentValue} / {targetValue}{goal.unit ? ` ${goal.unit}` : ""}
                 </p>
               </div>
             </div>
@@ -648,6 +658,16 @@ const GoalViewPage = () => {
               </div>
             </div>
           </div>
+          ) : (
+            <div className="bg-linear-to-r from-indigo-50 to-purple-50 dark:from-indigo-500/10 dark:to-purple-500/10 border border-indigo-100 dark:border-indigo-500/25 rounded-3xl p-6">
+              <p className="text-xs uppercase tracking-wide text-indigo-600 dark:text-indigo-300 font-semibold">
+                Qualitative Goal
+              </p>
+              <p className="mt-2 text-sm leading-6 text-foreground-secondary">
+                This goal has no numeric target. When you’ve achieved it, edit the goal and set its status to completed.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Details Grid */}
@@ -814,7 +834,7 @@ const GoalViewPage = () => {
 
         {/* Add Progress Button */}
 
-        {goal.status === "active" && !showProgressForm && (
+        {goal.status === "active" && hasNumericTarget && !showProgressForm && (
           <div className="mt-6">
             <button
               type="button"
@@ -833,7 +853,7 @@ const GoalViewPage = () => {
           Add Progress Modal
           ================================================== */}
 
-      {goal.status === "active" && showProgressForm && (
+      {goal.status === "active" && hasNumericTarget && showProgressForm && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-gray-950/50 backdrop-blur-sm"
           role="presentation"
@@ -1072,8 +1092,9 @@ const GoalViewPage = () => {
             </h3>
 
             <p className="text-sm text-foreground-muted mt-1 max-w-md">
-              Start tracking this goal by adding your first progress entry
-              above.
+              {hasNumericTarget
+                ? "Start tracking this goal by adding your first progress entry above."
+                : "This qualitative goal does not use numeric progress. Edit it to mark it completed when you achieve it."}
             </p>
           </div>
         )}
@@ -1098,9 +1119,11 @@ const GoalViewPage = () => {
                         +{progress.value}
                       </span>
 
-                      <span className="text-[10px] mt-1 font-medium">
-                        {goal.unit}
-                      </span>
+                      {goal.unit && (
+                        <span className="text-[10px] mt-1 font-medium">
+                          {goal.unit}
+                        </span>
+                      )}
                     </div>
 
                     {/* Note */}

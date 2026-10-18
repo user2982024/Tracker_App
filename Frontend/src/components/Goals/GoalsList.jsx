@@ -1,7 +1,13 @@
 import GoalCard from "./GoalCard";
 import Spinner from "../UI/Spinner";
 
-const GoalsList = ({ goals, loading, onDelete }) => {
+const GoalsList = ({
+  goals,
+  loading,
+  onDelete,
+  onCompleteQualitative,
+  completingGoalId,
+}) => {
   
   // Loading State
   if (loading) {
@@ -32,7 +38,13 @@ const GoalsList = ({ goals, loading, onDelete }) => {
       {goals.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {goals.map((goal) => (
-            <GoalCard goal={goal} onDelete={onDelete} key={goal._id} />
+            <GoalCard
+              goal={goal}
+              onDelete={onDelete}
+              onCompleteQualitative={onCompleteQualitative}
+              isCompleting={completingGoalId === goal._id}
+              key={goal._id}
+            />
           ))}
         </div>
       ) : (

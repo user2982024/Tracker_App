@@ -77,13 +77,14 @@ const isRetryableDashboardFailure = (result) => {
 };
 
 const getAverageGoalProgress = (goals = []) => {
-  if (!goals.length) return 0;
-  const total = goals.reduce((sum, goal) => {
+  const measurableGoals = goals.filter((goal) => Number(goal.targetValue) > 0);
+  if (!measurableGoals.length) return 0;
+  const total = measurableGoals.reduce((sum, goal) => {
     const target = Number(goal.targetValue) || 0;
     if (target <= 0) return sum;
     return sum + Math.max(0, Math.min(100, (Number(goal.currentValue) / target) * 100));
   }, 0);
-  return Math.round(total / goals.length);
+  return Math.round(total / measurableGoals.length);
 };
 
 const readDashboardSection = async (request) => {
@@ -638,10 +639,11 @@ const Dashboard = () => {
         ) : (
           <div className="flex-1 space-y-3">
             {goalsList.map((goal) => {
-              const percentage = Math.min(
-                100,
-                Math.round(((goal.currentValue || 0) / (goal.targetValue || 1)) * 100),
-              );
+              const targetValue = Number(goal.targetValue) || 0;
+              const hasNumericTarget = targetValue > 0;
+              const percentage = hasNumericTarget
+                ? Math.min(100, Math.round(((goal.currentValue || 0) / targetValue) * 100))
+                : 0;
 
               return (
                 <Link
@@ -651,19 +653,25 @@ const Dashboard = () => {
                 >
                   <div className="flex items-center justify-between text-sm">
                     <p className="truncate font-medium text-foreground">{goal.title}</p>
-                    <span className="font-semibold text-primary">{percentage}%</span>
+                    <span className="font-semibold text-primary">
+                      {hasNumericTarget ? `${percentage}%` : "Qualitative"}
+                    </span>
                   </div>
 
-                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-surface-secondary">
-                    <div
-                      className="h-full bg-primary transition-all duration-300"
-                      style={{ width: `${percentage}%` }}
-                    />
-                  </div>
+                  {hasNumericTarget && (
+                    <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-surface-secondary">
+                      <div
+                        className="h-full bg-primary transition-all duration-300"
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
+                  )}
 
                   <div className="mt-2 flex items-center justify-between text-xs text-foreground-muted">
                     <span>
-                      {goal.currentValue || 0} / {goal.targetValue} {goal.unit}
+                      {hasNumericTarget
+                        ? `${goal.currentValue || 0} / ${targetValue}${goal.unit ? ` ${goal.unit}` : ""}`
+                        : "No numeric target"}
                     </span>
                     {goal.targetDate && (
                       <span className="flex items-center gap-1">

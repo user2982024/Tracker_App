@@ -108,7 +108,10 @@ const createReportLines = (backup) => {
   if (!empty(goals)) paragraph("No goals in this account.");
   goals.forEach((goal, index) => {
     recordHeading(`${index + 1}. ${valueOr(goal.title, "Untitled goal")} [${valueOr(goal.status)}]`);
-    paragraph(`Progress: ${valueOr(goal.currentValue, 0)} / ${valueOr(goal.targetValue, 0)} ${valueOr(goal.unit, "")} | Target date: ${formatDate(goal.targetDate, dateFormat)} | Priority: ${valueOr(goal.priority)}`);
+    const progressSummary = goal.targetValue == null
+      ? "Qualitative goal"
+      : `Progress: ${valueOr(goal.currentValue, 0)} / ${valueOr(goal.targetValue, 0)}${goal.unit ? ` ${goal.unit}` : ""}`;
+    paragraph(`${progressSummary} | Target date: ${formatDate(goal.targetDate, dateFormat)} | Priority: ${valueOr(goal.priority)}`);
     if (goal.description) paragraph(goal.description);
   });
 

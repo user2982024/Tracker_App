@@ -5,7 +5,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-const GoalsStats = ({ stats, goals }) => {
+const GoalsStats = ({ stats }) => {
 
   // Prevent crash before API loads
   if (!stats) return null;
@@ -14,19 +14,9 @@ const GoalsStats = ({ stats, goals }) => {
   const completedGoals = stats.completed || 0;
   const activeGoals = stats.active || 0;
 
-  // Average progress calculation
-  let averageProgress = 0;
-
-  if (goals.length > 0) {
-
-    const totalProgress = goals.reduce((acc, goal) => {
-      return acc + (goal.progressPercentage || 0);
-    }, 0);
-
-    averageProgress = Math.round(
-      totalProgress / goals.length
-    );
-  }
+  const averageProgress = Number.isFinite(Number(stats.averageProgress))
+    ? Number(stats.averageProgress)
+    : 0;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

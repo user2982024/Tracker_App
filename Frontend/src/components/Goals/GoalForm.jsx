@@ -39,10 +39,18 @@ const GoalForm = ({
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => {
+      const next = { ...prev, [name]: value };
+      if (
+        name === "targetValue" &&
+        value &&
+        prev.status === "completed" &&
+        initialData.status !== "completed"
+      ) {
+        next.status = "active";
+      }
+      return next;
+    });
   };
 
   // Handle submit
@@ -52,9 +60,11 @@ const GoalForm = ({
     try {
       setLoading(true);
 
+      const targetValue = String(formData.targetValue).trim();
       const payload = {
         ...formData,
-        targetValue: Number(formData.targetValue),
+        targetValue: targetValue ? Number(targetValue) : null,
+        unit: formData.unit.trim(),
       };
 
       // Edit mode
@@ -152,11 +162,13 @@ const GoalForm = ({
           {/* Target Value */}
           <div>
             <label className="text-sm text-foreground-muted">
-              Target Value
+              Target Value <span className="text-foreground-muted">(optional)</span>
             </label>
 
             <input
               type="number"
+              min="1"
+              step="1"
               name="targetValue"
               value={formData.targetValue}
               onChange={handleChange}
@@ -168,7 +180,7 @@ const GoalForm = ({
           {/* Unit */}
           <div>
             <label className="text-sm text-foreground-muted">
-              Unit
+              Unit <span className="text-foreground-muted">(optional)</span>
             </label>
 
             <input
@@ -254,6 +266,9 @@ const GoalForm = ({
             >
               <option value="active">active</option>
               <option value="paused">paused</option>
+              {(!formData.targetValue || formData.status === "completed") && (
+                <option value="completed">completed</option>
+              )}
             </select>
           </div>
         )}
