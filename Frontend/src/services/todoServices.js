@@ -58,10 +58,13 @@ export const getAllTodos = async ({
 };
 
 // Toggle todo completion
-export const toggleTodoCompletion = async (todoId) => {
+export const toggleTodoCompletion = async (todoId, completed) => {
   const response = await apiFetch(`${BASE_URL}/${todoId}/toggle`, {
     method: "PATCH",
     credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ completed }),
+    retryOnNetworkError: true,
   });
 
   const data = await response.json();

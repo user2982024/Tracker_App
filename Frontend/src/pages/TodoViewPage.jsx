@@ -53,7 +53,7 @@ const TodoViewPage = () => {
   // Handlers
   const handleToggle = async () => {
     try {
-      const res = await toggleTodoCompletion(id);
+      const res = await toggleTodoCompletion(id, !todo.completed);
       toast.success(res.message);
       fetchTodo();
     } catch (error) {

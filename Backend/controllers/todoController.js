@@ -74,6 +74,7 @@ const toggleTodoCompleted = async (req, res, next) => {
     const updatedTodo = await todoService.toggleTodoCompletedService(
       todoId,
       userId,
+      req.body.completed,
     );
 
     return res.status(200).json({

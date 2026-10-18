@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { useRef, useState } from "react";
 
 import {
   CalendarDays,
@@ -16,6 +17,8 @@ import useDateFormat from "../../hooks/useDateFormat";
 import { formatDate } from "../../utils/dateFormatting";
 
 const TodoCard = ({ todo, onRefresh, onEdit, onDelete, onPin, onUnpin }) => {
+  const [toggling, setToggling] = useState(false);
+  const toggleInFlight = useRef(false);
   const dateFormat = useDateFormat();
   const {
     _id,
@@ -81,12 +84,19 @@ const navigate = useNavigate();
     : "bg-surface hover:bg-surface-secondary";
 
   const handleToggle = async () => {
+    if (toggleInFlight.current) return;
+
     try {
-      const res = await toggleTodoCompletion(_id);
+      toggleInFlight.current = true;
+      setToggling(true);
+      const res = await toggleTodoCompletion(_id, !completed);
       toast.success(res.message);
       onRefresh();
     } catch (error) {
       toast.error(error.message);
+    } finally {
+      toggleInFlight.current = false;
+      setToggling(false);
     }
   };
 
@@ -118,14 +128,18 @@ const navigate = useNavigate();
       )}
 
       {/* Checkbox */}
-      <div
+      <button
+        type="button"
         onClick={handleToggle}
-        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer ${
+        disabled={toggling}
+        aria-label={completed ? `Mark ${title} as pending` : `Mark ${title} as completed`}
+        aria-pressed={completed}
+        className={`w-5 h-5 rounded-full border-2 flex items-center justify-center cursor-pointer disabled:cursor-wait disabled:opacity-60 ${
           completed ? "bg-green-500 border-green-500" : "border-border-strong"
         }`}
       >
         {completed && <Check size={14} className="text-white" />}
-      </div>
+      </button>
 
       {/* Content */}
       <div className="flex flex-col min-w-0">

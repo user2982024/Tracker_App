@@ -163,6 +163,7 @@ export const undoHabitCompletion = async (completionId) => {
     {
       method: "DELETE",
       credentials: "include",
+      retryOnNetworkError: true,
     },
   );
 

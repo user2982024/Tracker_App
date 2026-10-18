@@ -17,10 +17,35 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  // Bundle the app's entry dependencies up front. This avoids a second
+  // optimizer pass (and page reload) when a route first imports them.
+  optimizeDeps: {
+    include: [
+      'react',
+      'react-dom/client',
+      'react-router-dom',
+      'react-router-hash-link',
+      'react-hot-toast',
+      'lucide-react',
+      'react-icons',
+    ],
+  },
   server: {
+    port: 5173,
+    strictPort: true,
     proxy: apiProxy,
+    warmup: {
+      clientFiles: [
+        './src/main.jsx',
+        './src/App.jsx',
+        './src/routes/AppRoutes.jsx',
+        './src/context/AuthContext.jsx',
+        './src/context/ThemeContext.jsx',
+      ],
+    },
   },
   preview: {
+    strictPort: true,
     proxy: apiProxy,
   },
 })

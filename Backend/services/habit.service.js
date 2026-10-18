@@ -699,13 +699,12 @@ const undoHabitCompletionService = async ({
     user: userId,
   });
 
-  if (!completion) {
-    throw new Error("Habit completion not found");
-  }
-
   return {
-    message: "Habit completion removed successfully",
+    message: completion
+      ? "Habit completion removed successfully"
+      : "Habit completion was already removed",
     completion,
+    alreadyRemoved: !completion,
   };
 };
 

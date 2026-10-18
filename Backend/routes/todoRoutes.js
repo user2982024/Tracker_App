@@ -3,6 +3,7 @@ const express = require("express");
 const {
     validateCreateTodo,
     validateUpdateTodo,
+    validateTodoCompletion,
     validateTodoId,
 } = require("../validators/todoValidator");
 const validateRequest = require("../middlewares/validateRequest");
@@ -37,7 +38,14 @@ router.patch("/:id/pin", authMiddleware, validateTodoId, validateRequest, pinTod
 router.patch("/:id/unpin", authMiddleware, validateTodoId, validateRequest, unpinTodo);
 
 // Toggle todo completed route
-router.patch("/:id/toggle", authMiddleware, validateTodoId, validateRequest, toggleTodoCompleted);
+router.patch(
+  "/:id/toggle",
+  authMiddleware,
+  validateTodoId,
+  validateTodoCompletion,
+  validateRequest,
+  toggleTodoCompleted,
+);
 
 // Update todo route
 router.put("/:id", authMiddleware, validateTodoId, validateUpdateTodo, validateRequest, updateTodo);

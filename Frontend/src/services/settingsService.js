@@ -30,7 +30,11 @@ export const changePassword = (data) =>
   request("/password", { method: "PATCH", body: JSON.stringify(data) });
 
 export const updatePreferences = (data) =>
-  request("/preferences", { method: "PATCH", body: JSON.stringify(data) });
+  request("/preferences", {
+    method: "PATCH",
+    body: JSON.stringify(data),
+    retryOnNetworkError: true,
+  });
 
 const downloadExport = async (path, fallbackName, fallbackMessage) => {
   const response = await apiFetch(`${BASE_URL}${path}`, { credentials: "include" });

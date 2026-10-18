@@ -295,7 +295,7 @@ const Dashboard = () => {
     }));
 
     try {
-      await toggleTodoCompletion(todo._id);
+      await toggleTodoCompletion(todo._id, !todo.completed);
       toast.success(todo.completed ? "Task marked pending" : "Task completed!");
     } catch (err) {
       toast.error(err.message || "Failed to update task");

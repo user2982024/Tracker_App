@@ -188,7 +188,7 @@ const getAllTodos = async ({
 };
 
 // Toggle todo completed service
-const toggleTodoCompletedService = async (todoId, userId) => {
+const toggleTodoCompletedService = async (todoId, userId, completed) => {
   if (!userId) {
     throw new Error("User not authenticated");
   }
@@ -197,20 +197,19 @@ const toggleTodoCompletedService = async (todoId, userId) => {
     throw new Error("Todo ID is required");
   }
 
-  // Find todo with ownership check
-  const todo = await Todo.findOne({
-    _id: todoId,
-    user: userId,
-  });
-
-  if (!todo) {
-    throw new Error("Todo not found or access denied");
+  if (typeof completed !== "boolean") {
+    throw new Error("Completed must be true or false");
   }
 
-  // Toggle completed status
-  todo.completed = !todo.completed;
+  // Set the requested state atomically. Repeating a request after a brief
+  // network interruption is safe because it cannot flip the state twice.
+  const todo = await Todo.findOneAndUpdate(
+    { _id: todoId, user: userId },
+    { $set: { completed } },
+    { new: true, runValidators: true },
+  );
 
-  await todo.save();
+  if (!todo) throw new Error("Todo not found or access denied");
 
   return todo;
 };

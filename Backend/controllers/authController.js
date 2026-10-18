@@ -1,5 +1,13 @@
 const authService = require("../services/auth.service");
 
+const authCookieOptions = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: process.env.COOKIE_SAME_SITE ||
+    (process.env.NODE_ENV === "production" ? "none" : "lax"),
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+};
+
 // Signup Controller
 exports.signup = async (req, res, next) => {
   try {
@@ -14,12 +22,7 @@ exports.signup = async (req, res, next) => {
     });
 
     // Set cookie (same as signin)
-    res.cookie("token", result.token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    res.cookie("token", result.token, authCookieOptions);
 
     // Send response
     return res.status(201).json({
@@ -42,12 +45,7 @@ exports.signin = async (req, res, next) => {
     const result = await authService.signin({ email, password });
 
     // Set cookie
-    res.cookie("token", result.token, {
-      httpOnly: true, // cannot be accessed by JS (XSS protection)
-      secure: process.env.NODE_ENV === "production", // only HTTPs in production
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    res.cookie("token", result.token, authCookieOptions);
 
     // Send response
     return res.status(200).json({
@@ -65,9 +63,9 @@ exports.signout = async (req, res, next) => {
   try {
     // Clear cookie
     res.clearCookie("token", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      httpOnly: authCookieOptions.httpOnly,
+      secure: authCookieOptions.secure,
+      sameSite: authCookieOptions.sameSite,
     });
 
     // Send response

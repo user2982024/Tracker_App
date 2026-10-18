@@ -61,6 +61,12 @@ const validateUpdateTodo = [
     .withMessage("Completed must be true or false"),
 ];
 
+const validateTodoCompletion = [
+  body("completed")
+    .isBoolean({ strict: true })
+    .withMessage("Completed must be true or false"),
+];
+
 // Validate todo id
 const validateTodoId = [
   param("id")
@@ -72,5 +78,6 @@ const validateTodoId = [
 module.exports = {
   validateCreateTodo,
   validateUpdateTodo,
+  validateTodoCompletion,
   validateTodoId,
 };
