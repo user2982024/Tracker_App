@@ -1,3 +1,4 @@
+import { toastError } from "../../utils/userToast.js";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
@@ -70,7 +71,7 @@ const GoalForm = ({
       // Edit mode
       if (isEdit) {
         await updateGoal(goalId, payload);
-        toast.success("Goal updated successfully!");
+        toast.success("Your goal has been updated.");
       }
 
       // Create mode
@@ -94,11 +95,9 @@ const GoalForm = ({
       else navigate("/app/goals");
 
     } catch (error) {
-      console.error(
-        isEdit
-          ? "Failed to update goal:"
-          : "Failed to create goal:",
-        error.message
+      toastError(
+        error.message ||
+          (isEdit ? "Unable to update this goal." : "Unable to create this goal."),
       );
     } finally {
       setLoading(false);
@@ -303,5 +302,6 @@ const GoalForm = ({
     </div>
   );
 };
+
 
 export default GoalForm;

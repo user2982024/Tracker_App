@@ -1,3 +1,4 @@
+import { toastError } from "../utils/userToast.js";
 import { useCallback, useState, useEffect } from "react";
 
 import toast from "react-hot-toast";
@@ -114,10 +115,10 @@ const GoalsPage = () => {
     setCompletingGoalId(goal._id);
     try {
       await updateGoal(goal._id, { status: "completed" });
-      toast.success("Goal marked as completed");
+      toast.success("Goal completed. Great work!");
       await fetchGoals();
     } catch (error) {
-      toast.error(error.message || "Failed to complete goal");
+      toastError(error.message || "Failed to complete goal");
     } finally {
       setCompletingGoalId(null);
     }
@@ -143,11 +144,11 @@ const GoalsPage = () => {
       setIsDeleteModalOpen(false);
       setGoalToDelete(null);
 
-      toast.success("Goal deleted successfully");
+      toast.success("Goal deleted.");
 
       await fetchGoals();
     } catch (error) {
-      toast.error(error.message || "Failed to delete goal");
+      toastError(error.message || "Failed to delete goal");
     } finally {
       setDeletingGoal(false);
     }
@@ -186,9 +187,7 @@ const GoalsPage = () => {
         toast.success("No completed goals found.");
       } else {
         toast.success(
-          `Deleted ${deletedGoals} completed goal(s) and ${deletedProgressEntries} progress entr${
-            deletedProgressEntries === 1 ? "y" : "ies"
-          }.`,
+          `Cleared ${deletedGoals} completed goal${deletedGoals === 1 ? "" : "s"} and ${deletedProgressEntries} progress update${deletedProgressEntries === 1 ? "" : "s"}.`,
         );
       }
 
@@ -206,7 +205,7 @@ const GoalsPage = () => {
         setPage(Math.max(1, totalPages));
       }
     } catch (error) {
-      toast.error(
+      toastError(
         error.message || "Failed to delete completed goals",
       );
     } finally {
@@ -453,5 +452,6 @@ const GoalsPage = () => {
     </div>
   );
 };
+
 
 export default GoalsPage;

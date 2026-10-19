@@ -1,3 +1,4 @@
+import { toastError } from "../utils/userToast.js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useDebounce from "../hooks/useDebounce";
@@ -50,7 +51,7 @@ const ArchivedNotesPage = () => {
     } catch (error) {
       if (currentRequest === requestRevision.current) {
         setLoadError(error.message || "Failed to load archived notes");
-        toast.error(error.message || "Failed to fetch archived notes");
+        toastError(error.message || "Failed to fetch archived notes");
       }
     } finally {
       if (currentRequest === requestRevision.current) setLoading(false);
@@ -81,7 +82,7 @@ const ArchivedNotesPage = () => {
     if (!noteToDelete || actionPending) return;
     try {
       setActionPending(true);
-      const res = await deleteNote(noteToDelete._id);
+      await deleteNote(noteToDelete._id);
       requestRevision.current += 1;
 
       setNotes((prev) =>
@@ -89,7 +90,7 @@ const ArchivedNotesPage = () => {
       );
       setTotal((prev) => Math.max(0, prev - 1));
 
-      toast.success(res.message || "Note deleted successfully");
+      toast.success("Note deleted.");
 
       setShowDeleteModal(false);
       setNoteToDelete(null);
@@ -97,7 +98,7 @@ const ArchivedNotesPage = () => {
         setPage((currentPage) => Math.max(1, currentPage - 1));
       }
     } catch (error) {
-      toast.error(error.message || "Failed to delete note");
+      toastError(error.message || "Failed to delete note");
     } finally {
       setActionPending(false);
     }
@@ -108,16 +109,16 @@ const ArchivedNotesPage = () => {
     if (actionPending) return;
     try {
       setActionPending(true);
-      const res = await unarchiveNote(noteId);
+      await unarchiveNote(noteId);
       requestRevision.current += 1;
       setNotes((prev) => prev.filter((note) => note._id !== noteId));
       setTotal((prev) => Math.max(0, prev - 1));
-      toast.success(res.message || "Note unarchived successfully");
+      toast.success("Note restored from your archive.");
       if (notes.length === 1 && page > 1) {
         setPage((currentPage) => Math.max(1, currentPage - 1));
       }
     } catch (error) {
-      toast.error(error.message || "Failed to unarchive note");
+      toastError(error.message || "Failed to unarchive note");
     } finally {
       setActionPending(false);
     }
@@ -261,5 +262,6 @@ const ArchivedNotesPage = () => {
     </div>
   );
 };
+
 
 export default ArchivedNotesPage;

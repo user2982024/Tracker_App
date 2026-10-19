@@ -22,6 +22,14 @@ const mongoose = require("mongoose");
 
 const app = express();
 
+const normalizeOrigin = (origin) => {
+  try {
+    return new URL(origin).origin;
+  } catch {
+    return origin;
+  }
+};
+
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
@@ -30,7 +38,9 @@ const allowedOrigins = [
     .map((origin) => origin.trim())
     .filter(Boolean),
   process.env.FRONTEND_URL,
-].filter(Boolean);
+]
+  .filter(Boolean)
+  .map(normalizeOrigin);
 
 // Allow the deployed frontend to send and receive the authentication cookie.
 app.use(
@@ -64,7 +74,7 @@ app.use("/api", (req, res, next) => {
   if (mongoose.connection.readyState !== 1) {
     return res.status(503).json({
       success: false,
-      message: "Database is temporarily unavailable. Please try again shortly.",
+      message: "We’re having trouble connecting right now. Please try again in a moment.",
     });
   }
   next();

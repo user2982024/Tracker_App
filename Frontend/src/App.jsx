@@ -1,7 +1,7 @@
 
 import { Toaster } from "react-hot-toast";
 import AppRoutes from "./routes/AppRoutes";
-import { useTheme } from "./context/ThemeContext";
+import { useTheme } from "./context/ThemeContextValue";
 
 const App = () => {
   const { theme } = useTheme();

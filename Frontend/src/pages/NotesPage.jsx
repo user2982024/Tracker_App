@@ -1,3 +1,4 @@
+import { toastError } from "../utils/userToast.js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useDebounce from "../hooks/useDebounce";
@@ -90,7 +91,7 @@ const NotesPage = () => {
     } catch (error) {
       if (requestId === notesRequestId.current) {
         setLoadError(error.message || "Failed to load notes");
-        toast.error(error.message || "Failed to fetch notes");
+        toastError(error.message || "Failed to fetch notes");
       }
       return false;
     } finally {
@@ -118,11 +119,11 @@ const NotesPage = () => {
             previous.map((note) => note._id === selectedNote._id ? res.note : note),
           );
         }
-        toast.success(res?.message || "Note updated successfully");
+        toast.success("Your note has been updated.");
         await fetchNotes();
       } else {
         const res = await createNote(formData);
-        toast.success(res?.message || "Note created successfully");
+        toast.success("Your note has been saved.");
         setCurrentPage(1);
         setSearchQuery("");
         if (res?.note) {
@@ -143,7 +144,7 @@ const NotesPage = () => {
       setIsEditMode(false);
       setSelectedNote(null);
     } catch (error) {
-      toast.error(error.message || "Failed to save note");
+      toastError(error.message || "Failed to save note");
     }
   };
 
@@ -163,7 +164,7 @@ const NotesPage = () => {
 
   const handleConfirmDelete = async () => {
     try {
-      const res = await deleteNote(noteToDelete._id);
+      await deleteNote(noteToDelete._id);
 
       invalidateNotesRequests();
 
@@ -173,7 +174,7 @@ const NotesPage = () => {
       setTotalNotes((prev) => Math.max(0, prev - 1));
       setAllNotesTotal((prev) => Math.max(0, prev - 1));
 
-      toast.success(res?.message || "Note deleted successfully");
+      toast.success("Note deleted.");
 
       setShowDeleteModal(false);
       setNoteToDelete(null);
@@ -183,7 +184,7 @@ const NotesPage = () => {
         await fetchNotes();
       }
     } catch (error) {
-      toast.error(error.message || "Failed to delete note");
+      toastError(error.message || "Failed to delete note");
     }
   };
 
@@ -192,16 +193,16 @@ const NotesPage = () => {
   // ======================
   const handleDeleteAll = async () => {
     try {
-      const res = await deleteAllNotes();
+      await deleteAllNotes();
       invalidateNotesRequests();
       setNotes([]);
       setTotalNotes(0);
       setAllNotesTotal(0);
       setCurrentPage(1);
       setShowDeleteAllModal(false);
-      toast.success(res.message);
+      toast.success("All notes have been deleted.");
     } catch (error) {
-      toast.error(error.message || "Failed to delete all notes");
+      toastError(error.message || "Failed to delete all notes");
     }
   };
 
@@ -210,18 +211,18 @@ const NotesPage = () => {
   // ======================
   const handleArchive = async (noteId) => {
     try {
-      const res = await archiveNote(noteId);
+      await archiveNote(noteId);
       invalidateNotesRequests();
       setNotes((prev) => prev.filter((note) => note._id !== noteId));
       setTotalNotes((prev) => Math.max(0, prev - 1));
-      toast.success(res.message || "Note archived successfully");
+      toast.success("Note moved to your archive.");
       if (notes.length === 1 && currentPage > 1) {
         setCurrentPage((page) => Math.max(1, page - 1));
       } else {
         await fetchNotes();
       }
     } catch (error) {
-      toast.error(error.message || "Failed to archive note");
+      toastError(error.message || "Failed to archive note");
     }
   };
 
@@ -230,7 +231,7 @@ const NotesPage = () => {
   // ======================
   const handlePin = async (noteId) => {
     try {
-      const res = await pinNote(noteId);
+      await pinNote(noteId);
       invalidateNotesRequests();
 
       setNotes((prev) => {
@@ -253,15 +254,15 @@ const NotesPage = () => {
         ];
       });
 
-      toast.success(res.message || "Note pinned successfully");
+      toast.success("Note pinned.");
     } catch (error) {
-      toast.error(error.message || "Failed to pin note");
+      toastError(error.message || "Failed to pin note");
     }
   };
 
   const handleUnpin = async (noteId) => {
     try {
-      const res = await unpinNote(noteId);
+      await unpinNote(noteId);
       invalidateNotesRequests();
 
       setNotes((prev) => {
@@ -280,9 +281,9 @@ const NotesPage = () => {
         ];
       });
 
-      toast.success(res.message || "Note unpinned successfully");
+      toast.success("Note unpinned.");
     } catch (error) {
-      toast.error(error.message || "Failed to unpin note");
+      toastError(error.message || "Failed to unpin note");
     }
   };
 
@@ -489,7 +490,7 @@ const NotesPage = () => {
           </>
         }
       >
-        {`This action `}
+        This action{" "}
         <span className="text-red-500 font-semibold">
           cannot be undone
         </span>.
@@ -497,5 +498,6 @@ const NotesPage = () => {
     </div>
   );
 };
+
 
 export default NotesPage;

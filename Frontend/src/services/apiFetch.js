@@ -10,21 +10,8 @@ const resolveApiUrl = (input) => {
   return input;
 };
 
-const getRequestLabel = (input, init) => {
-  const method = (init?.method || input?.method || "GET").toUpperCase();
-  const rawUrl = typeof input === "string" ? input : input?.url || "";
-
-  try {
-    const url = new URL(rawUrl, globalThis.location?.origin || "http://localhost");
-    return `${method} ${url.pathname}`;
-  } catch {
-    return method;
-  }
-};
-
 const apiFetch = async (input, init) => {
   const requestUrl = resolveApiUrl(input);
-  const requestLabel = getRequestLabel(requestUrl, init);
   const { retryOnNetworkError, ...fetchOptions } = init || {};
   const method = (fetchOptions.method || "GET").toUpperCase();
   const canRetry = retryOnNetworkError ?? ["GET", "HEAD"].includes(method);
@@ -52,7 +39,7 @@ const apiFetch = async (input, init) => {
       ) {
         if (error instanceof TypeError) {
           throw new Error(
-            `Could not connect while making ${requestLabel}. Verify the configured API URL and confirm the backend at /api/health is reachable.`,
+            "We couldn’t reach the service. Check your connection and try again.",
           );
         }
         throw error;
@@ -94,7 +81,7 @@ const apiFetch = async (input, init) => {
   // process cannot be reached. Keep this distinct from JSON API errors.
   if (response.status >= 500 && !contentType.includes("application/json")) {
     throw new Error(
-      `The API could not complete ${requestLabel}. Check the backend logs and confirm /api/health is reachable.`,
+      "Something went wrong while contacting the service. Please try again in a moment.",
     );
   }
 

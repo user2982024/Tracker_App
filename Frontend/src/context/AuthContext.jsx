@@ -45,8 +45,8 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     try {
       await signoutUser();
-    } catch (error) {
-      console.error("Logout failed:", error.message);
+    } catch {
+      // Clear local auth state even if the service is temporarily unavailable.
     } finally {
       setUser(null);
     }

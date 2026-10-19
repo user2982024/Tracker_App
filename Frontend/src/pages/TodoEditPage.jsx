@@ -1,3 +1,4 @@
+import { toastError } from "../utils/userToast.js";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Spinner from "../components/UI/Spinner";
@@ -6,7 +7,6 @@ import FormModal from "../components/UI/FormModal";
 import TodoForm from "../components/Todos/TodoForm";
 import { getTodo } from "../services/todoServices";
 
-import { toast } from "react-hot-toast";
 
 const TodoEditPage = () => {
   const { id } = useParams();
@@ -27,7 +27,7 @@ const TodoEditPage = () => {
         }
       } catch (error) {
         if (isMounted) {
-          toast.error(error.message);
+          toastError(error.message);
           navigate("/app/todos");
         }
       } finally {
@@ -69,5 +69,6 @@ const TodoEditPage = () => {
     </FormModal>
   );
 };
+
 
 export default TodoEditPage;

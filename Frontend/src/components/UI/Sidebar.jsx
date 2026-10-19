@@ -1,3 +1,4 @@
+import { toastError } from "../../utils/userToast.js";
 
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -34,9 +35,9 @@ const Sidebar = ({ closeSidebar }) => {
       setShowLogoutModal(false);
       if (closeSidebar) closeSidebar();
       navigate("/", { replace: true });
-      toast.success("Logged out successfully");
+      toast.success("You’re signed out.");
     } catch (error) {
-      toast.error(error.message || "Failed to logout");
+      toastError(error.message || "Failed to logout");
     }
   };
 
@@ -123,5 +124,6 @@ const Sidebar = ({ closeSidebar }) => {
     </aside>
   );
 };
+
 
 export default Sidebar;

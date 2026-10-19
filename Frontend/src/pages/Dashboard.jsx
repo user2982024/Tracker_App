@@ -1,3 +1,4 @@
+import { toastError } from "../utils/userToast.js";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -241,7 +242,7 @@ const Dashboard = () => {
         [todosRes, habitsRes, goalsRes, notesRes].some(isRetryableDashboardFailure),
       );
     } catch (err) {
-      toast.error(err.message || "Failed to load dashboard data");
+      toastError(err.message || "Failed to load dashboard data");
     } finally {
       if (!background) setLoading(false);
       dashboardFetchInProgress.current = false;
@@ -296,9 +297,9 @@ const Dashboard = () => {
 
     try {
       await toggleTodoCompletion(todo._id, !todo.completed);
-      toast.success(todo.completed ? "Task marked pending" : "Task completed!");
+      toast.success(todo.completed ? "Task moved back to your list." : "Task completed.");
     } catch (err) {
-      toast.error(err.message || "Failed to update task");
+      toastError(err.message || "Failed to update task");
       // Revert
       fetchDashboardData();
     } finally {
@@ -319,7 +320,7 @@ const Dashboard = () => {
         await undoHabitCompletion(existing._id);
         habitCompletionRevision.current += 1;
         setHabitCompletions((prev) => ({ ...prev, [habit._id]: null }));
-        toast.success(`Marked "${habit.title}" incomplete for today`);
+        toast.success(`“${habit.title}” is unchecked for today.`);
       } else {
         // Mark complete
         const res = await completeHabit(habit._id, { date: todayStr });
@@ -332,7 +333,7 @@ const Dashboard = () => {
             stats: adjustHabitStats(previous.stats, 1),
           }));
         }
-        toast.success(`Completed "${habit.title}"! 🔥`);
+        toast.success(`“${habit.title}” is complete for today. Great work!`);
       }
       if (existing?._id) {
         setHabitsData((previous) => ({
@@ -341,7 +342,7 @@ const Dashboard = () => {
         }));
       }
     } catch (err) {
-      toast.error(err.message || "Failed to update habit");
+      toastError(err.message || "Failed to update habit");
     } finally {
       setTogglingHabitId(null);
     }
@@ -410,7 +411,7 @@ const Dashboard = () => {
     } catch {
       // Ignore
     }
-    toast.success("Dashboard layout reset to default");
+    toast.success("Your dashboard layout has been reset.");
   };
 
   // Render individual widgets
@@ -965,5 +966,6 @@ const Dashboard = () => {
     </div>
   );
 };
+
 
 export default Dashboard;

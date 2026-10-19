@@ -1,3 +1,4 @@
+import { toastError } from "../utils/userToast.js";
 import { useState, useEffect, useRef, useCallback } from "react";
 
 import TodoHeader from "../components/Todos/TodoHeader";
@@ -75,7 +76,7 @@ const TodosPage = () => {
       setStats(stats);
       setPagination(pagination);
     } catch (error) {
-      if (requestId === todosRequestId.current) toast.error(error.message);
+      if (requestId === todosRequestId.current) toastError(error.message);
     } finally {
       if (requestId === todosRequestId.current) setLoading(false);
     }
@@ -106,9 +107,9 @@ const TodosPage = () => {
     try {
       setLoading(true);
 
-      const res = await deleteTodo(todoToDelete);
+      await deleteTodo(todoToDelete);
 
-      toast.success(res.message || "Todo deleted successfully");
+      toast.success("Task deleted.");
 
       // Close modal
       setIsDeleteModalOpen(false);
@@ -121,7 +122,7 @@ const TodosPage = () => {
         await fetchTodos();
       }
     } catch (error) {
-      toast.error(error.message);
+      toastError(error.message);
     } finally {
       setLoading(false);
     }
@@ -131,11 +132,11 @@ const TodosPage = () => {
   const handlePin = async (todoId) => {
     try {
       await pinTodo(todoId);
-      toast.success("Todo pinned successfully");
+      toast.success("Task pinned.");
 
       await fetchTodos();
     } catch (error) {
-      toast.error(error.message);
+      toastError(error.message);
     }
   };
 
@@ -143,11 +144,11 @@ const TodosPage = () => {
   const handleUnpin = async (todoId) => {
     try {
       await unpinTodo(todoId);
-      toast.success("Todo unpinned successfully");
+      toast.success("Task unpinned.");
 
       await fetchTodos();
     } catch (error) {
-      toast.error(error.message);
+      toastError(error.message);
     }
   };
 
@@ -156,9 +157,9 @@ const TodosPage = () => {
     try {
       setLoading(true);
 
-      const res = await deleteAllCompletedTodos();
+      await deleteAllCompletedTodos();
 
-      toast.success(res.message || "Completed todos deleted successfully");
+      toast.success("Completed tasks cleared.");
 
       setIsBulkDeleteModalOpen(false);
 
@@ -169,7 +170,7 @@ const TodosPage = () => {
         await fetchTodos();
       }
     } catch (error) {
-      toast.error(error.message);
+      toastError(error.message);
     } finally {
       setLoading(false);
     }
@@ -309,5 +310,6 @@ const TodosPage = () => {
     </div>
   );
 };
+
 
 export default TodosPage;

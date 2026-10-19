@@ -1,3 +1,4 @@
+import { toastError } from "../utils/userToast.js";
 import { createElement, useState } from "react";
 import {
   CalendarDays,
@@ -12,7 +13,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAuth } from "../context/AuthContextValue";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "../context/ThemeContextValue";
 import FormModal from "../components/UI/FormModal";
 import Spinner from "../components/UI/Spinner";
 import {
@@ -81,9 +82,9 @@ const SettingsPage = () => {
       setUser(result.user);
       setName(result.user.name);
       setShowProfileForm(false);
-      toast.success("Profile updated");
+      toast.success("Your profile has been updated.");
     } catch (error) {
-      toast.error(error.message || "Unable to update profile");
+      toastError(error.message || "Unable to update profile");
     } finally {
       setSavingProfile(false);
     }
@@ -106,9 +107,9 @@ const SettingsPage = () => {
       });
       setUser(result.user);
       setShowWeekStartForm(false);
-      toast.success("Preferences saved");
+      toast.success("Your preferences have been saved.");
     } catch (error) {
-      toast.error(error.message || "Unable to save preferences");
+      toastError(error.message || "Unable to save preferences");
     } finally {
       setSavingWeekStart(false);
     }
@@ -125,7 +126,7 @@ const SettingsPage = () => {
         toast.success("Your full data backup is ready");
       }
     } catch (error) {
-      toast.error(error.message || "Unable to export your data");
+      toastError(error.message || "Unable to export your data");
     } finally {
       setExporting(false);
     }
@@ -140,7 +141,7 @@ const SettingsPage = () => {
     event.preventDefault();
 
     if (passwords.newPassword !== passwords.confirmPassword) {
-      toast.error("New password and confirmation do not match");
+      toastError("New password and confirmation do not match");
       return;
     }
 
@@ -151,9 +152,9 @@ const SettingsPage = () => {
         newPassword: passwords.newPassword,
       });
       closePasswordForm();
-      toast.success("Password changed successfully");
+      toast.success("Your password has been changed.");
     } catch (error) {
-      toast.error(error.message || "Unable to change password");
+      toastError(error.message || "Unable to change password");
     } finally {
       setSavingPassword(false);
     }
@@ -468,5 +469,6 @@ const SettingsPage = () => {
     </div>
   );
 };
+
 
 export default SettingsPage;

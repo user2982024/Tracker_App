@@ -1,3 +1,4 @@
+import { toastError } from "../utils/userToast.js";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Spinner from "../components/UI/Spinner";
@@ -40,7 +41,7 @@ const NoteViewPage = () => {
         const res = await getNoteById(id);
         setNote(res.note);
       } catch (error) {
-        toast.error(error.message || "Failed to load note");
+        toastError(error.message || "Failed to load note");
         navigate(-1);
       } finally {
         setLoading(false);
@@ -54,10 +55,10 @@ const NoteViewPage = () => {
   const handleDelete = async () => {
     try {
       await deleteNote(id);
-      toast.success("Note deleted successfully");
+      toast.success("Note deleted.");
       navigate(-1);
     } catch (error) {
-      toast.error(error.message || "Failed to delete note");
+      toastError(error.message || "Failed to delete note");
     }
   };
 
@@ -68,9 +69,9 @@ const NoteViewPage = () => {
         : await archiveNote(id);
 
       setNote(res.note);
-      toast.success(note.isArchived ? "Note unarchived" : "Note archived");
+      toast.success(note.isArchived ? "Note restored from your archive." : "Note moved to your archive.");
     } catch (error) {
-      toast.error(error.message || "Failed to update archive status");
+      toastError(error.message || "Failed to update archive status");
     }
   };
 
@@ -79,9 +80,9 @@ const NoteViewPage = () => {
       const res = note.isPinned ? await unpinNote(id) : await pinNote(id);
 
       setNote(res.note);
-      toast.success(note.isPinned ? "Note unpinned" : "Note pinned");
+      toast.success(note.isPinned ? "Note unpinned." : "Note pinned.");
     } catch (error) {
-      toast.error(error.message || "Failed to update pin status");
+      toastError(error.message || "Failed to update pin status");
     }
   };
 
@@ -232,5 +233,6 @@ const NoteViewPage = () => {
     </div>
   );
 };
+
 
 export default NoteViewPage;

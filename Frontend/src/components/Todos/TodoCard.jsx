@@ -1,3 +1,4 @@
+import { toastError } from "../../utils/userToast.js";
 import { useNavigate } from "react-router-dom";
 import { useRef, useState } from "react";
 
@@ -89,11 +90,11 @@ const navigate = useNavigate();
     try {
       toggleInFlight.current = true;
       setToggling(true);
-      const res = await toggleTodoCompletion(_id, !completed);
-      toast.success(res.message);
+      await toggleTodoCompletion(_id, !completed);
+      toast.success(completed ? "Task moved back to your list." : "Task completed.");
       onRefresh();
     } catch (error) {
-      toast.error(error.message);
+      toastError(error.message);
     } finally {
       toggleInFlight.current = false;
       setToggling(false);
@@ -213,5 +214,6 @@ const navigate = useNavigate();
     </div>
   );
 };
+
 
 export default TodoCard;

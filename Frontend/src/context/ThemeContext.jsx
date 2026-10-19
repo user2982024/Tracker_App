@@ -1,16 +1,14 @@
+import { toastError } from "../utils/userToast.js";
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useState,
 } from "react";
-import toast from "react-hot-toast";
 import { useAuth } from "./AuthContextValue";
+import { ThemeContext } from "./ThemeContextValue";
 import { updatePreferences } from "../services/settingsService";
 
-const ThemeContext = createContext(null);
 const STORAGE_KEY = "taskflow-theme";
 
 const getInitialTheme = () => {
@@ -20,7 +18,6 @@ const getInitialTheme = () => {
     return "light";
   }
 };
-
 export const ThemeProvider = ({ children }) => {
   const { user, setUser } = useAuth();
   const [localTheme, setLocalTheme] = useState(getInitialTheme);
@@ -62,7 +59,7 @@ export const ThemeProvider = ({ children }) => {
         ...currentUser,
         preferences: { ...currentUser.preferences, theme: previousTheme },
       }));
-      toast.error(error.message || "Unable to save theme preference");
+      toastError(error.message || "Unable to save theme preference");
     }
   }, [localTheme, setUser, user]);
 
@@ -73,11 +70,4 @@ export const ThemeProvider = ({ children }) => {
       {children}
     </ThemeContext.Provider>
   );
-};
-
-// eslint-disable-next-line react-refresh/only-export-components
-export const useTheme = () => {
-  const context = useContext(ThemeContext);
-  if (!context) throw new Error("useTheme must be used inside a ThemeProvider");
-  return context;
 };

@@ -1,3 +1,4 @@
+import { toastError } from "../../utils/userToast.js";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 
@@ -49,17 +50,15 @@ const TodoForm = ({ todoToEdit, onTodoCreated, onCancel }) => {
     try {
       setLoading(true);
       
-      let res;
-
       if (isEditMode) {
         // Update todo
-        res = await updateTodo(todoToEdit._id, formData);
-        toast.success(res.message || "Todo updated successfully");
+        await updateTodo(todoToEdit._id, formData);
+        toast.success("Your task has been updated.");
       }
       else {
         // Create todo
-        res = await createTodo(formData);
-        toast.success(res.message || "Todo created successfully");
+        await createTodo(formData);
+        toast.success("Your task has been added.");
       }
 
       // Notify parent
@@ -78,7 +77,7 @@ const TodoForm = ({ todoToEdit, onTodoCreated, onCancel }) => {
       }
 
     } catch (error) {
-      toast.error(error.message || "Something went wrong");
+      toastError(error.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -169,5 +168,6 @@ const TodoForm = ({ todoToEdit, onTodoCreated, onCancel }) => {
     </div>
   );
 };
+
 
 export default TodoForm;

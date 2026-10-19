@@ -1,3 +1,4 @@
+import { toastError } from "../../utils/userToast.js";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
@@ -64,10 +65,8 @@ const AuthForm = ({ mode = "signup" }) => {
 
       // Success toast
       toast.success(
-        isSignup ? "Account created successfully" : "Login successful",
+        isSignup ? "Your account is ready." : "Welcome back.",
       );
-
-      console.log("Response", data);
 
       // Navigate after auth
         navigate("/app", { replace: true });
@@ -75,7 +74,7 @@ const AuthForm = ({ mode = "signup" }) => {
     } catch (err) {
       // Error toast
       const message = err?.message || err || "Something went wrong";
-      toast.error(message);
+      toastError(message);
       setError(message);
     } finally {
       setLoading(false);
@@ -189,5 +188,6 @@ const AuthForm = ({ mode = "signup" }) => {
     </div>
   );
 };
+
 
 export default AuthForm;

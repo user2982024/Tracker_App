@@ -8,7 +8,7 @@ const authMiddleware = (req, res, next) => {
     if (!token) {
       return res.status(401).json({
         success: false,
-        message: "Unauthorized: No token provided",
+        message: "Please sign in to continue.",
       });
     }
 
@@ -23,11 +23,9 @@ const authMiddleware = (req, res, next) => {
     // Move to next middlewaare/controller
     next();
   } catch (error) {
-    console.error("Auth Middleware Error:", error.message);
-
     return res.status(401).json({
       success: false,
-      message: "Unauthorized: Invalid or expired token",
+      message: "Your session has expired. Please sign in again.",
     });
   }
 };

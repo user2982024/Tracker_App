@@ -1,3 +1,4 @@
+import { toastError } from "../utils/userToast.js";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Spinner from "../components/UI/Spinner";
@@ -20,7 +21,7 @@ const NoteEditPage = () => {
         const res = await getNoteById(id);
         setNote(res.note);
       } catch (error) {
-        toast.error(error.message || "Failed to load note");
+        toastError(error.message || "Failed to load note");
         navigate(-1);
       } finally {
         setLoading(false);
@@ -32,13 +33,13 @@ const NoteEditPage = () => {
 
   const handleUpdate = async (formData) => {
     try {
-      const res = await updateNote(id, formData);
-      toast.success(res.message || "Note updated successfully");
+      await updateNote(id, formData);
+      toast.success("Your note has been updated.");
 
       // Go back to view page
       navigate(`/app/notes/${id}`);
     } catch (error) {
-      toast.error(error.message || "Failed to update note");
+      toastError(error.message || "Failed to update note");
     }
   };
 
@@ -66,5 +67,6 @@ const NoteEditPage = () => {
     </FormModal>
   );
 };
+
 
 export default NoteEditPage;

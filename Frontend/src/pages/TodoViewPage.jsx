@@ -1,3 +1,4 @@
+import { toastError } from "../utils/userToast.js";
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Spinner from "../components/UI/Spinner";
@@ -39,7 +40,7 @@ const TodoViewPage = () => {
       const data = await getTodo(id);
       setTodo(data);
     } catch (error) {
-      toast.error(error.message);
+      toastError(error.message);
       navigate("/app/todos");
     } finally {
       setLoading(false);
@@ -53,32 +54,33 @@ const TodoViewPage = () => {
   // Handlers
   const handleToggle = async () => {
     try {
-      const res = await toggleTodoCompletion(id, !todo.completed);
-      toast.success(res.message);
+      await toggleTodoCompletion(id, !todo.completed);
+      toast.success(todo.completed ? "Task moved back to your list." : "Task completed.");
       fetchTodo();
     } catch (error) {
-      toast.error(error.message);
+      toastError(error.message);
     }
   };
 
   const handleDelete = async () => {
     try {
-      const res = await deleteTodo(id);
-      toast.success(res.message);
+      await deleteTodo(id);
+      toast.success("Task deleted.");
       navigate("/app/todos");
     } catch (error) {
-      toast.error(error.message);
+      toastError(error.message);
     }
   };
 
   const handlePinToggle = async () => {
     try {
-      const res = todo.pinned ? await unpinTodo(id) : await pinTodo(id);
+      if (todo.pinned) await unpinTodo(id);
+      else await pinTodo(id);
 
-      toast.success(res.message);
+      toast.success(todo.pinned ? "Task unpinned." : "Task pinned.");
       fetchTodo();
     } catch (error) {
-      toast.error(error.message);
+      toastError(error.message);
     }
   };
 
@@ -249,5 +251,6 @@ const TodoViewPage = () => {
     </div>
   );
 };
+
 
 export default TodoViewPage;

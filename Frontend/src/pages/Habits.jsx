@@ -1,3 +1,4 @@
+import { toastError } from "../utils/userToast.js";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import toast from "react-hot-toast";
@@ -321,10 +322,10 @@ const Habits = () => {
 
       if (selectedHabit?._id) {
         await updateHabit(selectedHabit._id, habitData);
-        toast.success("Habit updated successfully.");
+        toast.success("Your habit has been updated.");
       } else {
         await createHabit(habitData);
-        toast.success("Habit created successfully.");
+        toast.success("Your habit has been added.");
       }
 
       setShowForm(false);
@@ -332,7 +333,7 @@ const Habits = () => {
 
       await fetchHabits({ silent: true });
     } catch (err) {
-      toast.error(err?.message || "Failed to save habit.");
+      toastError(err?.message || "Failed to save habit.");
     } finally {
       setSaving(false);
     }
@@ -371,7 +372,7 @@ const Habits = () => {
 
       if (completed) {
         if (!completion?._id) {
-          toast.error(
+          toastError(
             "Could not identify this completion. Refresh and try again.",
           );
           return;
@@ -386,7 +387,7 @@ const Habits = () => {
         });
         adjustCompletionStats(-1);
         setError("");
-        toast.success("Habit completion undone.");
+        toast.success("Habit marked incomplete for today.");
       } else {
         const response = await completeHabit(habit._id, { date: completionDateToday });
         completionRevision.current += 1;
@@ -402,7 +403,7 @@ const Habits = () => {
         toast.success("Habit completed. Great work!");
       }
     } catch (err) {
-      toast.error(err?.message || "Failed to update habit completion.");
+      toastError(err?.message || "Failed to update habit completion.");
     } finally {
       setActionId(null);
     }
@@ -418,7 +419,7 @@ const Habits = () => {
       toast.success(nextPinned ? "Habit pinned." : "Habit unpinned.");
       await fetchHabits({ silent: true });
     } catch (err) {
-      toast.error(err?.message || `Failed to ${nextPinned ? "pin" : "unpin"} habit.`);
+      toastError(err?.message || `Failed to ${nextPinned ? "pin" : "unpin"} habit.`);
     } finally {
       setPinningId(null);
     }
@@ -455,7 +456,7 @@ const Habits = () => {
         );
       }
     } catch (err) {
-      toast.error(err?.message || "Failed to update habit archive status.");
+      toastError(err?.message || "Failed to update habit archive status.");
     } finally {
       setActionId(null);
     }
@@ -469,12 +470,12 @@ const Habits = () => {
 
       await deleteHabit(habitToDelete._id);
 
-      toast.success("Habit deleted successfully.");
+      toast.success("Habit deleted.");
       setHabitToDelete(null);
 
       await fetchHabits({ silent: true });
     } catch (err) {
-      toast.error(err?.message || "Failed to delete habit.");
+      toastError(err?.message || "Failed to delete habit.");
     } finally {
       setActionId(null);
     }
@@ -484,7 +485,7 @@ const Habits = () => {
   const handleViewHistory = useCallback(
     (habit) => {
       if (!habit?._id) {
-        toast.error("Unable to open history: habit ID is missing.");
+        toastError("Unable to open history: habit ID is missing.");
         return;
       }
 
@@ -925,5 +926,6 @@ const Habits = () => {
     </main>
   );
 };
+
 
 export default Habits;

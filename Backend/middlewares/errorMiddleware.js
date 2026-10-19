@@ -1,6 +1,4 @@
 const errorHandler = (err, req, res, next) => {
-  console.error("Error:", err);
-
   // Default values
   let statusCode = err.statusCode || 500;
   let message = err.message || "Internal Server Error";
@@ -25,10 +23,17 @@ const errorHandler = (err, req, res, next) => {
       .join(", ");
   }
 
-return res.status(statusCode).json({
+  if (statusCode >= 500) {
+    console.error("Request failed:", err);
+    if (process.env.NODE_ENV === "production") {
+      message = "Something went wrong. Please try again in a moment.";
+    }
+  }
+
+  return res.status(statusCode).json({
     success: false,
     message,
-});
+  });
 };
 
 module.exports = errorHandler;

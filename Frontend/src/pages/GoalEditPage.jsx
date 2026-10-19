@@ -1,3 +1,4 @@
+import { toastError } from "../utils/userToast.js";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -5,7 +6,6 @@ import GoalForm from "../components/Goals/GoalForm";
 
 import { getGoal } from "../services/goalsServices";
 
-import { toast } from "react-hot-toast";
 
 const GoalEditPage = () => {
   const { id } = useParams();
@@ -28,7 +28,7 @@ const GoalEditPage = () => {
         }
       } catch (error) {
         if (isMounted) {
-          toast.error(error.message);
+          toastError(error.message);
           navigate("/app/goals");
         }
       } finally {
@@ -59,5 +59,6 @@ const GoalEditPage = () => {
     </div>
   );
 };
+
 
 export default GoalEditPage;
